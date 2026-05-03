@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://vertticonsultoria.com.br/sitemap.xml
