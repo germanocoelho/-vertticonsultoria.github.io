@@ -1120,7 +1120,9 @@ function val(id){return (document.getElementById(id)||{}).value||''}
 function enviarWhats(){
   const situacao=document.querySelector('input[name=situacao]:checked').value;
   const nome=val('f-nome'),tel=val('f-tel'),marca=val('f-marca'),uf=val('f-uf');
-  if(!nome||!tel||!marca||!uf){alert('Por favor preencha nome, telefone, nome da marca e estado.');return;}
+  if(!nome||!tel||!marca||!uf){
+    const msgs={pt:'Por favor preencha nome, telefone, nome da marca e estado.',en:'Please fill in name, phone, brand name and state.',es:'Por favor complete nombre, teléfono, nombre de la marca y estado.',fr:'Veuillez remplir le nom, le téléphone, le nom de la marque et l\'état.'};
+    alert(msgs[currentLang]||msgs.pt);return;}
   const msg=`*Consulta gratuita — VERTTI Consultoria*%0A%0A`+
     `*Nome:* ${nome}%0A`+
     `*Telefone:* ${tel}%0A`+
@@ -1366,6 +1368,8 @@ const I18N = {
   "form.phMarca": {pt:"A marca que deseja registrar", en:"The mark you wish to register", es:"La marca que desea registrar", fr:"La marque à enregistrer"},
   "form.lblDesc": {pt:"Produto ou serviço", en:"Product or service", es:"Producto o servicio", fr:"Produit ou service"},
   "form.phDesc": {pt:"Descreva brevemente", en:"Briefly describe", es:"Describa brevemente", fr:"Décrivez brièvement"},
+  "form.phEmail": {pt:"voce@email.com", en:"you@email.com", es:"usted@email.com", fr:"vous@email.com"},
+  "form.phTel": {pt:"(67) 9____-____", en:"+55 (67) 9____-____", es:"+55 (67) 9____-____", fr:"+55 (67) 9____-____"},
   "form.lblAbrang": {pt:"Abrangência", en:"Scope", es:"Alcance", fr:"Portée"},
   "form.abr1": {pt:"Nacional (INPI)", en:"National (INPI)", es:"Nacional (INPI)", fr:"National (INPI)"},
   "form.abr2": {pt:"Internacional (OMPI)", en:"International (WIPO)", es:"Internacional (OMPI)", fr:"International (OMPI)"},
@@ -1608,7 +1612,7 @@ function applyLang(lang){
   });
   // placeholders
   const ph = {
-    'f-nome':'form.phNome','f-marca':'form.phMarca','f-desc':'form.phDesc'
+    'f-nome':'form.phNome','f-marca':'form.phMarca','f-desc':'form.phDesc','f-email':'form.phEmail','f-tel':'form.phTel'
   };
   for(const id in ph){ const e=document.getElementById(id); const t=I18N[ph[id]]; if(e&&t) e.placeholder=t[lang]; }
   // badge recomendado (CSS pseudo-elemento)
