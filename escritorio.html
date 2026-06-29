@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escritório Digital · VERTTI Consultoria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --petroleo:#0E2A36; --petroleo-2:#12384a; --petroleo-soft:#16475c;
+  --ouro:#C9A24B; --ouro-claro:#E3C77E; --marfim:#F6F2E9;
+  --verde:#2E9E5B; --vermelho:#C0503E; --azul:#3D7EA6; --ambar:#C9952B;
+  --cinza:#5d6b72; --linha:rgba(14,42,54,.08);
+  --bg:#F4F1EA; --card:#ffffff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--petroleo);line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600}
+
+/* ===== LOGIN ===== */
+.login-screen{position:fixed;inset:0;background:linear-gradient(140deg,var(--petroleo) 0%,var(--petroleo-2) 60%,#0a2330 100%);display:flex;align-items:center;justify-content:center;z-index:1000}
+.login-box{background:rgba(255,255,255,.04);border:1px solid rgba(201,162,75,.2);border-radius:18px;padding:44px 40px;width:90%;max-width:400px;text-align:center;backdrop-filter:blur(8px)}
+.login-box .mark{width:54px;height:54px;border-radius:12px;background:linear-gradient(135deg,var(--ouro),#a07d2e);display:grid;place-items:center;margin:0 auto 20px;font-family:'Fraunces';font-weight:700;color:var(--petroleo);font-size:1.4rem}
+.login-box h1{color:#fff;font-size:1.5rem;margin-bottom:4px}
+.login-box .sub{color:rgba(255,255,255,.55);font-size:.85rem;margin-bottom:28px}
+.login-box input{width:100%;padding:13px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:1rem;margin-bottom:14px;font-family:inherit}
+.login-box input::placeholder{color:rgba(255,255,255,.4)}
+.login-box input:focus{outline:none;border-color:var(--ouro)}
+.login-box button{width:100%;padding:13px;border-radius:10px;border:none;background:var(--ouro);color:var(--petroleo);font-weight:700;font-size:1rem;cursor:pointer;font-family:inherit;transition:.2s}
+.login-box button:hover{background:var(--ouro-claro)}
+.login-box .hint{color:rgba(255,255,255,.4);font-size:.75rem;margin-top:18px}
+.login-box .err{color:#ff9b8a;font-size:.8rem;margin-top:10px;min-height:18px}
+
+/* ===== APP LAYOUT ===== */
+.app{display:none;min-height:100vh}
+.app.active{display:block}
+.topbar{background:var(--petroleo);color:#fff;padding:0 26px;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar .brand{display:flex;align-items:center;gap:12px}
+.topbar .mark{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--ouro),#a07d2e);display:grid;place-items:center;font-family:'Fraunces';font-weight:700;color:var(--petroleo);font-size:1rem}
+.topbar .brand b{font-family:'Fraunces';font-size:1.1rem;font-weight:600}
+.topbar .brand span{display:block;font-size:.66rem;letter-spacing:.14em;color:var(--ouro-claro);text-transform:uppercase}
+.topbar .right{display:flex;align-items:center;gap:18px;font-size:.85rem}
+.topbar .date{color:rgba(255,255,255,.6)}
+.topbar .logout{color:var(--ouro-claro);cursor:pointer;text-decoration:none;font-weight:600;font-size:.8rem}
+.topbar .live{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;color:rgba(255,255,255,.7)}
+.topbar .live .dot{width:7px;height:7px;border-radius:50%;background:var(--verde);box-shadow:0 0 0 0 rgba(46,158,91,.6);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(46,158,91,.5)}70%{box-shadow:0 0 0 7px rgba(46,158,91,0)}100%{box-shadow:0 0 0 0 rgba(46,158,91,0)}}
+
+.wrap{max-width:1240px;margin:0 auto;padding:26px}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--linha);margin-bottom:24px;overflow-x:auto}
+.tab{padding:11px 18px;font-size:.9rem;font-weight:600;color:var(--cinza);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.2s}
+.tab:hover{color:var(--petroleo)}
+.tab.active{color:var(--petroleo);border-bottom-color:var(--ouro)}
+
+.page{display:none}
+.page.active{display:block;animation:fade .4s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* section title */
+.sec-title{font-size:1.35rem;margin-bottom:4px}
+.sec-sub{color:var(--cinza);font-size:.88rem;margin-bottom:20px}
+
+/* KPI cards */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px}
+.kpi{background:var(--card);border:1px solid var(--linha);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+.kpi::after{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--ouro)}
+.kpi.green::after{background:var(--verde)}
+.kpi.blue::after{background:var(--azul)}
+.kpi.amber::after{background:var(--ambar)}
+.kpi .label{font-size:.74rem;color:var(--cinza);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:8px}
+.kpi .value{font-family:'Fraunces';font-size:2rem;font-weight:700;line-height:1}
+.kpi .delta{font-size:.76rem;margin-top:8px;font-weight:600}
+.kpi .delta.up{color:var(--verde)}
+.kpi .delta.down{color:var(--vermelho)}
+.kpi .delta.flat{color:var(--cinza)}
+
+/* panels */
+.panels{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;margin-bottom:22px}
+.panel{background:var(--card);border:1px solid var(--linha);border-radius:14px;padding:20px}
+.panel h3{font-size:1.05rem;margin-bottom:2px}
+.panel .psub{font-size:.8rem;color:var(--cinza);margin-bottom:16px}
+
+/* funnel */
+.funnel-stage{display:flex;align-items:center;gap:12px;margin-bottom:11px}
+.funnel-stage .bar{height:34px;border-radius:7px;display:flex;align-items:center;padding:0 12px;color:#fff;font-weight:600;font-size:.85rem;min-width:60px;transition:width .8s}
+.funnel-stage .info{font-size:.82rem;color:var(--cinza)}
+.funnel-stage .info b{color:var(--petroleo);font-size:.95rem}
+
+/* lead table */
+.lead-table{width:100%;border-collapse:collapse;font-size:.85rem}
+.lead-table th{text-align:left;padding:10px 12px;color:var(--cinza);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--linha);font-weight:600}
+.lead-table td{padding:11px 12px;border-bottom:1px solid var(--linha)}
+.lead-table tr:hover td{background:#faf7f1}
+.lead-table .empresa{font-weight:600}
+.lead-table .ramo{font-size:.76rem;color:var(--cinza)}
+.tag{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:20px}
+.tag.novo{background:#E8F0F5;color:#2c6385}
+.tag.conversa{background:#FBF1DD;color:#9a7414}
+.tag.busca{background:#F3E8F5;color:#7a3d85}
+.tag.proposta{background:#E5F0FF;color:#2c5aa0}
+.tag.fechado{background:#E6F5EB;color:#1f7a42}
+.tag.perdido{background:#F7E8E6;color:#a13b2c}
+.origin{display:inline-flex;align-items:center;gap:5px;font-size:.78rem;color:var(--cinza)}
+.origin .od{width:8px;height:8px;border-radius:50%}
+.od.ativo{background:var(--ouro)} .od.google{background:var(--azul)} .od.site{background:var(--verde)} .od.indica{background:var(--ambar)}
+
+/* bars (nichos) */
+.nicho-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.nicho-row .nm{width:130px;font-size:.84rem;font-weight:500}
+.nicho-row .track{flex:1;height:22px;background:#f0ece2;border-radius:6px;overflow:hidden}
+.nicho-row .fill{height:100%;background:linear-gradient(90deg,var(--ouro),var(--ouro-claro));border-radius:6px;transition:width .8s}
+.nicho-row .vv{width:70px;text-align:right;font-size:.82rem;font-weight:600}
+
+/* report box */
+.report{background:linear-gradient(140deg,var(--petroleo),var(--petroleo-2));color:var(--marfim);border-radius:14px;padding:24px 26px;margin-bottom:22px}
+.report h3{color:#fff;font-size:1.15rem;margin-bottom:3px}
+.report .rdate{color:var(--ouro-claro);font-size:.8rem;margin-bottom:18px}
+.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:20px}
+.report-stat{background:rgba(255,255,255,.05);border:1px solid rgba(201,162,75,.18);border-radius:10px;padding:14px 16px}
+.report-stat .l{font-size:.72rem;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.report-stat .v{font-family:'Fraunces';font-size:1.6rem;font-weight:700}
+.report-stat .v small{font-size:.85rem;color:var(--ouro-claro)}
+.report .insight{font-size:.9rem;line-height:1.65;color:rgba(246,242,233,.9);border-left:3px solid var(--ouro);padding-left:14px;margin-top:6px}
+.report .insight b{color:var(--ouro-claro)}
+.report .actions{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+.report .btn{background:var(--ouro);color:var(--petroleo);border:none;padding:9px 16px;border-radius:8px;font-weight:600;font-size:.82rem;cursor:pointer;font-family:inherit}
+.report .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:#fff}
+
+/* insight cards (reposicionamento) */
+.insight-card{background:var(--card);border:1px solid var(--linha);border-radius:12px;padding:18px 20px;margin-bottom:14px;border-left:4px solid var(--ouro)}
+.insight-card.op{border-left-color:var(--verde)}
+.insight-card.alert{border-left-color:var(--ambar)}
+.insight-card h4{font-size:1rem;margin-bottom:6px}
+.insight-card p{font-size:.86rem;color:#3a4a52;line-height:1.6}
+.insight-card .metric-inline{font-weight:700;color:var(--petroleo)}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+
+.foot-note{text-align:center;color:var(--cinza);font-size:.78rem;padding:24px 0 10px;border-top:1px solid var(--linha);margin-top:10px}
+
+.demo-banner{background:var(--ambar);color:#fff;text-align:center;font-size:.78rem;padding:7px;font-weight:600;letter-spacing:.02em}
+
+/* qualificação: dots de busca de nome */
+.bdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.b-livre{background:var(--verde)} .b-risco{background:var(--ambar)} .b-bloq{background:var(--vermelho)} .b-pend{background:var(--azul)}
+/* competição */
+.comp{display:inline-block;font-size:.68rem;font-weight:700;padding:2px 9px;border-radius:20px}
+.c-baixa{background:#E6F5EB;color:#1f7a42} .c-media{background:#FBF1DD;color:#9a7414} .c-alta{background:#F7E8E6;color:#a13b2c}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;font-size:.74rem;color:var(--cinza)}
+.legend span{display:inline-flex;align-items:center}
+/* situação do nome (segmentação) */
+.busca-item{padding:11px 0;border-bottom:1px solid var(--linha)}
+.busca-item:last-child{border-bottom:none}
+.busca-head{display:flex;align-items:center;gap:4px;font-size:.92rem}
+.busca-head b{flex:1}
+.busca-n{font-family:'Fraunces';font-weight:700;font-size:1.1rem}
+.busca-desc{font-size:.8rem;color:var(--cinza);margin-top:3px;margin-left:15px}
+/* cards de ação */
+.acao-card{background:var(--card);border:1px solid var(--linha);border-radius:12px;padding:18px 20px;margin-bottom:14px;position:relative}
+.acao-tag{display:inline-block;font-size:.68rem;font-weight:700;color:#fff;padding:3px 11px;border-radius:20px;margin-bottom:10px}
+.acao-card h4{font-size:1.05rem;margin-bottom:6px}
+.acao-card p{font-size:.86rem;color:#3a4a52;line-height:1.6;margin-bottom:14px}
+.acao-btn{background:var(--petroleo);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-weight:600;font-size:.82rem;cursor:pointer;font-family:inherit;transition:.2s}
+.acao-btn:hover{background:var(--petroleo-2)}
+
+/* ===== FINANCEIRO ===== */
+.tag.fin-pago{background:#E6F5EB;color:#1f7a42}
+.tag.fin-aberto{background:#EFEAE0;color:#6b5d3f}
+.tag.fin-breve{background:#E8F0F5;color:#2c6385}
+.tag.fin-atraso{background:#F7E8E6;color:#a13b2c}
+/* régua de cobrança */
+.regua-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--linha)}
+.regua-item:last-child{border-bottom:none}
+.regua-dot{width:12px;height:12px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.regua-top{display:flex;align-items:center;gap:8px}
+.regua-top b{font-size:.92rem}
+.regua-tom{font-size:.68rem;background:#f0ece2;color:var(--cinza);padding:2px 8px;border-radius:20px;font-weight:600}
+.regua-when{font-size:.78rem;color:var(--ouro);font-weight:600;margin:2px 0}
+.regua-desc{font-size:.8rem;color:var(--cinza);line-height:1.5}
+/* log de lembretes */
+.log-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--linha)}
+.log-item:last-child{border-bottom:none}
+.log-when{font-size:.72rem;color:var(--cinza);width:78px;flex-shrink:0;padding-top:2px}
+.log-body b{font-size:.88rem}
+.log-tipo{font-size:.78rem;color:#3a4a52}
+.log-canal{font-size:.72rem;color:var(--ouro);font-weight:600;margin-top:1px}
+/* saúde do negócio */
+.saude-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--linha)}
+.saude-row:last-child{border-bottom:none}
+.saude-ind{font-size:.88rem;font-weight:500}
+.saude-nota{font-size:.74rem;color:var(--cinza);font-weight:400}
+.saude-val{font-family:'Fraunces';font-size:1.3rem;font-weight:700}
+.saude-ok{color:var(--azul)} .saude-bom{color:var(--verde)} .saude-atencao{color:var(--ambar)}
+
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .panels{grid-template-columns:1fr}
+  .report-grid{grid-template-columns:1fr}
+  .two-col{grid-template-columns:1fr}
+  .nicho-row .nm{width:90px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="login">
+  <div class="login-box">
+    <div class="mark">V</div>
+    <h1>Escritório Digital</h1>
+    <div class="sub">VERTTI Consultoria · Acesso administrativo</div>
+    <input type="password" id="pwd" placeholder="Senha de administrador" onkeydown="if(event.key==='Enter')entrar()">
+    <button onclick="entrar()">Entrar no painel</button>
+    <div class="err" id="loginErr"></div>
+    <div class="hint">Demonstração · senha: vertti2026</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <div class="demo-banner" id="demoBanner">MODO DEMONSTRAÇÃO · dados fictícios para você experimentar o painel. Os dados reais entram quando o escritório digital for conectado.</div>
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark">V</div>
+      <div><b>VERTTI</b><span>Escritório Digital</span></div>
+    </div>
+    <div class="right">
+      <span class="live"><span class="dot"></span> Sistema ativo</span>
+      <span class="date" id="topDate"></span>
+      <a class="logout" href="index.html" style="margin-right:14px;color:rgba(255,255,255,.55)">← Ver site</a><a class="logout" onclick="sair()">Sair</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="tabs">
+      <div class="tab active" onclick="showPage('hoje',this)">Hoje</div>
+      <div class="tab" onclick="showPage('leads',this)">Leads</div>
+      <div class="tab" onclick="showPage('fechamento',this)">Fechamento</div>
+      <div class="tab" onclick="showPage('financeiro',this)">Financeiro</div>
+      <div class="tab" onclick="showPage('segmentacao',this)">Segmentação</div>
+      <div class="tab" onclick="showPage('nichos',this)">Nichos</div>
+      <div class="tab" onclick="showPage('acoes',this)">Ações</div>
+      <div class="tab" onclick="showPage('reposicionamento',this)">Reposicionamento</div>
+      <div class="tab" onclick="showPage('relatorios',this)">Relatórios</div>
+    </div>
+
+    <div id="pages"></div>
+
+    <div class="foot-note">VERTTI Consultoria · Escritório Digital · Germano Coelho Ramos Rocha-Silva · Agente da Propriedade Industrial</div>
+  </div>
+</div>
+
+<script>
+// ===== DADOS DE DEMONSTRAÇÃO — Escritório Digital VERTTI (enriquecido) =====
+const DADOS = {
+  hoje: {
+    leadsNovos: 7, emConversa: 12, buscasFeitas: 5, propostasEnviadas: 4,
+    fechadosHoje: 2, receitaHoje: 3600, deltaLeads: +3, deltaFechados: +1
+  },
+  funil: [
+    {estagio:"Leads recebidos", qtd:148, cor:"#3D7EA6", pct:100},
+    {estagio:"Em conversa", qtd:64, cor:"#C9952B", pct:43},
+    {estagio:"Busca feita", qtd:41, cor:"#7a3d85", pct:28},
+    {estagio:"Proposta enviada", qtd:23, cor:"#2c5aa0", pct:16},
+    {estagio:"Contrato fechado", qtd:14, cor:"#2E9E5B", pct:9}
+  ],
+  leads: [
+    {empresa:"Padaria Pão Dourado", ramo:"Alimentação", resp:"Marcos Lima", cidade:"Campo Grande", origem:"ativo", status:"novo", dias:0, valor:800, competicao:"alta", buscaStatus:"pendente"},
+    {empresa:"Studio Bella Estética", ramo:"Beleza", resp:"Cláudia Reis", cidade:"Dourados", origem:"google", status:"conversa", dias:1, valor:1800, competicao:"alta", buscaStatus:"risco"},
+    {empresa:"TechSul Sistemas", ramo:"Tecnologia", resp:"André Vasquez", cidade:"Campo Grande", origem:"site", status:"proposta", dias:3, valor:1800, competicao:"media", buscaStatus:"livre"},
+    {empresa:"Açaí da Praça", ramo:"Alimentação", resp:"Juliana Paz", cidade:"Três Lagoas", origem:"ativo", status:"busca", dias:2, valor:800, competicao:"alta", buscaStatus:"bloqueado"},
+    {empresa:"Moda Pantanal", ramo:"Vestuário", resp:"Renata Souza", cidade:"Campo Grande", origem:"google", status:"fechado", dias:5, valor:1800, competicao:"media", buscaStatus:"livre"},
+    {empresa:"Oficina MecânicaPro", ramo:"Serviços", resp:"Carlos Dias", cidade:"Corumbá", origem:"indica", status:"conversa", dias:1, valor:800, competicao:"baixa", buscaStatus:"livre"},
+    {empresa:"Pet Shop AmigoFiel", ramo:"Comércio", resp:"Fernanda Melo", cidade:"Campo Grande", origem:"ativo", status:"novo", dias:0, valor:800, competicao:"media", buscaStatus:"pendente"},
+    {empresa:"Doces da Vó Tereza", ramo:"Alimentação", resp:"Tereza Nunes", cidade:"Dourados", origem:"site", status:"busca", dias:2, valor:800, competicao:"alta", buscaStatus:"risco"},
+    {empresa:"Construtora Forte MS", ramo:"Construção", resp:"Roberto Alves", cidade:"Campo Grande", origem:"google", status:"proposta", dias:4, valor:1800, competicao:"baixa", buscaStatus:"livre"},
+    {empresa:"Salão Charme & Cia", ramo:"Beleza", resp:"Patrícia Gomes", cidade:"Naviraí", origem:"ativo", status:"fechado", dias:6, valor:1800, competicao:"alta", buscaStatus:"livre"},
+    {empresa:"Hamburgueria do Zé", ramo:"Alimentação", resp:"José Carlos", cidade:"Campo Grande", origem:"ativo", status:"novo", dias:0, valor:800, competicao:"alta", buscaStatus:"bloqueado"},
+    {empresa:"AgroSementes Vale", ramo:"Agronegócio", resp:"Marcelo Khan", cidade:"Maracaju", origem:"google", status:"conversa", dias:1, valor:1800, competicao:"baixa", buscaStatus:"livre"},
+    {empresa:"Farmácia VidaPlena", ramo:"Saúde", resp:"Dra. Lúcia Reis", cidade:"Campo Grande", origem:"site", status:"perdido", dias:8, valor:0, competicao:"media", buscaStatus:"risco"},
+    {empresa:"Barbearia Navalha", ramo:"Beleza", resp:"Diego Matos", cidade:"Ponta Porã", origem:"ativo", status:"busca", dias:2, valor:800, competicao:"alta", buscaStatus:"risco"}
+  ],
+  nichos: [
+    {nome:"Alimentação", qtd:38, pct:100, competicao:"alta", fechamento:14, ticket:980},
+    {nome:"Beleza", qtd:31, pct:82, competicao:"alta", fechamento:13, ticket:1500},
+    {nome:"Vestuário", qtd:22, pct:58, competicao:"media", fechamento:11, ticket:1300},
+    {nome:"Comércio", qtd:19, pct:50, competicao:"media", fechamento:8, ticket:900},
+    {nome:"Serviços", qtd:16, pct:42, competicao:"baixa", fechamento:10, ticket:850},
+    {nome:"Tecnologia", qtd:12, pct:32, competicao:"media", fechamento:9, ticket:1700},
+    {nome:"Agronegócio", qtd:10, pct:26, competicao:"baixa", fechamento:12, ticket:1750}
+  ],
+  cidades: [
+    {nome:"Campo Grande", qtd:71, pct:100, fechamento:11},
+    {nome:"Dourados", qtd:24, pct:34, fechamento:13},
+    {nome:"Três Lagoas", qtd:18, pct:25, fechamento:9},
+    {nome:"Corumbá", qtd:11, pct:15, fechamento:8},
+    {nome:"Ponta Porã", qtd:9, pct:13, fechamento:10},
+    {nome:"Naviraí", qtd:8, pct:11, fechamento:12},
+    {nome:"Maracaju", qtd:7, pct:10, fechamento:14}
+  ],
+  origens: [
+    {nome:"Prospecção ativa (MS)", qtd:71, cor:"#C9A24B", pct:100},
+    {nome:"Google Ads", qtd:42, cor:"#3D7EA6", pct:59},
+    {nome:"Site (busca orgânica)", qtd:23, cor:"#2E9E5B", pct:32},
+    {nome:"Indicação", qtd:12, cor:"#C9952B", pct:17}
+  ],
+  buscaResumo: [
+    {label:"Nome livre", qtd:52, cor:"#2E9E5B", desc:"disponível, pode seguir direto para o pedido"},
+    {label:"Há semelhantes (risco)", qtd:38, cor:"#C9952B", desc:"existe marca parecida; exige análise de classe e estratégia"},
+    {label:"Já registrado (bloqueado)", qtd:21, cor:"#C0503E", desc:"precisa de novo nome ou estratégia alternativa"},
+    {label:"Ainda sem nome definido", qtd:19, cor:"#3D7EA6", desc:"cliente ainda escolhendo; oportunidade de orientar"}
+  ],
+  fechamento: {
+    taxaConversao: 9.5, taxaConversaProposta: 36, taxaPropostaFechado: 61,
+    ticketMedio: 1240, tempoMedioFechamento: 6, receitaMes: 17360, metaMes: 20000,
+    melhorOrigem: "Prospecção ativa", melhorOrigemTaxa: 12.4, piorEtapa: "Conversa → Proposta"
+  },
+  acoes: [
+    {tipo:"nicho", alvo:"Alimentação", titulo:"E-mail temático para Alimentação", texto:"38 empresas. Mensagem sobre o risco alto de nomes de restaurantes e padarias já estarem tomados (nicho saturado), com dica de incluir elemento distintivo. Forte gancho de urgência.", cta:"Programar campanha"},
+    {tipo:"nicho", alvo:"Confecção / Vestuário", titulo:"E-mail temático para Confecção", texto:"22 empresas. Falar de marca de roupa como ativo que vai na etiqueta, e do risco de investir em coleção com nome de outro. Dica: registrar antes de estampar.", cta:"Programar campanha"},
+    {tipo:"busca", alvo:"Nome bloqueado", titulo:"Sequência 'seu nome já está registrado'", texto:"21 leads com nome já tomado. Aqui está seu maior valor técnico: oferecer consultoria de criação de nome registrável e busca de alternativas. Ticket maior.", cta:"Programar campanha"},
+    {tipo:"busca", alvo:"Sem nome definido", titulo:"Guia 'como escolher um nome registrável'", texto:"19 leads ainda escolhendo. Enviar dicas de como criar nome forte e disponível desde o início, posicionando você como consultor, não só executor.", cta:"Programar campanha"},
+    {tipo:"cidade", alvo:"Dourados + Três Lagoas", titulo:"Campanha local fora da capital", texto:"42 leads somados, fechamento acima da média. Google Ads e e-mail com tom 'atendimento em MS, sem precisar ir a Campo Grande'.", cta:"Programar campanha"}
+  ],
+  reposicionamento: [
+    {tipo:"op", titulo:"Alimentação: volume alto, mas nomes disputados", texto:"38 leads, o maior volume, porém competição alta: muitos nomes de restaurantes e padarias já estão registrados. Isso é oportunidade dupla: você fecha o registro de quem tem nome livre E vende consultoria de criação para quem esbarrou em nome tomado."},
+    {tipo:"op", titulo:"Beleza converte rápido e paga mais", texto:"Salões e estúdios fecham em ~4 dias, ticket tende a R$ 1.800. Competição de nome também alta, o que reforça a urgência na comunicação."},
+    {tipo:"alert", titulo:"21 leads com nome já bloqueado", texto:"São clientes que descobriram que o nome está tomado. Em vez de perdê-los, há uma linha de serviço de maior valor: criação de nome registrável e nova busca. Hoje esse grupo é subaproveitado."},
+    {tipo:"", titulo:"Agronegócio: baixa concorrência, alto ticket", texto:"Poucos leads, mas competição de nome baixa (fácil registrar) e ticket alto. Em MS, é um filão natural. Vale prospecção dedicada a cooperativas e produtores."},
+    {tipo:"op", titulo:"Cidades do interior fecham mais", texto:"Maracaju (14%), Dourados (13%) e Naviraí (12%) fecham acima de Campo Grande (11%). Menos concorrência de consultorias, mais valor no seu atendimento local."}
+  ],
+  relatoriosAnteriores: [
+    {data:"27/06/2026", leads:6, fechados:1, receita:1800, destaque:"1 fechamento em Beleza (Dourados)"},
+    {data:"26/06/2026", leads:9, fechados:3, receita:4400, destaque:"Melhor dia do mês · 3 contratos"},
+    {data:"25/06/2026", leads:5, fechados:0, receita:0, destaque:"5 buscas feitas, 2 propostas saíram"},
+    {data:"24/06/2026", leads:8, fechados:2, receita:2600, destaque:"Alimentação puxou os fechamentos"},
+    {data:"23/06/2026", leads:4, fechados:1, receita:800, destaque:"1 MEI fechado via prospecção ativa"}
+  ]
+};
+
+// ===== MÓDULO FINANCEIRO — Escritório Digital VERTTI =====
+const FIN = {
+  resumo: {
+    aReceberMes: 14200,      // total a receber neste mês
+    recebidoMes: 8600,       // já recebido
+    aReceberTotal: 38500,    // carteira total a receber (todos os meses)
+    aPagarMes: 3850,         // obrigações do mês
+    inadimplencia: 2400,     // valor atrasado
+    saldoProjetado: 18750,   // entradas - saídas projetadas do mês
+    parcelasVigentes: 23,    // contratos parcelados ativos
+    ticketMedio: 1240
+  },
+
+  // Parcelamentos vigentes — cada parcela com vencimento e status
+  // status: 'pago' | 'aberto' | 'vence_breve' (<=2 dias) | 'atrasado'
+  parcelas: [
+    {cliente:"Moda Pantanal", contrato:"Registro completo", parcela:"2/3", valor:600, venc:"30/06/2026", status:"vence_breve", lembrete:"enviado"},
+    {cliente:"Salão Charme & Cia", contrato:"Pacote completo", parcela:"1/2", valor:900, venc:"29/06/2026", status:"vence_breve", lembrete:"enviado"},
+    {cliente:"Construtora Forte MS", contrato:"Pacote completo", parcela:"3/6", valor:300, venc:"27/06/2026", status:"atrasado", lembrete:"cobranca_1"},
+    {cliente:"TechSul Sistemas", contrato:"Pacote completo", parcela:"2/4", valor:450, venc:"25/06/2026", status:"atrasado", lembrete:"cobranca_2"},
+    {cliente:"AgroSementes Vale", contrato:"Registro completo", parcela:"1/3", valor:600, venc:"05/07/2026", status:"aberto", lembrete:"-"},
+    {cliente:"Padaria Pão Dourado", contrato:"MEI/ME", parcela:"2/2", valor:400, venc:"08/07/2026", status:"aberto", lembrete:"-"},
+    {cliente:"Pet Shop AmigoFiel", contrato:"MEI/ME", parcela:"1/2", valor:400, venc:"10/07/2026", status:"aberto", lembrete:"-"},
+    {cliente:"Açaí da Praça", contrato:"MEI/ME", parcela:"3/3", valor:267, venc:"15/07/2026", status:"aberto", lembrete:"-"},
+    {cliente:"Doces da Vó Tereza", contrato:"MEI/ME", parcela:"2/3", valor:267, venc:"12/06/2026", status:"pago", lembrete:"-"},
+    {cliente:"Barbearia Navalha", contrato:"Registro completo", parcela:"1/2", valor:900, venc:"18/07/2026", status:"aberto", lembrete:"-"}
+  ],
+
+  // Régua de cobrança — sequência automática
+  reguaCobranca: [
+    {momento:"2 dias antes do vencimento", tom:"Acolhedor", titulo:"Lembrete gentil", desc:"E-mail e WhatsApp carinhosos lembrando da parcela que vence em 2 dias, com os dados de pagamento.", cor:"#3D7EA6"},
+    {momento:"1 dia após o vencimento", tom:"Educado", titulo:"Aviso de débito", desc:"Mensagem educada informando que a parcela venceu, sem cobrança agressiva, oferecendo ajuda.", cor:"#C9952B"},
+    {momento:"5 dias após", tom:"Firme e cordial", titulo:"2º lembrete", desc:"Reforço cordial, perguntando se houve algum imprevisto e reiterando os dados.", cor:"#C9952B"},
+    {momento:"12 dias após", tom:"Formal", titulo:"3º lembrete", desc:"Tom mais formal, mencionando a importância de regularizar para não afetar o andamento do processo.", cor:"#C0503E"},
+    {momento:"20 dias após", tom:"Última tentativa", titulo:"Aviso final amigável", desc:"Último lembrete automático antes de você decidir uma ação pessoal. Você é avisado para intervir.", cor:"#C0503E"}
+  ],
+
+  // Log de lembretes disparados — você sempre sabe o que o sistema enviou
+  logLembretes: [
+    {data:"28/06 08:00", cliente:"Moda Pantanal", tipo:"Lembrete gentil (2 dias antes)", canal:"E-mail + WhatsApp"},
+    {data:"28/06 08:00", cliente:"Salão Charme & Cia", tipo:"Lembrete gentil (2 dias antes)", canal:"E-mail + WhatsApp"},
+    {data:"28/06 09:15", cliente:"Construtora Forte MS", tipo:"Aviso de débito (1 dia após)", canal:"E-mail + WhatsApp"},
+    {data:"27/06 09:15", cliente:"TechSul Sistemas", tipo:"2º lembrete (5 dias após)", canal:"E-mail + WhatsApp"},
+    {data:"26/06 08:00", cliente:"Doces da Vó Tereza", tipo:"Confirmação de pagamento recebido", canal:"E-mail"}
+  ],
+
+  // Previsão de recebimentos — próximos meses
+  previsaoReceber: [
+    {mes:"Junho/2026", valor:14200, recebido:8600},
+    {mes:"Julho/2026", valor:11800, recebido:0},
+    {mes:"Agosto/2026", valor:8300, recebido:0},
+    {mes:"Setembro/2026", valor:4200, recebido:0}
+  ],
+
+  // Obrigações a pagar — o que sai, com data
+  aPagar: [
+    {item:"Taxa INPI · depósitos do mês (GRU)", categoria:"Taxas INPI", valor:1760, venc:"30/06/2026", obrigatorio:true},
+    {item:"Google Ads · campanha de captação", categoria:"Marketing", valor:480, venc:"05/07/2026", obrigatorio:false},
+    {item:"Impostos sobre faturamento", categoria:"Tributos", valor:1290, venc:"20/07/2026", obrigatorio:true},
+    {item:"Brevo · plano de e-mail (se escalar)", categoria:"Ferramentas", valor:0, venc:"-", obrigatorio:false},
+    {item:"Anuidade de domínio · vertticonsultoria.com.br", categoria:"Infraestrutura", valor:40, venc:"14/09/2026", obrigatorio:true},
+    {item:"Contador · honorários mensais", categoria:"Serviços", valor:320, venc:"10/07/2026", obrigatorio:true}
+  ],
+
+  // Para Imposto de Renda — o que o sistema separa
+  impostoRenda: [
+    {tipo:"Receita de honorários (ano)", valor:142800, nota:"Total faturado, base para declaração"},
+    {tipo:"Taxas INPI repassadas", valor:38400, nota:"Custos repassados ao cliente, deduzíveis"},
+    {tipo:"Despesas com marketing", valor:5760, nota:"Google Ads e ferramentas, dedutíveis"},
+    {tipo:"Despesas operacionais", valor:8200, nota:"Domínio, contador, infraestrutura"}
+  ],
+
+  // Saúde do negócio — indicadores de decisão
+  saude: [
+    {ind:"Taxa de inadimplência", valor:"6,2%", status:"ok", nota:"Abaixo de 10% é saudável"},
+    {ind:"Margem por contrato", valor:"~68%", status:"bom", nota:"Honorário menos custos diretos"},
+    {ind:"Prazo médio de recebimento", valor:"38 dias", status:"atencao", nota:"Parcelamentos alongam o caixa"},
+    {ind:"Cobertura de caixa", valor:"4,8x", status:"bom", nota:"A receber cobre quase 5x o a pagar"}
+  ]
+};
+
+</script>
+<script>
+// ===== ESCRITÓRIO DIGITAL VERTTI — lógica =====
+
+function entrar(){
+  const p = document.getElementById('pwd').value;
+  if(p === 'vertti2026'){
+    document.getElementById('login').style.display='none';
+    document.getElementById('app').classList.add('active');
+    initDate();
+    renderAll();
+    showPage('hoje', document.querySelector('.tab'));
+  } else {
+    document.getElementById('loginErr').textContent='Senha incorreta. Tente novamente.';
+  }
+}
+function sair(){
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('login').style.display='flex';
+  document.getElementById('pwd').value='';
+  document.getElementById('loginErr').textContent='';
+}
+function initDate(){
+  const d=new Date();
+  const opt={weekday:'long',day:'numeric',month:'long',year:'numeric'};
+  document.getElementById('topDate').textContent = d.toLocaleDateString('pt-BR',opt);
+}
+
+function showPage(id, el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg=document.getElementById('page-'+id);
+  if(pg) pg.classList.add('active');
+}
+
+function money(v){ return 'R$ '+v.toLocaleString('pt-BR'); }
+
+function renderAll(){
+  const c=document.getElementById('pages');
+  c.innerHTML = pageHoje()+pageLeads()+pageFechamento()+pageFinanceiro()+pageSegmentacao()+pageNichos()+pageAcoes()+pageReposicionamento()+pageRelatorios();
+  // animar barras do funil
+  setTimeout(()=>{
+    document.querySelectorAll('[data-w]').forEach(b=>{ b.style.width=b.dataset.w+'%'; });
+  },100);
+}
+
+/* ===== HOJE ===== */
+function pageHoje(){
+  const h=DADOS.hoje;
+  return `<div class="page" id="page-hoje">
+    <div class="report">
+      <h3>Resumo do dia</h3>
+      <div class="rdate">Relatório automático · atualizado agora</div>
+      <div class="report-grid">
+        <div class="report-stat"><div class="l">Leads novos hoje</div><div class="v">${h.leadsNovos} <small>+${h.deltaLeads} vs ontem</small></div></div>
+        <div class="report-stat"><div class="l">Fechados hoje</div><div class="v">${h.fechadosHoje} <small>${money(h.receitaHoje)}</small></div></div>
+        <div class="report-stat"><div class="l">Aguardando você</div><div class="v">${h.emConversa} <small>em conversa</small></div></div>
+      </div>
+      <div class="insight">Hoje entraram <b>${h.leadsNovos} novos leads</b> e <b>${h.propostasEnviadas} propostas</b> estão aguardando retorno. O foco do dia: os <b>${h.emConversa} leads em conversa</b> são os mais próximos do fechamento. Priorize quem já recebeu a busca gratuita.</div>
+      <div class="actions">
+        <button class="btn" onclick="showPage('leads',document.querySelectorAll('.tab')[1])">Ver leads do dia</button>
+        <button class="btn ghost" onclick="showPage('relatorios',document.querySelectorAll('.tab')[5])">Relatórios anteriores</button>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi"><div class="label">Leads novos</div><div class="value">${h.leadsNovos}</div><div class="delta up">▲ ${h.deltaLeads} vs ontem</div></div>
+      <div class="kpi amber"><div class="label">Em conversa</div><div class="value">${h.emConversa}</div><div class="delta flat">aguardando ação</div></div>
+      <div class="kpi blue"><div class="label">Propostas ativas</div><div class="value">${h.propostasEnviadas}</div><div class="delta flat">aguardando decisão</div></div>
+      <div class="kpi green"><div class="label">Fechados hoje</div><div class="value">${h.fechadosHoje}</div><div class="delta up">▲ ${money(h.receitaHoje)}</div></div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <h3>Funil de conversão</h3>
+        <div class="psub">Onde estão seus clientes potenciais agora</div>
+        ${DADOS.funil.map(f=>`
+          <div class="funnel-stage">
+            <div class="bar" data-w="${f.pct}" style="width:0;background:${f.cor}">${f.qtd}</div>
+            <div class="info"><b>${f.estagio}</b> · ${f.pct}%</div>
+          </div>`).join('')}
+      </div>
+      <div class="panel">
+        <h3>De onde vêm os leads</h3>
+        <div class="psub">Origem dos clientes potenciais</div>
+        ${DADOS.origens.map(o=>`
+          <div class="nicho-row">
+            <div class="nm" style="width:auto;flex:1">${o.nome}</div>
+            <div class="vv">${o.qtd}</div>
+          </div>
+          <div class="nicho-row" style="margin-top:-6px">
+            <div class="track"><div class="fill" data-w="${o.pct}" style="width:0;background:${o.cor}"></div></div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ===== LEADS ===== */
+function pageLeads(){
+  const statusLabel={novo:'Novo',conversa:'Em conversa',busca:'Busca feita',proposta:'Proposta',fechado:'Fechado',perdido:'Perdido'};
+  const originLabel={ativo:'Prospecção ativa',google:'Google Ads',site:'Site',indica:'Indicação'};
+  const buscaLabel={pendente:'A fazer',livre:'Nome livre',risco:'Há risco',bloqueado:'Bloqueado'};
+  const buscaTag={pendente:'b-pend',livre:'b-livre',risco:'b-risco',bloqueado:'b-bloq'};
+  const compTag={baixa:'c-baixa',media:'c-media',alta:'c-alta'};
+  const compLabel={baixa:'Baixa',media:'Média',alta:'Alta'};
+  const rows=DADOS.leads.map(l=>`
+    <tr>
+      <td><div class="empresa">${l.empresa}</div><div class="ramo">${l.ramo} · ${l.cidade}</div></td>
+      <td><span class="origin"><span class="od ${l.origem}"></span>${originLabel[l.origem]}</span></td>
+      <td><span class="tag ${l.status}">${statusLabel[l.status]}</span></td>
+      <td><span class="bdot ${buscaTag[l.buscaStatus]}"></span>${buscaLabel[l.buscaStatus]}</td>
+      <td><span class="comp ${compTag[l.competicao]}">${compLabel[l.competicao]}</span></td>
+      <td>${l.dias===0?'Hoje':l.dias+'d'}</td>
+      <td style="font-weight:600">${l.valor>0?money(l.valor):'—'}</td>
+    </tr>`).join('');
+  return `<div class="page" id="page-leads">
+    <h2 class="sec-title">Leads</h2>
+    <div class="sec-sub">Cada cliente potencial qualificado: origem, estágio, situação do nome no INPI e nível de competição do ramo.</div>
+    <div class="panel">
+      <table class="lead-table">
+        <thead><tr><th>Empresa</th><th>Origem</th><th>Status</th><th>Nome (INPI)</th><th>Competição</th><th>Idade</th><th>Valor</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="legend">
+        <span><span class="bdot b-livre"></span> Nome livre</span>
+        <span><span class="bdot b-risco"></span> Há marca semelhante</span>
+        <span><span class="bdot b-bloq"></span> Já registrado</span>
+        <span><span class="bdot b-pend"></span> Busca a fazer</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ===== SEGMENTAÇÃO (cidade + estágio de nome) ===== */
+function pageSegmentacao(){
+  return `<div class="page" id="page-segmentacao">
+    <h2 class="sec-title">Segmentação</h2>
+    <div class="sec-sub">As duas dimensões que mais ajudam a programar ações: por cidade e pela situação do nome no INPI.</div>
+    <div class="panels">
+      <div class="panel">
+        <h3>Leads por cidade</h3>
+        <div class="psub">Onde estão e quanto fecham — base para campanhas locais</div>
+        ${DADOS.cidades.map(c=>`
+          <div class="nicho-row">
+            <div class="nm" style="width:120px">${c.nome}</div>
+            <div class="track"><div class="fill" data-w="${c.pct}" style="width:0"></div></div>
+            <div class="vv">${c.qtd} · ${c.fechamento}%</div>
+          </div>`).join('')}
+        <div class="legend"><span>Barra: volume de leads</span><span>% = taxa de fechamento</span></div>
+      </div>
+      <div class="panel">
+        <h3>Situação do nome (INPI)</h3>
+        <div class="psub">Onde você agrega mais valor técnico</div>
+        ${DADOS.buscaResumo.map(b=>`
+          <div class="busca-item">
+            <div class="busca-head"><span class="bdot" style="background:${b.cor}"></span><b>${b.label}</b><span class="busca-n">${b.qtd}</span></div>
+            <div class="busca-desc">${b.desc}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="insight-card op"><h4>O grupo mais valioso e esquecido</h4><p>Os <b>21 leads com nome já bloqueado</b> e os <b>19 ainda sem nome</b> são onde você vende mais que um registro: vende sua expertise de criar nomes registráveis. Esses 40 leads merecem uma comunicação própria, não o e-mail padrão.</p></div>
+  </div>`;
+}
+
+/* ===== AÇÕES (campanhas segmentadas) ===== */
+function pageAcoes(){
+  const tipoLabel={nicho:'Por ramo',busca:'Por situação do nome',cidade:'Por cidade'};
+  const tipoCor={nicho:'#C9A24B',busca:'#7a3d85',cidade:'#3D7EA6'};
+  return `<div class="page" id="page-acoes">
+    <h2 class="sec-title">Ações segmentadas</h2>
+    <div class="sec-sub">Campanhas específicas, prontas para programar. Cada uma fala a língua de um grupo — é o que faz fechar mais.</div>
+    ${DADOS.acoes.map(a=>`
+      <div class="acao-card">
+        <div class="acao-tag" style="background:${tipoCor[a.tipo]}">${tipoLabel[a.tipo]}</div>
+        <h4>${a.titulo}</h4>
+        <p>${a.texto}</p>
+        <button class="acao-btn" onclick="alert('Na versão conectada, isto agenda a campanha segmentada para o grupo: ${a.alvo}.')">${a.cta} →</button>
+      </div>`).join('')}
+    <div class="insight-card"><h4>Como isso funciona quando conectado</h4><p>Cada lead já entra etiquetado por ramo, cidade e situação do nome. O sistema separa automaticamente os grupos e dispara a mensagem certa para cada um, no momento certo. Você só aprova o texto uma vez.</p></div>
+  </div>`;
+}
+
+/* ===== FECHAMENTO ===== */
+function pageFechamento(){
+  const f=DADOS.fechamento;
+  const pctMeta=Math.round(f.receitaMes/f.metaMes*100);
+  return `<div class="page" id="page-fechamento">
+    <h2 class="sec-title">Fechamento</h2>
+    <div class="sec-sub">O que realmente importa: onde você ganha contratos e onde os perde.</div>
+    <div class="kpi-grid">
+      <div class="kpi green"><div class="label">Taxa de fechamento</div><div class="value">${f.taxaConversao}%</div><div class="delta flat">leads que viram contrato</div></div>
+      <div class="kpi"><div class="label">Ticket médio</div><div class="value">${money(f.ticketMedio)}</div><div class="delta flat">por contrato</div></div>
+      <div class="kpi blue"><div class="label">Tempo até fechar</div><div class="value">${f.tempoMedioFechamento}d</div><div class="delta flat">do contato ao sim</div></div>
+      <div class="kpi amber"><div class="label">Receita do mês</div><div class="value">${money(f.receitaMes)}</div><div class="delta up">${pctMeta}% da meta</div></div>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <h3>Onde os clientes avançam (ou param)</h3>
+        <div class="psub">Cada transição do funil, em porcentagem</div>
+        <div class="nicho-row"><div class="nm" style="width:170px">Conversa → Proposta</div><div class="track"><div class="fill" data-w="${f.taxaConversaProposta}" style="width:0;background:var(--ambar)"></div></div><div class="vv">${f.taxaConversaProposta}%</div></div>
+        <div class="nicho-row"><div class="nm" style="width:170px">Proposta → Fechado</div><div class="track"><div class="fill" data-w="${f.taxaPropostaFechado}" style="width:0;background:var(--verde)"></div></div><div class="vv">${f.taxaPropostaFechado}%</div></div>
+        <div class="insight-card alert" style="margin-top:18px">
+          <h4>⚠ Atenção: o gargalo está em "${f.piorEtapa}"</h4>
+          <p>É a etapa que mais perde gente. Muitos pedem a busca, recebem o resultado, e somem na hora de receber a proposta. Uma resposta automática mais clara sobre preço e prazo tende a destravar isso.</p>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Melhor origem para fechar</h3>
+        <div class="psub">Qual canal traz quem realmente assina</div>
+        <div class="insight-card op">
+          <h4>${f.melhorOrigem}</h4>
+          <p>Fecha a <span class="metric-inline">${f.melhorOrigemTaxa}%</span>, acima de todos os outros canais. A lista de empresas novas de MS, cruzada com o INPI, traz quem mais precisa e menos resiste.</p>
+        </div>
+        <div class="insight-card">
+          <h4>Meta do mês: ${money(f.metaMes)}</h4>
+          <p>Você está em <span class="metric-inline">${money(f.receitaMes)}</span> (${pctMeta}%). Faltam ${money(f.metaMes-f.receitaMes)} para a meta, cerca de ${Math.ceil((f.metaMes-f.receitaMes)/f.ticketMedio)} contratos.</p>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ===== NICHOS ===== */
+function pageNichos(){
+  return `<div class="page" id="page-nichos">
+    <h2 class="sec-title">Nichos</h2>
+    <div class="sec-sub">De quais ramos vêm seus clientes. Mostra onde concentrar a prospecção para render mais.</div>
+    <div class="panel">
+      <h3>Ramos que mais procuram registro</h3>
+      <div class="psub">Volume de leads por setor, nos últimos 30 dias</div>
+      ${DADOS.nichos.map(n=>`
+        <div class="nicho-row">
+          <div class="nm">${n.nome}</div>
+          <div class="track"><div class="fill" data-w="${n.pct}" style="width:0"></div></div>
+          <div class="vv">${n.qtd} leads</div>
+        </div>`).join('')}
+    </div>
+    <div class="two-col" style="margin-top:18px">
+      <div class="insight-card op"><h4>Concentre aqui</h4><p>Alimentação e Beleza somam mais da metade dos seus leads e têm as melhores taxas de fechamento. Direcionar a prospecção ativa para esses ramos rende mais por hora investida.</p></div>
+      <div class="insight-card"><h4>Oportunidade pouco explorada</h4><p>Agronegócio tem poucos leads mas alto valor por contrato e é forte em MS. Vale um teste de prospecção dedicada para cooperativas e produtores formalizados.</p></div>
+    </div>
+  </div>`;
+}
+
+/* ===== REPOSICIONAMENTO ===== */
+function pageReposicionamento(){
+  return `<div class="page" id="page-reposicionamento">
+    <h2 class="sec-title">Reposicionamento</h2>
+    <div class="sec-sub">Leituras automáticas do que os dados sugerem para você vender mais, com menos esforço.</div>
+    ${DADOS.reposicionamento.map(r=>`
+      <div class="insight-card ${r.tipo}">
+        <h4>${r.titulo}</h4>
+        <p>${r.texto}</p>
+      </div>`).join('')}
+  </div>`;
+}
+
+/* ===== RELATÓRIOS ===== */
+function pageRelatorios(){
+  const rows=DADOS.relatoriosAnteriores.map(r=>`
+    <tr>
+      <td style="font-weight:600">${r.data}</td>
+      <td>${r.leads}</td>
+      <td>${r.fechados}</td>
+      <td style="font-weight:600">${r.receita>0?money(r.receita):'—'}</td>
+      <td class="ramo">${r.destaque}</td>
+    </tr>`).join('');
+  return `<div class="page" id="page-relatorios">
+    <h2 class="sec-title">Relatórios diários</h2>
+    <div class="sec-sub">O histórico do seu escritório, dia a dia. Gerado e arquivado automaticamente.</div>
+    <div class="panel">
+      <table class="lead-table">
+        <thead><tr><th>Data</th><th>Leads</th><th>Fechados</th><th>Receita</th><th>Destaque do dia</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div class="report" style="margin-top:20px">
+      <h3>Como chega até você</h3>
+      <div class="rdate">Entrega automática</div>
+      <div class="insight">Todo dia, às 8h, este relatório chega no seu e-mail e WhatsApp: quantos leads entraram, quantos fecharam, quanto faturou, e o que precisa da sua atenção. Sem você precisar abrir nada. O painel fica disponível 24h para quando quiser se aprofundar.</div>
+    </div>
+  </div>`;
+}
+
+/* ===== FINANCEIRO ===== */
+function pageFinanceiro(){
+  const r=FIN.resumo;
+  const statusLabel={pago:'Pago',aberto:'Em aberto',vence_breve:'Vence em breve',atrasado:'Atrasado'};
+  const statusTag={pago:'fin-pago',aberto:'fin-aberto',vence_breve:'fin-breve',atrasado:'fin-atraso'};
+  const lembreteLabel={'enviado':'Lembrete enviado','cobranca_1':'Cobrança 1 enviada','cobranca_2':'Cobrança 2 enviada','-':'—'};
+
+  const parcRows=FIN.parcelas.map(p=>`
+    <tr>
+      <td><div class="empresa">${p.cliente}</div><div class="ramo">${p.contrato} · parcela ${p.parcela}</div></td>
+      <td style="font-weight:600">${money(p.valor)}</td>
+      <td>${p.venc}</td>
+      <td><span class="tag ${statusTag[p.status]}">${statusLabel[p.status]}</span></td>
+      <td class="ramo">${lembreteLabel[p.lembrete]}</td>
+    </tr>`).join('');
+
+  const pagarRows=FIN.aPagar.map(a=>`
+    <tr>
+      <td><div class="empresa">${a.item}</div><div class="ramo">${a.categoria}</div></td>
+      <td style="font-weight:600">${a.valor>0?money(a.valor):'incluso/grátis'}</td>
+      <td>${a.venc}</td>
+      <td>${a.obrigatorio?'<span class="comp c-alta">Obrigatório</span>':'<span class="comp c-baixa">Opcional</span>'}</td>
+    </tr>`).join('');
+
+  return `<div class="page" id="page-financeiro">
+    <h2 class="sec-title">Financeiro</h2>
+    <div class="sec-sub">Seu controle de caixa: o que entra, o que sai, quem te deve e o que precisa pagar.</div>
+
+    <div class="kpi-grid">
+      <div class="kpi green"><div class="label">A receber no mês</div><div class="value">${money(r.aReceberMes)}</div><div class="delta up">${money(r.recebidoMes)} já recebido</div></div>
+      <div class="kpi"><div class="label">Carteira total a receber</div><div class="value" style="font-size:1.5rem">${money(r.aReceberTotal)}</div><div class="delta flat">${r.parcelasVigentes} parcelas vigentes</div></div>
+      <div class="kpi amber"><div class="label">A pagar no mês</div><div class="value" style="font-size:1.5rem">${money(r.aPagarMes)}</div><div class="delta flat">obrigações + opcionais</div></div>
+      <div class="kpi blue"><div class="label">Saldo projetado</div><div class="value" style="font-size:1.5rem">${money(r.saldoProjetado)}</div><div class="delta up">entradas − saídas</div></div>
+    </div>
+
+    ${r.inadimplencia>0?`<div class="insight-card alert"><h4>⚠ ${money(r.inadimplencia)} em atraso</h4><p>Há parcelas vencidas. A régua de cobrança automática já está atuando (veja abaixo). Você é avisado de cada lembrete disparado, e quando for hora de uma ação pessoal.</p></div>`:''}
+
+    <div class="panel" style="margin-bottom:18px">
+      <h3>Parcelamentos vigentes</h3>
+      <div class="psub">Cada parcela, com vencimento, situação e o que a cobrança automática já fez</div>
+      <table class="lead-table">
+        <thead><tr><th>Cliente / Contrato</th><th>Valor</th><th>Vencimento</th><th>Situação</th><th>Cobrança</th></tr></thead>
+        <tbody>${parcRows}</tbody>
+      </table>
+      <div class="legend">
+        <span><span class="bdot" style="background:#3D7EA6"></span> Vence em breve (≤2 dias)</span>
+        <span><span class="bdot" style="background:#C0503E"></span> Atrasado</span>
+        <span><span class="bdot" style="background:#2E9E5B"></span> Pago</span>
+      </div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <h3>Régua de cobrança automática</h3>
+        <div class="psub">Mensagens gentis e educadas que saem sozinhas — você só é avisado</div>
+        ${FIN.reguaCobranca.map(c=>`
+          <div class="regua-item">
+            <div class="regua-dot" style="background:${c.cor}"></div>
+            <div class="regua-body">
+              <div class="regua-top"><b>${c.titulo}</b> <span class="regua-tom">${c.tom}</span></div>
+              <div class="regua-when">${c.momento}</div>
+              <div class="regua-desc">${c.desc}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div class="panel">
+        <h3>Lembretes disparados</h3>
+        <div class="psub">Registro do que o sistema enviou — você nunca é pego de surpresa</div>
+        ${FIN.logLembretes.map(l=>`
+          <div class="log-item">
+            <div class="log-when">${l.data}</div>
+            <div class="log-body"><b>${l.cliente}</b><div class="log-tipo">${l.tipo}</div><div class="log-canal">${l.canal}</div></div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="panel" style="margin-bottom:18px">
+      <h3>Obrigações a pagar</h3>
+      <div class="psub">O que sai, com data — taxas do INPI, tributos, marketing e infraestrutura</div>
+      <table class="lead-table">
+        <thead><tr><th>Item</th><th>Valor</th><th>Vencimento</th><th>Tipo</th></tr></thead>
+        <tbody>${pagarRows}</tbody>
+      </table>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <h3>Previsão de recebimentos</h3>
+        <div class="psub">O que entra nos próximos meses, pelos parcelamentos já fechados</div>
+        ${FIN.previsaoReceber.map(p=>{
+          const pct=Math.round(p.valor/14200*100);
+          return `<div class="nicho-row">
+            <div class="nm" style="width:120px">${p.mes}</div>
+            <div class="track"><div class="fill" data-w="${pct}" style="width:0"></div></div>
+            <div class="vv">${money(p.valor)}</div>
+          </div>`;
+        }).join('')}
+        <div class="legend"><span>Projeção baseada em contratos já assinados</span></div>
+      </div>
+      <div class="panel">
+        <h3>Saúde do negócio</h3>
+        <div class="psub">Os números que dizem se está tudo bem</div>
+        ${FIN.saude.map(s=>`
+          <div class="saude-row">
+            <div class="saude-ind">${s.ind}<div class="saude-nota">${s.nota}</div></div>
+            <div class="saude-val saude-${s.status}">${s.valor}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="report" style="margin-top:18px">
+      <h3>Separado para o Imposto de Renda</h3>
+      <div class="rdate">Atualizado automaticamente o ano todo</div>
+      <div class="report-grid">
+        ${FIN.impostoRenda.slice(0,3).map(i=>`
+          <div class="report-stat"><div class="l">${i.tipo}</div><div class="v" style="font-size:1.3rem">${money(i.valor)}</div></div>`).join('')}
+      </div>
+      <div class="insight">O sistema separa o ano todo o que importa para a sua declaração: receita de honorários, taxas do INPI repassadas, despesas de marketing e operacionais. Na hora do IR, está tudo organizado, sem corrida de última hora. <b>Converse sempre com seu contador</b> para o enquadramento correto.</div>
+    </div>
+  </div>`;
+}
+
+</script>
+</body>
+</html>
