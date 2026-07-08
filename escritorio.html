@@ -245,6 +245,8 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600}
       <div class="tab" onclick="showPage('nichos',this)">Nichos</div>
       <div class="tab" onclick="showPage('acoes',this)">Ações</div>
       <div class="tab" onclick="showPage('reposicionamento',this)">Reposicionamento</div>
+      <div class="tab" onclick="showPage('captacao',this)">Captação</div>
+      <div class="tab" onclick="showPage('motor',this)">Relatório Motor</div>
       <div class="tab" onclick="showPage('relatorios',this)">Relatórios</div>
     </div>
 
@@ -463,7 +465,7 @@ function money(v){ return 'R$ '+v.toLocaleString('pt-BR'); }
 
 function renderAll(){
   const c=document.getElementById('pages');
-  c.innerHTML = pageHoje()+pageLeads()+pageFechamento()+pageFinanceiro()+pageSegmentacao()+pageNichos()+pageAcoes()+pageReposicionamento()+pageRelatorios();
+  c.innerHTML = pageHoje()+pageLeads()+pageFechamento()+pageFinanceiro()+pageSegmentacao()+pageNichos()+pageAcoes()+pageReposicionamento()+pageCaptacao()+pageMotor()+pageRelatorios();
   // animar barras do funil
   setTimeout(()=>{
     document.querySelectorAll('[data-w]').forEach(b=>{ b.style.width=b.dataset.w+'%'; });
@@ -827,6 +829,323 @@ function pageFinanceiro(){
           <div class="report-stat"><div class="l">${i.tipo}</div><div class="v" style="font-size:1.3rem">${money(i.valor)}</div></div>`).join('')}
       </div>
       <div class="insight">O sistema separa o ano todo o que importa para a sua declaração: receita de honorários, taxas do INPI repassadas, despesas de marketing e operacionais. Na hora do IR, está tudo organizado, sem corrida de última hora. <b>Converse sempre com seu contador</b> para o enquadramento correto.</div>
+    </div>
+  </div>`;
+}
+
+
+/* ================================================================
+   CAPTAÇÃO REAL + RELATÓRIO MOTOR  (dados reais, persistidos)
+   localStorage: vertti_db_v1 · sync opcional: dados.json no GitHub
+   ================================================================ */
+const V_REPO='germanocoelho/-vertticonsultoria.github.io';
+const V_CANAIS={email:'E-mail (motor)',ads:'Google Ads',perfil:'Perfil Google',site:'Site',indica:'Indicação',outro:'Outro'};
+const V_STATUS={novo:'Novo',conversa:'Em conversa',proposta:'Proposta',fechado:'Fechado',perdido:'Perdido'};
+const V_LINKS=[
+ ['E-mail 1 (motor)','https://wa.me/5567981644664?text=Ol%C3%A1%2C%20recebi%20o%20e-mail%20da%20VERTTI%20e%20quero%20a%20busca%20gratuita%20da%20minha%20marca'],
+ ['E-mail 2 (motor)','https://wa.me/5567981644664?text=Ol%C3%A1%2C%20quero%20verificar%20se%20minha%20marca%20est%C3%A1%20em%20risco'],
+ ['E-mail 3 (motor)','https://wa.me/5567981644664?text=Ol%C3%A1%2C%20quero%20aproveitar%20a%20condi%C3%A7%C3%A3o%20especial%20para%20registrar%20minha%20marca'],
+ ['Landing (Ads)','https://wa.me/5567981644664?text=Ol%C3%A1%2C%20vim%20pela%20p%C3%A1gina%20de%20busca%20gratuita%20e%20quero%20verificar%20a%20viabilidade%20da%20minha%20marca'],
+ ['Perfil do Google','https://wa.me/5567981644664?text=Ol%C3%A1%2C%20encontrei%20a%20VERTTI%20no%20Google%20e%20quero%20registrar%20minha%20marca'],
+ ['Site institucional','https://wa.me/5567981644664?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20VERTTI%20e%20preciso%20de%20uma%20consultoria%20de%20marca'],
+ ['Indicação / cartão','https://wa.me/5567981644664?text=Ol%C3%A1%2C%20a%20VERTTI%20me%20foi%20indicada%20e%20quero%20proteger%20minha%20marca']
+];
+
+function vdb(){
+  try{ return JSON.parse(localStorage.getItem('vertti_db_v1'))||{leads:[],lotes:[],ads:{}}; }
+  catch(e){ return {leads:[],lotes:[],ads:{}}; }
+}
+function vsave(db){ localStorage.setItem('vertti_db_v1',JSON.stringify(db)); }
+function vRefresh(tab){
+  renderAll();
+  const el=[...document.querySelectorAll('.tab')].find(t=>t.getAttribute('onclick').includes("'"+tab+"'"));
+  showPage(tab,el);
+}
+function vMes(){ return new Date().toISOString().slice(0,7); }
+function vHoje(){ return new Date().toISOString().slice(0,10); }
+function escHtml(s){ return String(s||'').replace(/[<>&"]/g,ch=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[ch])); }
+
+/* ---- CRUD leads reais ---- */
+function vAddLead(){
+  const g=id=>document.getElementById(id);
+  const empresa=g('cl-empresa').value.trim();
+  if(!empresa){ alert('Informe a empresa.'); return; }
+  const db=vdb();
+  db.leads.push({data:vHoje(),empresa,canal:g('cl-canal').value,
+    cidade:g('cl-cidade').value.trim()||'Campo Grande',
+    contato:g('cl-contato').value.trim(),status:'novo',
+    valor:parseFloat(g('cl-valor').value)||0});
+  vsave(db); vRefresh('captacao');
+}
+function vLeadStatus(i,st){ const db=vdb(); db.leads[i].status=st; vsave(db); vRefresh('captacao'); }
+function vLeadDel(i){ if(!confirm('Excluir este lead?'))return; const db=vdb(); db.leads.splice(i,1); vsave(db); vRefresh('captacao'); }
+
+/* ---- CRUD lotes do motor ---- */
+function vAddLote(){
+  const g=id=>document.getElementById(id);
+  const db=vdb();
+  db.lotes.push({data:g('lt-data').value||vHoje(),raios:g('lt-raios').value.trim()||'1',
+    enviados:parseInt(g('lt-env').value)||0,aberturas:parseInt(g('lt-abr').value)||0,
+    respostas:parseInt(g('lt-resp').value)||0,descad:parseInt(g('lt-desc').value)||0});
+  vsave(db); vRefresh('captacao');
+}
+function vLoteDel(i){ if(!confirm('Excluir este lote?'))return; const db=vdb(); db.lotes.splice(i,1); vsave(db); vRefresh('captacao'); }
+
+/* ---- Ads mensal ---- */
+function vSetAds(){
+  const m=document.getElementById('ads-mes').value||vMes();
+  const v=parseFloat(document.getElementById('ads-valor').value)||0;
+  const db=vdb(); db.ads[m]=v; vsave(db); vRefresh('captacao');
+}
+
+/* ---- backup / sync ---- */
+function vExport(){
+  const blob=new Blob([JSON.stringify(vdb(),null,1)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='vertti_dados_'+vHoje()+'.json'; a.click();
+}
+function vImport(ev){
+  const f=ev.target.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{ try{ vsave(JSON.parse(r.result)); vRefresh('captacao'); alert('Dados importados.'); }
+    catch(e){ alert('Arquivo inválido.'); } };
+  r.readAsText(f);
+}
+async function vGitSave(){
+  let tok=localStorage.getItem('vertti_gh_token');
+  if(!tok){ tok=prompt('Cole o token do GitHub (fica salvo só neste navegador):')||''; 
+    if(!tok)return; localStorage.setItem('vertti_gh_token',tok.trim()); tok=tok.trim(); }
+  const api='https://api.github.com/repos/'+V_REPO+'/contents/dados.json';
+  const hd={'Authorization':'token '+tok,'Accept':'application/vnd.github+json'};
+  let sha=null;
+  try{ const r=await fetch(api,{headers:hd}); if(r.ok){ sha=(await r.json()).sha; } }catch(e){}
+  const body={message:'Escritório Digital · dados '+vHoje(),
+    content:btoa(unescape(encodeURIComponent(JSON.stringify(vdb(),null,1))))};
+  if(sha) body.sha=sha;
+  try{
+    const r=await fetch(api,{method:'PUT',headers:hd,body:JSON.stringify(body)});
+    if(r.ok){ alert('Salvo no GitHub (dados.json).'); }
+    else{ const j=await r.json(); alert('Falha ao salvar: '+(j.message||r.status)+'. Verifique o token.'); 
+      if(r.status===401){ localStorage.removeItem('vertti_gh_token'); } }
+  }catch(e){ alert('Erro de rede ao salvar.'); }
+}
+async function vGitLoad(){
+  try{
+    const r=await fetch('https://raw.githubusercontent.com/'+V_REPO+'/main/dados.json?t='+Date.now());
+    if(!r.ok){ alert('dados.json ainda não existe no repositório.'); return; }
+    vsave(await r.json()); vRefresh('captacao'); alert('Dados carregados do GitHub.');
+  }catch(e){ alert('Erro de rede ao carregar.'); }
+}
+function vCopy(txt,btn){ navigator.clipboard.writeText(txt).then(()=>{ btn.textContent='Copiado ✓';
+  setTimeout(()=>btn.textContent='Copiar',1500); }); }
+
+/* ===== PÁGINA CAPTAÇÃO ===== */
+function pageCaptacao(){
+  const db=vdb();
+  const inp='style="padding:9px 12px;border:1px solid var(--linha);border-radius:8px;font-family:inherit;font-size:.85rem;background:#fff"';
+  const btn='style="padding:9px 16px;border:none;border-radius:8px;background:var(--petroleo);color:#fff;font-weight:600;cursor:pointer;font-size:.85rem"';
+  const btng='style="padding:7px 13px;border:1px solid var(--linha);border-radius:8px;background:#fff;cursor:pointer;font-size:.78rem"';
+
+  const leadRows=db.leads.map((l,i)=>`<tr>
+    <td><div class="empresa">${escHtml(l.empresa)}</div><div class="ramo">${escHtml(l.cidade)} · ${l.data}</div></td>
+    <td>${V_CANAIS[l.canal]||l.canal}</td>
+    <td><select onchange="vLeadStatus(${i},this.value)" ${inp}>
+      ${Object.entries(V_STATUS).map(([k,v])=>`<option value="${k}" ${l.status===k?'selected':''}>${v}</option>`).join('')}
+    </select></td>
+    <td>${escHtml(l.contato)}</td>
+    <td style="font-weight:600">${l.valor>0?money(l.valor):'—'}</td>
+    <td><button onclick="vLeadDel(${i})" ${btng}>✕</button></td>
+  </tr>`).join('') || '<tr><td colspan="6" style="color:var(--cinza);padding:18px">Nenhum lead real ainda. Registre o primeiro acima — leva 20 segundos.</td></tr>';
+
+  const loteRows=db.lotes.map((l,i)=>{
+    const tA=l.enviados?(100*l.aberturas/l.enviados):0, tR=l.enviados?(100*l.respostas/l.enviados):0, tD=l.enviados?(100*l.descad/l.enviados):0;
+    const alerta = tA<25?'⚠ abertura baixa — trocar assunto':(tR<2?'⚠ resposta baixa — revisar e-mail 1':(tD>1.5?'⚠ descadastro alto — reduzir volume':'✓ dentro das metas'));
+    const cor = alerta.startsWith('✓')?'var(--verde)':'var(--vermelho)';
+    return `<tr><td>${l.data}</td><td>Raios ${escHtml(l.raios)}</td><td>${l.enviados}</td>
+      <td>${tA.toFixed(1)}%</td><td>${tR.toFixed(1)}%</td><td>${tD.toFixed(1)}%</td>
+      <td style="color:${cor};font-weight:600;font-size:.78rem">${alerta}</td>
+      <td><button onclick="vLoteDel(${i})" ${btng}>✕</button></td></tr>`;
+  }).join('') || '<tr><td colspan="8" style="color:var(--cinza);padding:18px">Nenhum lote registrado. Após cada disparo no Brevo, registre aqui os números.</td></tr>';
+
+  const mesAtual=vMes();
+  const adsRows=Object.entries(db.ads).sort().reverse().slice(0,6).map(([m,v])=>
+    `<tr><td>${m}</td><td style="font-weight:600">${money(v)}</td></tr>`).join('')||'<tr><td colspan="2" style="color:var(--cinza)">Nenhum investimento registrado.</td></tr>';
+
+  const linkRows=V_LINKS.map(([nome,url])=>`<tr>
+    <td style="font-weight:600;font-size:.83rem">${nome}</td>
+    <td style="font-size:.72rem;color:var(--cinza);word-break:break-all">${url}</td>
+    <td><button onclick="vCopy('${url}',this)" ${btng}>Copiar</button></td></tr>`).join('');
+
+  return `<div class="page" id="page-captacao">
+    <h2 class="sec-title">Captação · dados reais</h2>
+    <div class="sec-sub">Tudo aqui é real e fica salvo neste navegador — com backup e sincronização no GitHub quando você quiser. É a sala de máquinas do motor de captação.</div>
+
+    <div class="panel" style="margin-bottom:18px">
+      <h3 style="margin-bottom:12px">Registrar lead (20 segundos)</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <input id="cl-empresa" placeholder="Empresa *" ${inp}>
+        <select id="cl-canal" ${inp}>${Object.entries(V_CANAIS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select>
+        <input id="cl-cidade" placeholder="Cidade" ${inp}>
+        <input id="cl-contato" placeholder="WhatsApp / contato" ${inp}>
+        <input id="cl-valor" type="number" placeholder="Valor (R$)" ${inp} style="width:120px;padding:9px 12px;border:1px solid var(--linha);border-radius:8px">
+        <button onclick="vAddLead()" ${btn}>Adicionar</button>
+      </div>
+      <div class="insight" style="margin-top:12px">A primeira frase do lead no WhatsApp revela o canal — os links rastreáveis abaixo fazem isso automaticamente.</div>
+    </div>
+
+    <div class="panel" style="margin-bottom:18px;overflow-x:auto">
+      <h3 style="margin-bottom:10px">Leads reais (${db.leads.length})</h3>
+      <table class="lead-table"><thead><tr><th>Empresa</th><th>Canal</th><th>Status</th><th>Contato</th><th>Valor</th><th></th></tr></thead>
+      <tbody>${leadRows}</tbody></table>
+    </div>
+
+    <div class="panel" style="margin-bottom:18px;overflow-x:auto">
+      <h3 style="margin-bottom:10px">Lotes do motor (e-mails enviados)</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+        <input id="lt-data" type="date" value="${vHoje()}" ${inp}>
+        <input id="lt-raios" placeholder="Raios (ex.: 1,2)" ${inp} style="width:110px;padding:9px 12px;border:1px solid var(--linha);border-radius:8px">
+        <input id="lt-env" type="number" placeholder="Enviados" ${inp} style="width:100px;padding:9px 12px;border:1px solid var(--linha);border-radius:8px">
+        <input id="lt-abr" type="number" placeholder="Aberturas" ${inp} style="width:100px;padding:9px 12px;border:1px solid var(--linha);border-radius:8px">
+        <input id="lt-resp" type="number" placeholder="Respostas" ${inp} style="width:100px;padding:9px 12px;border:1px solid var(--linha);border-radius:8px">
+        <input id="lt-desc" type="number" placeholder="Descadastros" ${inp} style="width:110px;padding:9px 12px;border:1px solid var(--linha);border-radius:8px">
+        <button onclick="vAddLote()" ${btn}>Registrar lote</button>
+      </div>
+      <table class="lead-table"><thead><tr><th>Data</th><th>Raios</th><th>Enviados</th><th>Abertura</th><th>Resposta</th><th>Descad.</th><th>Diagnóstico</th><th></th></tr></thead>
+      <tbody>${loteRows}</tbody></table>
+      <div class="insight" style="margin-top:10px">Metas de corte: abertura ≥ 25% · resposta ≥ 2% · descadastro ≤ 1,5%. O diagnóstico é automático, lote a lote.</div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:18px">
+      <div class="panel">
+        <h3 style="margin-bottom:10px">Investimento Google Ads</h3>
+        <div style="display:flex;gap:10px;margin-bottom:12px">
+          <input id="ads-mes" type="month" value="${mesAtual}" ${inp}>
+          <input id="ads-valor" type="number" placeholder="R$ no mês" ${inp} style="width:120px;padding:9px 12px;border:1px solid var(--linha);border-radius:8px">
+          <button onclick="vSetAds()" ${btn}>Salvar</button>
+        </div>
+        <table class="lead-table"><tbody>${adsRows}</tbody></table>
+      </div>
+      <div class="panel">
+        <h3 style="margin-bottom:10px">Backup e sincronização</h3>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <button onclick="vExport()" ${btng}>⬇ Exportar dados (JSON)</button>
+          <label ${btng.replace('cursor:pointer','cursor:pointer;text-align:center')}>⬆ Importar dados<input type="file" accept=".json" onchange="vImport(event)" style="display:none"></label>
+          <button onclick="vGitSave()" ${btng}>☁ Salvar no GitHub (dados.json)</button>
+          <button onclick="vGitLoad()" ${btng}>☁ Carregar do GitHub</button>
+        </div>
+        <div class="insight" style="margin-top:12px">O token do GitHub é pedido uma vez e fica salvo só neste navegador — nunca vai para o código do site.</div>
+      </div>
+    </div>
+
+    <div class="panel" style="overflow-x:auto">
+      <h3 style="margin-bottom:10px">Links rastreáveis de WhatsApp</h3>
+      <table class="lead-table"><tbody>${linkRows}</tbody></table>
+    </div>
+  </div>`;
+}
+
+/* ===== PÁGINA RELATÓRIO MOTOR ===== */
+function pageMotor(){
+  const db=vdb();
+  const mes=vMes();
+  const leadsMes=db.leads.filter(l=>l.data&&l.data.startsWith(mes));
+  const fechados=db.leads.filter(l=>l.status==='fechado');
+  const fechadosMes=leadsMes.filter(l=>l.status==='fechado');
+  const receita=fechados.reduce((s,l)=>s+(l.valor||0),0);
+  const receitaMes=fechadosMes.reduce((s,l)=>s+(l.valor||0),0);
+  const conv=db.leads.length?100*fechados.length/db.leads.length:0;
+
+  const porCanal=Object.keys(V_CANAIS).map(k=>{
+    const ls=db.leads.filter(l=>l.canal===k);
+    const fc=ls.filter(l=>l.status==='fechado');
+    const rc=fc.reduce((s,l)=>s+(l.valor||0),0);
+    return {k,nome:V_CANAIS[k],leads:ls.length,fechados:fc.length,
+      conv:ls.length?100*fc.length/ls.length:0,receita:rc};
+  }).filter(c=>c.leads>0);
+  const maxLeads=Math.max(1,...porCanal.map(c=>c.leads));
+
+  const adsMes=db.ads[mes]||0;
+  const leadsAds=leadsMes.filter(l=>l.canal==='ads').length;
+  const fechAds=leadsMes.filter(l=>l.canal==='ads'&&l.status==='fechado').length;
+  const cpl=leadsAds?adsMes/leadsAds:0, cpa=fechAds?adsMes/fechAds:0;
+
+  const env=db.lotes.reduce((s,l)=>s+l.enviados,0);
+  const abr=db.lotes.reduce((s,l)=>s+l.aberturas,0);
+  const rsp=db.lotes.reduce((s,l)=>s+l.respostas,0);
+  const dsc=db.lotes.reduce((s,l)=>s+l.descad,0);
+  const tA=env?100*abr/env:0, tR=env?100*rsp/env:0, tD=env?100*dsc/env:0;
+
+  const funil=[
+    {n:'Leads',v:db.leads.length,c:'#3D7EA6'},
+    {n:'Em conversa+',v:db.leads.filter(l=>['conversa','proposta','fechado'].includes(l.status)).length,c:'#C9952B'},
+    {n:'Proposta+',v:db.leads.filter(l=>['proposta','fechado'].includes(l.status)).length,c:'#2c5aa0'},
+    {n:'Fechados',v:fechados.length,c:'#2E9E5B'}];
+  const maxF=Math.max(1,funil[0].v);
+
+  const resumo=
+`RELATÓRIO MENSAL VERTTI — ${mes}
+Leads no mês: ${leadsMes.length} | Contratos no mês: ${fechadosMes.length} | Receita no mês: R$ ${receitaMes.toLocaleString('pt-BR')}
+Acumulado: ${db.leads.length} leads · ${fechados.length} contratos · R$ ${receita.toLocaleString('pt-BR')} · conversão ${conv.toFixed(1)}%
+Google Ads (${mes}): investido R$ ${adsMes.toLocaleString('pt-BR')} · CPL R$ ${cpl.toFixed(2)} · custo por contrato R$ ${cpa.toFixed(2)}
+Motor de e-mail: ${env} enviados · abertura ${tA.toFixed(1)}% · resposta ${tR.toFixed(1)}% · descadastro ${tD.toFixed(2)}%
+Por canal: ${porCanal.map(c=>`${c.nome} ${c.leads}L/${c.fechados}C`).join(' · ')||'—'}`;
+
+  const kpi=(l,v,sub)=>`<div class="report-stat"><div class="l">${l}</div><div class="v">${v}</div>${sub?`<div class="l" style="margin-top:4px">${sub}</div>`:''}</div>`;
+
+  return `<div class="page" id="page-motor">
+    <h2 class="sec-title">Relatório do Motor · dados reais</h2>
+    <div class="sec-sub">O controle que decide: qual canal traz contrato, a que custo, e se o motor de e-mail está dentro das metas. Calculado ao vivo dos dados da aba Captação.</div>
+
+    <div class="report">
+      <h3>Mês corrente (${mes})</h3>
+      <div class="rdate">Atualizado agora, a partir dos registros reais</div>
+      <div class="report-grid">
+        ${kpi('Leads no mês',leadsMes.length)}
+        ${kpi('Contratos no mês',fechadosMes.length)}
+        ${kpi('Receita no mês',money(receitaMes))}
+        ${kpi('Conversão geral',conv.toFixed(1)+'%')}
+        ${kpi('CPL · Ads',cpl?money(Math.round(cpl)):'—',adsMes?'investido '+money(adsMes):'sem investimento registrado')}
+        ${kpi('Custo por contrato · Ads',cpa?money(Math.round(cpa)):'—')}
+      </div>
+      ${cpl>40?'<div class="insight" style="border-left:3px solid var(--vermelho)">⚠ CPL acima de R$ 40 — regra de corte: revisar palavras-chave e negativação no Google Ads.</div>':''}
+    </div>
+
+    <div class="panel" style="margin:18px 0">
+      <h3 style="margin-bottom:14px">Leads e conversão por canal</h3>
+      ${porCanal.length?porCanal.map(c=>`
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:4px">
+            <b>${c.nome}</b><span>${c.leads} leads · ${c.fechados} contratos · ${c.conv.toFixed(0)}% · ${money(c.receita)}</span>
+          </div>
+          <div class="track"><div class="fill" data-w="${(100*c.leads/maxLeads).toFixed(0)}" style="background:var(--petroleo-soft)"></div></div>
+        </div>`).join(''):'<div style="color:var(--cinza)">Registre leads na aba Captação para ver o comparativo de canais.</div>'}
+    </div>
+
+    <div class="two-col" style="margin-bottom:18px">
+      <div class="panel">
+        <h3 style="margin-bottom:14px">Funil real</h3>
+        ${funil.map(f=>`
+          <div style="margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:4px"><span>${f.n}</span><b>${f.v}</b></div>
+            <div class="track"><div class="fill" data-w="${(100*f.v/maxF).toFixed(0)}" style="background:${f.c}"></div></div>
+          </div>`).join('')}
+      </div>
+      <div class="panel">
+        <h3 style="margin-bottom:14px">Motor de e-mail · acumulado</h3>
+        <div class="report-grid">
+          ${kpi('Enviados',env)}
+          ${kpi('Abertura',tA.toFixed(1)+'%',tA>=25?'✓ meta ≥ 25%':'⚠ abaixo de 25%')}
+          ${kpi('Resposta',tR.toFixed(1)+'%',tR>=2?'✓ meta ≥ 2%':'⚠ abaixo de 2%')}
+          ${kpi('Descadastro',tD.toFixed(2)+'%',tD<=1.5?'✓ meta ≤ 1,5%':'⚠ acima de 1,5%')}
+        </div>
+      </div>
+    </div>
+
+    <div class="report">
+      <h3>Resumo do mês para copiar</h3>
+      <div class="rdate">Cole no seu controle pessoal, e-mail ou grupo — uma linha por indicador</div>
+      <pre id="v-resumo" style="white-space:pre-wrap;font-size:.8rem;background:#fff;border:1px solid var(--linha);border-radius:10px;padding:14px;margin:10px 0">${resumo}</pre>
+      <button onclick="vCopy(document.getElementById('v-resumo').textContent,this)" style="padding:9px 16px;border:none;border-radius:8px;background:var(--petroleo);color:#fff;font-weight:600;cursor:pointer;font-size:.85rem">Copiar</button>
     </div>
   </div>`;
 }
