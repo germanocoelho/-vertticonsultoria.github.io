@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Marca em Campo Grande/MS — Busca Gratuita | VERTTI</title>
+<meta name="description" content="Verifique grátis se o nome da sua empresa está livre no INPI. Agente da Propriedade Industrial nº 588, 30+ anos de experiência. Campo Grande/MS.">
+<meta name="robots" content="index,follow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tinta:#171B21;        /* quase-preto notarial */
+  --papel:#F2F3F0;        /* papel de protocolo, frio */
+  --deferido:#157A5A;     /* verde de marca concedida */
+  --deferido-esc:#0E5940;
+  --aco:#6B7280;          /* cinza utilitário */
+  --linha:#D6D8D3;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--papel);color:var(--tinta);
+  font-family:'Archivo',system-ui,sans-serif;
+  font-variation-settings:'wdth' 100;
+  line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:680px;margin:0 auto;padding:0 22px}
+.mono{font-family:'IBM Plex Mono',monospace}
+
+/* ---------- topo mínimo ---------- */
+header{padding:20px 0;border-bottom:1px solid var(--linha)}
+header .wrap{display:flex;justify-content:space-between;align-items:baseline}
+.logo{font-weight:900;font-variation-settings:'wdth' 118;letter-spacing:.04em;font-size:1.15rem}
+.credencial{font-size:.72rem;color:var(--aco);letter-spacing:.06em}
+
+/* ---------- hero ---------- */
+.hero{padding:56px 0 34px}
+.hero h1{font-weight:900;font-variation-settings:'wdth' 112;
+  font-size:clamp(1.9rem,6.4vw,3.1rem);line-height:1.08;letter-spacing:-.015em}
+.hero h1 em{font-style:normal;color:var(--deferido)}
+.hero p.sub{margin-top:18px;font-size:1.06rem;max-width:34em;color:#2A2F36}
+
+/* ---------- CTA ---------- */
+.cta{display:inline-block;margin-top:26px;background:var(--deferido);color:#fff;
+  text-decoration:none;font-weight:700;font-size:1.05rem;
+  padding:16px 26px;border-radius:6px;
+  box-shadow:0 2px 0 var(--deferido-esc);transition:transform .12s ease}
+.cta:hover{transform:translateY(-1px)}
+.cta:focus-visible{outline:3px solid var(--tinta);outline-offset:3px}
+.cta small{display:block;font-weight:400;font-size:.78rem;opacity:.92;margin-top:2px}
+
+/* ---------- ficha de protocolo (assinatura) ---------- */
+.ficha{margin:46px 0 10px;border:1.5px dashed var(--tinta);border-radius:4px;
+  background:#FBFBF9;padding:26px 24px;position:relative;
+  animation:surge .5s ease both}
+@keyframes surge{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.ficha{animation:none}}
+.ficha h2{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:.8rem;
+  letter-spacing:.14em;color:var(--aco);text-transform:uppercase;margin-bottom:18px}
+.campo{display:flex;justify-content:space-between;gap:12px;
+  border-bottom:1px solid var(--linha);padding:10px 0;
+  font-family:'IBM Plex Mono',monospace;font-size:.88rem}
+.campo .k{color:var(--aco)}
+.campo .v{font-weight:500;text-align:right}
+.v.alerta{color:#A33B2E}
+.v.ok{color:var(--deferido)}
+.carimbo{position:absolute;top:-14px;right:14px;transform:rotate(6deg);
+  border:2.5px solid var(--deferido);color:var(--deferido);border-radius:4px;
+  font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:.72rem;
+  letter-spacing:.12em;padding:6px 10px;background:var(--papel)}
+
+/* ---------- provas ---------- */
+.provas{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;
+  background:var(--linha);border:1px solid var(--linha);margin:44px 0}
+.prova{background:var(--papel);padding:18px 14px;text-align:center}
+.prova b{display:block;font-weight:900;font-variation-settings:'wdth' 115;font-size:1.3rem}
+.prova span{font-size:.74rem;color:var(--aco);letter-spacing:.03em}
+@media(max-width:520px){.provas{grid-template-columns:1fr}.prova{text-align:left;display:flex;justify-content:space-between;align-items:baseline}}
+
+/* ---------- passos ---------- */
+.secao{padding:14px 0 8px}
+.secao h3{font-weight:900;font-variation-settings:'wdth' 110;font-size:1.35rem;margin-bottom:20px}
+.passo{display:flex;gap:16px;margin-bottom:20px}
+.passo .n{font-family:'IBM Plex Mono',monospace;color:var(--deferido);
+  font-weight:500;min-width:2.2em}
+.passo p{font-size:.98rem;color:#2A2F36}
+.passo b{color:var(--tinta)}
+
+/* ---------- risco ---------- */
+.risco{border-left:3px solid #A33B2E;padding:6px 0 6px 18px;margin:34px 0;
+  color:#2A2F36;font-size:.98rem}
+
+/* ---------- fechamento ---------- */
+.fim{padding:34px 0 60px;text-align:center;border-top:1px solid var(--linha);margin-top:40px}
+.fim p{color:var(--aco);font-size:.9rem;margin-top:20px}
+footer{border-top:1px solid var(--linha);padding:22px 0 40px;
+  font-size:.74rem;color:var(--aco)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="logo">VERTTI</div>
+    <div class="credencial mono">API INPI Nº 588 · CAMPO GRANDE/MS</div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <h1>O CNPJ protege a sua empresa.<br>O seu nome, <em>não</em>.</h1>
+    <p class="sub">Marca se registra no INPI — e vale para quem chega primeiro.
+    Descubra gratuitamente, ainda hoje, se o nome do seu negócio está livre
+    ou se alguém pode tomá-lo de você.</p>
+
+    <a class="cta" id="cta-topo"
+       href="https://wa.me/5567981644664?text=Ol%C3%A1%2C%20vim%20pela%20p%C3%A1gina%20de%20busca%20gratuita%20e%20quero%20verificar%20a%20viabilidade%20da%20minha%20marca">
+      Verificar minha marca grátis
+      <small>resposta pelo WhatsApp · sem compromisso</small>
+    </a>
+  </section>
+
+  <section class="ficha" aria-label="Exemplo de ficha de verificação">
+    <div class="carimbo">BUSCA GRATUITA</div>
+    <h2>Ficha de verificação · INPI</h2>
+    <div class="campo"><span class="k">Marca consultada</span><span class="v">— o nome da sua empresa —</span></div>
+    <div class="campo"><span class="k">Registro no INPI</span><span class="v alerta">NÃO LOCALIZADO</span></div>
+    <div class="campo"><span class="k">Situação do nome</span><span class="v alerta">DESPROTEGIDO — livre para terceiros</span></div>
+    <div class="campo"><span class="k">Após o registro</span><span class="v ok">EXCLUSIVIDADE EM TODO O BRASIL</span></div>
+  </section>
+
+  <div class="provas">
+    <div class="prova"><b>30+</b><span>anos em propriedade industrial</span></div>
+    <div class="prova"><b>Nº 588</b><span>Agente habilitado no INPI</span></div>
+    <div class="prova"><b>OMPI</b><span>negociações em Genebra pelo Brasil</span></div>
+  </div>
+
+  <section class="secao">
+    <h3>Como funciona</h3>
+    <div class="passo"><span class="n mono">01</span>
+      <p><b>Você me envia o nome da sua marca</b> pelo WhatsApp — leva um minuto.</p></div>
+    <div class="passo"><span class="n mono">02</span>
+      <p><b>Eu faço a busca completa no INPI</b> e devolvo um parecer claro:
+      livre, com risco, ou já ocupado. De graça, sem letra miúda.</p></div>
+    <div class="passo"><span class="n mono">03</span>
+      <p><b>Se quiser registrar, cuido de tudo</b> — e empresas do Simples,
+      MEI e pequeno porte pagam taxa reduzida de 60% no INPI.</p></div>
+  </section>
+
+  <p class="risco">No Brasil, a marca é de quem <b>deposita primeiro</b>, não de
+  quem usa há mais tempo. Todos os anos, empresas estabelecidas são notificadas
+  a abandonar o próprio nome porque outra pessoa o registrou antes. Trocar de
+  nome depois custa fachada, embalagem, domínio, redes sociais — e a confiança
+  do seu cliente.</p>
+
+  <section class="fim">
+    <a class="cta" id="cta-fim"
+       href="https://wa.me/5567981644664?text=Ol%C3%A1%2C%20quero%20a%20busca%20gratuita%20de%20viabilidade%20da%20minha%20marca">
+      Quero minha busca gratuita
+      <small>Germano Rocha-Silva · Agente da Propriedade Industrial nº 588</small>
+    </a>
+    <p>Atendimento direto com o especialista — não é call center.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    VERTTI Consultoria · marcas, patentes, franchising · Campo Grande/MS ·
+    vertticonsultoria.com.br · Esta página não coleta dados de navegação;
+    o contato acontece exclusivamente pelo canal que você escolher.
+  </div>
+</footer>
+
+<!-- Conversão Google Ads: após criar a ação de conversão "Clique no WhatsApp",
+     cole aqui o gtag.js e adicione onclick de conversão nos dois CTAs.
+     Enquanto isso, a própria mensagem pré-preenchida identifica a origem. -->
+
+</body>
+</html>
