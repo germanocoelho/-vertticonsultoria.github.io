@@ -2,6 +2,7 @@
  "meses": 3,
  "lote": 100,
  "raios": "1,2",
+ "raios_auto_expandir": false,
  "brevo_lista_id": 2,
  "envio_automatico": true,
  "max_rpis_por_execucao": 4,
