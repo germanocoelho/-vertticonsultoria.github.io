@@ -246,6 +246,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600}
       <div class="tab" onclick="showPage('acoes',this)">Ações</div>
       <div class="tab" onclick="showPage('reposicionamento',this)">Reposicionamento</div>
       <div class="tab" onclick="showPage('captacao',this)">Captação</div>
+      <div class="tab" onclick="showPage('motorauto',this);vMotorLoad()">Motor Auto</div>
       <div class="tab" onclick="showPage('motor',this)">Relatório Motor</div>
       <div class="tab" onclick="showPage('relatorios',this)">Relatórios</div>
     </div>
@@ -465,7 +466,7 @@ function money(v){ return 'R$ '+v.toLocaleString('pt-BR'); }
 
 function renderAll(){
   const c=document.getElementById('pages');
-  c.innerHTML = pageHoje()+pageLeads()+pageFechamento()+pageFinanceiro()+pageSegmentacao()+pageNichos()+pageAcoes()+pageReposicionamento()+pageCaptacao()+pageMotor()+pageRelatorios();
+  c.innerHTML = pageHoje()+pageLeads()+pageFechamento()+pageFinanceiro()+pageSegmentacao()+pageNichos()+pageAcoes()+pageReposicionamento()+pageCaptacao()+pageMotorAuto()+pageMotor()+pageRelatorios();
   // animar barras do funil
   setTimeout(()=>{
     document.querySelectorAll('[data-w]').forEach(b=>{ b.style.width=b.dataset.w+'%'; });
@@ -1147,6 +1148,199 @@ Por canal: ${porCanal.map(c=>`${c.nome} ${c.leads}L/${c.fechados}C`).join(' · '
       <pre id="v-resumo" style="white-space:pre-wrap;font-size:.8rem;background:#fff;border:1px solid var(--linha);border-radius:10px;padding:14px;margin:10px 0">${resumo}</pre>
       <button onclick="vCopy(document.getElementById('v-resumo').textContent,this)" style="padding:9px 16px;border:none;border-radius:8px;background:var(--petroleo);color:#fff;font-weight:600;cursor:pointer;font-size:.85rem">Copiar</button>
     </div>
+  </div>`;
+}
+
+
+/* ================================================================
+   MOTOR AUTO — pipeline autônomo no GitHub Actions
+   Lê motor_status.json/motor_config.json do repositório e permite
+   disparar execuções e salvar configurações direto do painel.
+   ================================================================ */
+const V_RAW='https://raw.githubusercontent.com/'+V_REPO+'/main/';
+const V_ETAPAS=[
+ ['download','Download da Receita Federal','Baixa sozinho os ~21 arquivos do mês'],
+ ['integridade_zips','Teste de integridade dos arquivos','Cada ZIP é verificado byte a byte antes de seguir'],
+ ['destilaria','Destilaria (base só-MS)','60 GB viram uma base local pequena e instantânea'],
+ ['rpi','Base INPI (RPI semanal)','Acumula os titulares de marca de MS, de graça'],
+ ['jucems','Sinal JUCEMS','Momento de abertura por município, sem dependência externa'],
+ ['lote','Geração do lote por raios','Campo Grande primeiro, depois entorno, polos, MS'],
+ ['filtro_inpi','Filtro anti-constrangimento','Remove quem já tem marca registrada'],
+ ['dedupe_historico','Trava de repetição (LGPD)','Ninguém recebe duas vezes; histórico só por hash'],
+ ['brevo','Envio ao Brevo','Contatos entram na lista e a sequência dispara sozinha']
+];
+const V_BADGE={ok:['✓','#2E9E5B','concluída'],erro:['✕','#C0392B','falhou'],
+ aviso:['⚠','#C9952B','com aviso'],pulado:['↷','#8A93A0','pulada'],
+ desligado:['⏸','#8A93A0','desligado'],aguardando_chave:['🔑','#C9952B','aguardando chave']};
+
+let V_ST=null, V_CFG=null;
+
+async function vMotorLoad(){
+  const box=document.getElementById('ma-conteudo');
+  if(box) box.innerHTML='<div style="padding:30px;color:var(--cinza)">Consultando o motor no GitHub…</div>';
+  try{
+    const [s,cfg]=await Promise.all([
+      fetch(V_RAW+'motor_status.json?t='+Date.now()).then(r=>r.ok?r.json():null),
+      fetch(V_RAW+'motor_config.json?t='+Date.now()).then(r=>r.ok?r.json():null)]);
+    V_ST=s; V_CFG=cfg||{};
+  }catch(e){ V_ST=null; V_CFG=V_CFG||{}; }
+  vMotorRender();
+}
+
+function vMotorRender(){
+  const box=document.getElementById('ma-conteudo');
+  if(!box) return;
+  const btn='style="padding:10px 18px;border:none;border-radius:8px;background:var(--petroleo);color:#fff;font-weight:600;cursor:pointer;font-size:.85rem"';
+  const btng='style="padding:9px 15px;border:1px solid var(--linha);border-radius:8px;background:#fff;cursor:pointer;font-size:.8rem"';
+  const inp='style="padding:8px 11px;border:1px solid var(--linha);border-radius:8px;font-size:.85rem;width:90px"';
+
+  if(!V_ST){
+    box.innerHTML=`<div class="panel" style="text-align:center;padding:40px">
+      <div style="font-size:2rem;margin-bottom:10px">🚀</div>
+      <h3>O motor ainda não rodou pela primeira vez</h3>
+      <p style="color:var(--cinza);margin:10px 0 20px">Assim que a primeira execução acontecer
+      (agendada ou pelo botão abaixo), as etapas aparecem aqui com todos os testes de integridade.</p>
+      <button onclick="vDispatch('motor_mensal.yml',this)" ${btn}>▶ Rodar ciclo completo agora</button>
+      <div style="margin-top:10px"><button onclick="vMotorLoad()" ${btng}>🔄 Atualizar</button></div>
+    </div>`;
+    return;
+  }
+
+  const erros=Object.values(V_ST.etapas).filter(e=>e.status==='erro').length;
+  const avisos=(V_ST.alertas||[]).filter(a=>a.nivel!=='erro').length +
+               Object.values(V_ST.etapas).filter(e=>['aviso','aguardando_chave'].includes(e.status)).length;
+  const farol = erros? ['#C0392B','⛔ Motor com falha — veja as etapas em vermelho']
+              : avisos? ['#C9952B','⚠ Motor operando, com pontos de atenção']
+              : ['#2E9E5B','✅ Motor operando normalmente'];
+
+  const dt=s=>s? new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+
+  const passos=V_ETAPAS.map(([id,nome,sub])=>{
+    const e=V_ST.etapas[id];
+    const [ic,cor,label]=e? (V_BADGE[e.status]||V_BADGE.pulado) : ['·','#D5D9DE','ainda não executada'];
+    return `<div style="display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--linha)">
+      <div style="min-width:34px;height:34px;border-radius:50%;background:${cor}18;color:${cor};
+        display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;border:2px solid ${cor}">${ic}</div>
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">
+          <b style="font-size:.9rem">${nome}</b>
+          <span style="font-size:.72rem;color:${cor};font-weight:600">${label.toUpperCase()} ${e?'· '+dt(e.quando):''}</span>
+        </div>
+        <div style="font-size:.8rem;color:var(--cinza);margin-top:2px">${e? escHtml(e.detalhe) : sub}</div>
+        ${e&&e.integridade?`<div style="font-size:.74rem;color:#5B8A72;margin-top:3px">🛡 ${escHtml(e.integridade)}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const alertas=(V_ST.alertas||[]).map(a=>`
+    <div style="border-left:3px solid ${a.nivel==='erro'?'#C0392B':'#C9952B'};padding:8px 12px;
+      background:#fff;border-radius:0 8px 8px 0;margin-bottom:8px;font-size:.83rem">
+      ${escHtml(a.msg)} <span style="color:var(--cinza);font-size:.72rem">· ${dt(a.quando)}</span>
+    </div>`).join('') || '<div style="color:var(--cinza);font-size:.85rem">Nenhum alerta — tudo limpo.</div>';
+
+  const m=V_ST.metricas||{};
+  box.innerHTML=`
+    <div class="panel" style="border-left:5px solid ${farol[0]};margin-bottom:18px;display:flex;
+      justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-weight:700;font-size:1.05rem">${farol[1]}</div>
+        <div style="font-size:.8rem;color:var(--cinza)">Última execução (${V_ST.tipo_ultima_execucao||'—'}):
+          ${dt(V_ST.atualizado_em)} · Próximas: ${V_ST.proximas?V_ST.proximas.semanal:''} e ${V_ST.proximas?V_ST.proximas.mensal:''}</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="vDispatch('motor_mensal.yml',this)" ${btn}>▶ Rodar ciclo agora</button>
+        <button onclick="vDispatch('motor_semanal.yml',this)" ${btng}>▶ Atualizar RPI</button>
+        <button onclick="vMotorLoad()" ${btng}>🔄</button>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:18px">
+      <div class="panel">
+        <h3 style="margin-bottom:6px">Linha de produção</h3>
+        <div style="font-size:.78rem;color:var(--cinza);margin-bottom:8px">Cada etapa só roda se a anterior passar nos testes — falhas param o ciclo antes de causar dano.</div>
+        ${passos}
+      </div>
+      <div>
+        <div class="panel" style="margin-bottom:16px">
+          <h3 style="margin-bottom:12px">Números do motor</h3>
+          <div class="report-grid">
+            <div class="report-stat"><div class="l">Contatos enviados (total)</div><div class="v">${m.enviados_total??0}</div></div>
+            <div class="report-stat"><div class="l">Último lote</div><div class="v">${m.ultimo_lote??'—'}</div></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-bottom:16px">
+          <h3 style="margin-bottom:10px">Alertas e mitigações</h3>
+          ${alertas}
+        </div>
+        <div class="panel">
+          <h3 style="margin-bottom:10px">⚙ Configurações do motor</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:.83rem">
+            <label>Lote <input id="cfg-lote" type="number" value="${V_CFG.lote??100}" ${inp}></label>
+            <label>Raios <input id="cfg-raios" value="${V_CFG.raios??'1,2'}" ${inp}></label>
+            <label>Meses <input id="cfg-meses" type="number" value="${V_CFG.meses??3}" ${inp}></label>
+            <label style="display:flex;align-items:center;gap:6px">
+              <input id="cfg-auto" type="checkbox" ${V_CFG.envio_automatico!==false?'checked':''}>
+              Envio automático ao Brevo</label>
+          </div>
+          <button onclick="vCfgSave(this)" ${btn.replace('10px 18px','9px 15px')} style="margin-top:12px">Salvar no motor</button>
+          <div style="font-size:.74rem;color:var(--cinza);margin-top:8px">As mudanças valem a partir da próxima execução.</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function vGhToken(){
+  let tok=localStorage.getItem('vertti_gh_token');
+  if(!tok){ tok=prompt('Cole o token do GitHub (fica salvo só neste navegador):')||'';
+    if(!tok) return null; localStorage.setItem('vertti_gh_token',tok.trim()); }
+  return tok.trim();
+}
+
+async function vDispatch(workflow,btn){
+  const tok=await vGhToken(); if(!tok) return;
+  const orig=btn.textContent; btn.textContent='Disparando…'; btn.disabled=true;
+  try{
+    const r=await fetch('https://api.github.com/repos/'+V_REPO+'/actions/workflows/'+workflow+'/dispatches',
+      {method:'POST',headers:{'Authorization':'token '+tok,'Accept':'application/vnd.github+json'},
+       body:JSON.stringify({ref:'main'})});
+    if(r.status===204){ btn.textContent='✓ Em execução'; 
+      setTimeout(()=>{btn.textContent=orig;btn.disabled=false;},4000);
+      alert('Motor disparado! A execução leva de minutos (semanal) a algumas horas (mensal, por causa do download). Clique em 🔄 depois para ver o resultado.'); }
+    else{ const j=await r.json().catch(()=>({}));
+      alert('Não consegui disparar: '+(j.message||r.status)+'. Verifique se o token tem permissão de Actions.');
+      btn.textContent=orig; btn.disabled=false; }
+  }catch(e){ alert('Erro de rede.'); btn.textContent=orig; btn.disabled=false; }
+}
+
+async function vCfgSave(btn){
+  const tok=await vGhToken(); if(!tok) return;
+  const novo={...V_CFG,
+    lote:parseInt(document.getElementById('cfg-lote').value)||100,
+    raios:document.getElementById('cfg-raios').value.trim()||'1,2',
+    meses:parseInt(document.getElementById('cfg-meses').value)||3,
+    envio_automatico:document.getElementById('cfg-auto').checked};
+  const api='https://api.github.com/repos/'+V_REPO+'/contents/motor_config.json';
+  const hd={'Authorization':'token '+tok,'Accept':'application/vnd.github+json'};
+  btn.textContent='Salvando…';
+  try{
+    let sha=null;
+    const r0=await fetch(api,{headers:hd}); if(r0.ok) sha=(await r0.json()).sha;
+    const body={message:'Config do motor via Escritório Digital',
+      content:btoa(unescape(encodeURIComponent(JSON.stringify(novo,null,1)))),...(sha?{sha}:{})};
+    const r=await fetch(api,{method:'PUT',headers:hd,body:JSON.stringify(body)});
+    if(r.ok){ V_CFG=novo; btn.textContent='✓ Salvo'; setTimeout(()=>btn.textContent='Salvar no motor',2500); }
+    else{ alert('Falha ao salvar configuração.'); btn.textContent='Salvar no motor'; }
+  }catch(e){ alert('Erro de rede.'); btn.textContent='Salvar no motor'; }
+}
+
+/* ===== PÁGINA MOTOR AUTO ===== */
+function pageMotorAuto(){
+  return `<div class="page" id="page-motorauto">
+    <h2 class="sec-title">Motor Automático · GitHub Actions</h2>
+    <div class="sec-sub">O pipeline roda sozinho na nuvem — toda quarta (base INPI) e todo dia 20 (ciclo
+    completo: Receita → lote → Brevo) — com teste de integridade em cada etapa e parada automática
+    antes de qualquer dano. Esta tela é o raio-X ao vivo.</div>
+    <div id="ma-conteudo"><div style="padding:30px;color:var(--cinza)">Consultando o motor no GitHub…</div></div>
   </div>`;
 }
 
