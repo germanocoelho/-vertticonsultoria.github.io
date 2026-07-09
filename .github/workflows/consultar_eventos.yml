@@ -1,0 +1,19 @@
+name: TESTE - Consultar eventos Brevo
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  consultar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Consultar eventos de entrega no Brevo
+        env:
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          DEST_EMAIL: germano.consneo@gmail.com
+        run: python3 consultar_eventos_brevo.py
