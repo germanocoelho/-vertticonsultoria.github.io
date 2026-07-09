@@ -6,6 +6,7 @@ aceito, entregue, bloqueado, em spam, rejeitado etc.
 """
 import json
 import os
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -19,8 +20,16 @@ params = urllib.parse.urlencode({
 })
 url = f"https://api.brevo.com/v3/smtp/emailEvents?{params}"
 req = urllib.request.Request(url, headers={"api-key": BREVO_KEY, "Accept": "application/json"})
-with urllib.request.urlopen(req) as r:
-    data = json.load(r)
+try:
+    with urllib.request.urlopen(req) as r:
+        data = json.load(r)
+except urllib.error.HTTPError as e:
+    corpo = e.read().decode("utf-8", errors="replace")
+    print(f"::error::Brevo respondeu {e.code} em {url} :: {corpo[:500]}")
+    raise
+except Exception as e:
+    print(f"::error::Falha inesperada: {type(e).__name__}: {e}")
+    raise
 
 eventos = data.get("events", [])
 print(f"Total de eventos encontrados para {DEST}: {len(eventos)}\n")
