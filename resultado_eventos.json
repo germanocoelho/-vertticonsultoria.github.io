@@ -1,0 +1,1012 @@
+{
+ "destinatario": "germano.consneo@gmail.com",
+ "total_eventos": 50,
+ "eventos": [
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T09:28:28.428-04:00",
+   "messageId": "<202607091324.10173363267@smtp-relay.mailin.fr>",
+   "event": "opened",
+   "subject": "[TESTE DIA 4] O que acontece quando outra empresa registra o seu nome primeiro",
+   "tag": "teste-motor-vertti",
+   "from": "contato@vertticonsultoria.com.br",
+   "ip": "66.249.88.5"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T09:26:45.110-04:00",
+   "messageId": "<202607091324.10173363267@smtp-relay.mailin.fr>",
+   "event": "clicks",
+   "subject": "[TESTE DIA 4] O que acontece quando outra empresa registra o seu nome primeiro",
+   "tag": "teste-motor-vertti",
+   "from": "contato@vertticonsultoria.com.br",
+   "link": "https://wa.me/5567981644664?text=Ol%C3%A1%2C%20quero%20verificar%20se%20minha%20marca%20est%C3%A1%20em%20risco",
+   "ip": "179.182.53.233"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T09:26:20.891-04:00",
+   "messageId": "<202607091324.10173363267@smtp-relay.mailin.fr>",
+   "event": "opened",
+   "subject": "[TESTE DIA 4] O que acontece quando outra empresa registra o seu nome primeiro",
+   "tag": "teste-motor-vertti",
+   "from": "contato@vertticonsultoria.com.br",
+   "ip": "66.249.88.1"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T09:24:25.000-04:00",
+   "messageId": "<202607091324.10173363267@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": "[TESTE DIA 4] O que acontece quando outra empresa registra o seu nome primeiro",
+   "tag": "teste-motor-vertti",
+   "from": "contato@vertticonsultoria.com.br",
+   "ip": "77.32.148.26"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T09:24:24.560-04:00",
+   "messageId": "<202607091324.10875643216@smtp-relay.mailin.fr>",
+   "event": "opened",
+   "subject": "[TESTE DIA 0] O nome \"Padaria Teste VERTTI\" já está protegido?",
+   "tag": "teste-motor-vertti",
+   "from": "contato@vertticonsultoria.com.br",
+   "ip": "172.20.36.214"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T09:24:24.000-04:00",
+   "messageId": "<202607091324.10875643216@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": "[TESTE DIA 0] O nome \"Padaria Teste VERTTI\" já está protegido?",
+   "tag": "teste-motor-vertti",
+   "from": "contato@vertticonsultoria.com.br",
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T09:24:24.000-04:00",
+   "messageId": "<202607091324.27840635924@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": "[TESTE DIA 11] Última mensagem — e uma condição especial para Padaria Teste VERTTI",
+   "tag": "teste-motor-vertti",
+   "from": "contato@vertticonsultoria.com.br",
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T09:24:23.902-04:00",
+   "messageId": "<202607091324.10173363267@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": "[TESTE DIA 4] O que acontece quando outra empresa registra o seu nome primeiro",
+   "tag": "teste-motor-vertti",
+   "from": "contato@vertticonsultoria.com.br",
+   "ip": "77.32.148.26"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T09:24:22.816-04:00",
+   "messageId": "<202607091324.27840635924@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": "[TESTE DIA 11] Última mensagem — e uma condição especial para Padaria Teste VERTTI",
+   "tag": "teste-motor-vertti",
+   "from": "contato@vertticonsultoria.com.br",
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T09:24:22.710-04:00",
+   "messageId": "<202607091324.10875643216@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": "[TESTE DIA 0] O nome \"Padaria Teste VERTTI\" já está protegido?",
+   "tag": "teste-motor-vertti",
+   "from": "contato@vertticonsultoria.com.br",
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:41:28.154-04:00",
+   "messageId": "<202607090441.62776365773@smtp-relay.mailin.fr>",
+   "event": "opened",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "74.125.213.37"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:41:24.000-04:00",
+   "messageId": "<202607090441.35240993553@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": "Última mensagem — e uma condição especial para ",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 9,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:41:23.014-04:00",
+   "messageId": "<202607090441.35240993553@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": "Última mensagem — e uma condição especial para ",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 9,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:41:23.000-04:00",
+   "messageId": "<202607090441.62776365773@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "77.32.148.26"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:41:22.808-04:00",
+   "messageId": "<202607090441.62776365773@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "77.32.148.26"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:41:22.000-04:00",
+   "messageId": "<202607090441.69752025271@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": " O nome ... já está protegido?",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 5,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:41:21.998-04:00",
+   "messageId": "<202607090441.69752025271@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": " O nome ... já está protegido?",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 5,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:39:37.560-04:00",
+   "messageId": "<202607090436.45245964657@smtp-relay.mailin.fr>",
+   "event": "opened",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "66.249.88.4"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:39:37.546-04:00",
+   "messageId": "<202607090439.50973102336@smtp-relay.mailin.fr>",
+   "event": "opened",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "74.125.213.37"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:39:31.034-04:00",
+   "messageId": "<202607090439.50973102336@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "77.32.148.26"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:39:31.000-04:00",
+   "messageId": "<202607090439.32353542566@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": " O nome ... já está protegido?",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 5,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:39:31.000-04:00",
+   "messageId": "<202607090439.50973102336@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "77.32.148.26"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:39:31.000-04:00",
+   "messageId": "<202607090439.47376829847@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": "Última mensagem — e uma condição especial para ",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 9,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:39:30.861-04:00",
+   "messageId": "<202607090439.47376829847@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": "Última mensagem — e uma condição especial para ",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 9,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:39:30.821-04:00",
+   "messageId": "<202607090439.32353542566@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": " O nome ... já está protegido?",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 5,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:36:52.000-04:00",
+   "messageId": "<202607090436.88883092053@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": "Última mensagem — e uma condição especial para ",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 9,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:36:51.446-04:00",
+   "messageId": "<202607090436.88883092053@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": "Última mensagem — e uma condição especial para ",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 9,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:36:51.000-04:00",
+   "messageId": "<202607090436.45245964657@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "77.32.148.26"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:36:51.000-04:00",
+   "messageId": "<202607090436.80475914989@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": " O nome ... já está protegido?",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 5,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:36:50.393-04:00",
+   "messageId": "<202607090436.45245964657@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "77.32.148.26"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:36:50.257-04:00",
+   "messageId": "<202607090436.80475914989@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": " O nome ... já está protegido?",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 5,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:34:00.886-04:00",
+   "messageId": "<202607090433.81911833405@smtp-relay.mailin.fr>",
+   "event": "opened",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "74.125.213.37"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:33:53.000-04:00",
+   "messageId": "<202607090433.12286856344@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": "Última mensagem — e uma condição especial para ",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 9,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:33:53.000-04:00",
+   "messageId": "<202607090433.81911833405@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "77.32.148.26"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:33:53.000-04:00",
+   "messageId": "<202607090433.18759117117@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": " O nome ... já está protegido?",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 5,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:33:52.773-04:00",
+   "messageId": "<202607090433.81911833405@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "77.32.148.26"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:33:52.237-04:00",
+   "messageId": "<202607090433.12286856344@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": "Última mensagem — e uma condição especial para ",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 9,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:33:52.111-04:00",
+   "messageId": "<202607090433.18759117117@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": " O nome ... já está protegido?",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 5,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:28:57.507-04:00",
+   "messageId": "<202607090428.39937877339@smtp-relay.mailin.fr>",
+   "event": "opened",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "66.249.88.5"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:28:49.000-04:00",
+   "messageId": "<202607090428.71435550798@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": "Última mensagem — e uma condição especial para ",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 9,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:28:49.000-04:00",
+   "messageId": "<202607090428.40756589219@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": " O nome ... já está protegido?",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 5,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:28:49.000-04:00",
+   "messageId": "<202607090428.39937877339@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "77.32.148.26"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:28:48.955-04:00",
+   "messageId": "<202607090428.39937877339@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "77.32.148.26"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:28:48.620-04:00",
+   "messageId": "<202607090428.71435550798@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": "Última mensagem — e uma condição especial para ",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 9,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:28:48.300-04:00",
+   "messageId": "<202607090428.40756589219@smtp-relay.mailin.fr>",
+   "event": "requests",
+   "subject": " O nome ... já está protegido?",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 5,
+   "ip": "77.32.148.27"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:26:45.992-04:00",
+   "messageId": "<202607090406.88916170617@smtp-relay.mailin.fr>",
+   "event": "opened",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "66.249.88.4"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:26:30.247-04:00",
+   "messageId": "<202607090424.72773807493@smtp-relay.mailin.fr>",
+   "event": "opened",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "74.125.213.38"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:25:57.663-04:00",
+   "messageId": "<202607090423.45833901690@smtp-relay.mailin.fr>",
+   "event": "opened",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "66.249.88.4"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:25:28.760-04:00",
+   "messageId": "<202607090424.72773807493@smtp-relay.mailin.fr>",
+   "event": "opened",
+   "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 8,
+   "ip": "74.125.213.38"
+  },
+  {
+   "email": "germano.consneo@gmail.com",
+   "date": "2026-07-09T00:24:40.000-04:00",
+   "messageId": "<202607090424.80669789693@smtp-relay.mailin.fr>",
+   "event": "delivered",
+   "subject": "Última mensagem — e uma condição especial para ",
+   "from": "contato@vertticonsultoria.com.br",
+   "templateId": 9,
+   "ip": "77.32.148.27"
+  }
+ ],
+ "resposta_bruta": {
+  "events": [
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T09:28:28.428-04:00",
+    "messageId": "<202607091324.10173363267@smtp-relay.mailin.fr>",
+    "event": "opened",
+    "subject": "[TESTE DIA 4] O que acontece quando outra empresa registra o seu nome primeiro",
+    "tag": "teste-motor-vertti",
+    "from": "contato@vertticonsultoria.com.br",
+    "ip": "66.249.88.5"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T09:26:45.110-04:00",
+    "messageId": "<202607091324.10173363267@smtp-relay.mailin.fr>",
+    "event": "clicks",
+    "subject": "[TESTE DIA 4] O que acontece quando outra empresa registra o seu nome primeiro",
+    "tag": "teste-motor-vertti",
+    "from": "contato@vertticonsultoria.com.br",
+    "link": "https://wa.me/5567981644664?text=Ol%C3%A1%2C%20quero%20verificar%20se%20minha%20marca%20est%C3%A1%20em%20risco",
+    "ip": "179.182.53.233"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T09:26:20.891-04:00",
+    "messageId": "<202607091324.10173363267@smtp-relay.mailin.fr>",
+    "event": "opened",
+    "subject": "[TESTE DIA 4] O que acontece quando outra empresa registra o seu nome primeiro",
+    "tag": "teste-motor-vertti",
+    "from": "contato@vertticonsultoria.com.br",
+    "ip": "66.249.88.1"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T09:24:25.000-04:00",
+    "messageId": "<202607091324.10173363267@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": "[TESTE DIA 4] O que acontece quando outra empresa registra o seu nome primeiro",
+    "tag": "teste-motor-vertti",
+    "from": "contato@vertticonsultoria.com.br",
+    "ip": "77.32.148.26"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T09:24:24.560-04:00",
+    "messageId": "<202607091324.10875643216@smtp-relay.mailin.fr>",
+    "event": "opened",
+    "subject": "[TESTE DIA 0] O nome \"Padaria Teste VERTTI\" já está protegido?",
+    "tag": "teste-motor-vertti",
+    "from": "contato@vertticonsultoria.com.br",
+    "ip": "172.20.36.214"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T09:24:24.000-04:00",
+    "messageId": "<202607091324.10875643216@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": "[TESTE DIA 0] O nome \"Padaria Teste VERTTI\" já está protegido?",
+    "tag": "teste-motor-vertti",
+    "from": "contato@vertticonsultoria.com.br",
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T09:24:24.000-04:00",
+    "messageId": "<202607091324.27840635924@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": "[TESTE DIA 11] Última mensagem — e uma condição especial para Padaria Teste VERTTI",
+    "tag": "teste-motor-vertti",
+    "from": "contato@vertticonsultoria.com.br",
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T09:24:23.902-04:00",
+    "messageId": "<202607091324.10173363267@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": "[TESTE DIA 4] O que acontece quando outra empresa registra o seu nome primeiro",
+    "tag": "teste-motor-vertti",
+    "from": "contato@vertticonsultoria.com.br",
+    "ip": "77.32.148.26"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T09:24:22.816-04:00",
+    "messageId": "<202607091324.27840635924@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": "[TESTE DIA 11] Última mensagem — e uma condição especial para Padaria Teste VERTTI",
+    "tag": "teste-motor-vertti",
+    "from": "contato@vertticonsultoria.com.br",
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T09:24:22.710-04:00",
+    "messageId": "<202607091324.10875643216@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": "[TESTE DIA 0] O nome \"Padaria Teste VERTTI\" já está protegido?",
+    "tag": "teste-motor-vertti",
+    "from": "contato@vertticonsultoria.com.br",
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:41:28.154-04:00",
+    "messageId": "<202607090441.62776365773@smtp-relay.mailin.fr>",
+    "event": "opened",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "74.125.213.37"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:41:24.000-04:00",
+    "messageId": "<202607090441.35240993553@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": "Última mensagem — e uma condição especial para ",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 9,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:41:23.014-04:00",
+    "messageId": "<202607090441.35240993553@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": "Última mensagem — e uma condição especial para ",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 9,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:41:23.000-04:00",
+    "messageId": "<202607090441.62776365773@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "77.32.148.26"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:41:22.808-04:00",
+    "messageId": "<202607090441.62776365773@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "77.32.148.26"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:41:22.000-04:00",
+    "messageId": "<202607090441.69752025271@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": " O nome ... já está protegido?",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 5,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:41:21.998-04:00",
+    "messageId": "<202607090441.69752025271@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": " O nome ... já está protegido?",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 5,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:39:37.560-04:00",
+    "messageId": "<202607090436.45245964657@smtp-relay.mailin.fr>",
+    "event": "opened",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "66.249.88.4"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:39:37.546-04:00",
+    "messageId": "<202607090439.50973102336@smtp-relay.mailin.fr>",
+    "event": "opened",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "74.125.213.37"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:39:31.034-04:00",
+    "messageId": "<202607090439.50973102336@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "77.32.148.26"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:39:31.000-04:00",
+    "messageId": "<202607090439.32353542566@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": " O nome ... já está protegido?",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 5,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:39:31.000-04:00",
+    "messageId": "<202607090439.50973102336@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "77.32.148.26"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:39:31.000-04:00",
+    "messageId": "<202607090439.47376829847@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": "Última mensagem — e uma condição especial para ",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 9,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:39:30.861-04:00",
+    "messageId": "<202607090439.47376829847@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": "Última mensagem — e uma condição especial para ",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 9,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:39:30.821-04:00",
+    "messageId": "<202607090439.32353542566@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": " O nome ... já está protegido?",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 5,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:36:52.000-04:00",
+    "messageId": "<202607090436.88883092053@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": "Última mensagem — e uma condição especial para ",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 9,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:36:51.446-04:00",
+    "messageId": "<202607090436.88883092053@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": "Última mensagem — e uma condição especial para ",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 9,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:36:51.000-04:00",
+    "messageId": "<202607090436.45245964657@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "77.32.148.26"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:36:51.000-04:00",
+    "messageId": "<202607090436.80475914989@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": " O nome ... já está protegido?",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 5,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:36:50.393-04:00",
+    "messageId": "<202607090436.45245964657@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "77.32.148.26"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:36:50.257-04:00",
+    "messageId": "<202607090436.80475914989@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": " O nome ... já está protegido?",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 5,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:34:00.886-04:00",
+    "messageId": "<202607090433.81911833405@smtp-relay.mailin.fr>",
+    "event": "opened",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "74.125.213.37"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:33:53.000-04:00",
+    "messageId": "<202607090433.12286856344@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": "Última mensagem — e uma condição especial para ",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 9,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:33:53.000-04:00",
+    "messageId": "<202607090433.81911833405@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "77.32.148.26"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:33:53.000-04:00",
+    "messageId": "<202607090433.18759117117@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": " O nome ... já está protegido?",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 5,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:33:52.773-04:00",
+    "messageId": "<202607090433.81911833405@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "77.32.148.26"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:33:52.237-04:00",
+    "messageId": "<202607090433.12286856344@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": "Última mensagem — e uma condição especial para ",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 9,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:33:52.111-04:00",
+    "messageId": "<202607090433.18759117117@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": " O nome ... já está protegido?",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 5,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:28:57.507-04:00",
+    "messageId": "<202607090428.39937877339@smtp-relay.mailin.fr>",
+    "event": "opened",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "66.249.88.5"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:28:49.000-04:00",
+    "messageId": "<202607090428.71435550798@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": "Última mensagem — e uma condição especial para ",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 9,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:28:49.000-04:00",
+    "messageId": "<202607090428.40756589219@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": " O nome ... já está protegido?",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 5,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:28:49.000-04:00",
+    "messageId": "<202607090428.39937877339@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "77.32.148.26"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:28:48.955-04:00",
+    "messageId": "<202607090428.39937877339@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "77.32.148.26"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:28:48.620-04:00",
+    "messageId": "<202607090428.71435550798@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": "Última mensagem — e uma condição especial para ",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 9,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:28:48.300-04:00",
+    "messageId": "<202607090428.40756589219@smtp-relay.mailin.fr>",
+    "event": "requests",
+    "subject": " O nome ... já está protegido?",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 5,
+    "ip": "77.32.148.27"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:26:45.992-04:00",
+    "messageId": "<202607090406.88916170617@smtp-relay.mailin.fr>",
+    "event": "opened",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "66.249.88.4"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:26:30.247-04:00",
+    "messageId": "<202607090424.72773807493@smtp-relay.mailin.fr>",
+    "event": "opened",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "74.125.213.38"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:25:57.663-04:00",
+    "messageId": "<202607090423.45833901690@smtp-relay.mailin.fr>",
+    "event": "opened",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "66.249.88.4"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:25:28.760-04:00",
+    "messageId": "<202607090424.72773807493@smtp-relay.mailin.fr>",
+    "event": "opened",
+    "subject": "O que acontece quando outra empresa registra o seu nome primeiro? Não é teoria — é o caso mais comum que atendo há 30 anos.",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 8,
+    "ip": "74.125.213.38"
+   },
+   {
+    "email": "germano.consneo@gmail.com",
+    "date": "2026-07-09T00:24:40.000-04:00",
+    "messageId": "<202607090424.80669789693@smtp-relay.mailin.fr>",
+    "event": "delivered",
+    "subject": "Última mensagem — e uma condição especial para ",
+    "from": "contato@vertticonsultoria.com.br",
+    "templateId": 9,
+    "ip": "77.32.148.27"
+   }
+  ]
+ }
+}
