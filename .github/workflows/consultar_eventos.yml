@@ -4,7 +4,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   consultar:
@@ -17,3 +17,12 @@ jobs:
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
           DEST_EMAIL: germano.consneo@gmail.com
         run: python3 consultar_eventos_brevo.py
+
+      - name: Publicar resultado (para leitura via API, sem depender de blob storage)
+        if: always()
+        run: |
+          git config user.name  "Teste VERTTI"
+          git config user.email "motor@vertticonsultoria.com.br"
+          git add resultado_eventos.json || true
+          git diff --cached --quiet || git commit -m "Resultado da consulta de eventos Brevo [skip ci]"
+          git push
