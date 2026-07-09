@@ -1,0 +1,9 @@
+{
+ "meses": 3,
+ "lote": 100,
+ "raios": "1,2",
+ "brevo_lista_id": 2,
+ "envio_automatico": true,
+ "max_rpis_por_execucao": 4,
+ "rpi_seed": 2895
+}
