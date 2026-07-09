@@ -32,11 +32,8 @@ except Exception as e:
     raise
 
 eventos = data.get("events", [])
-print(f"Total de eventos encontrados para {DEST}: {len(eventos)}\n")
-print("--- JSON bruto (para garantir que nada fica escondido) ---")
-print(json.dumps(data, ensure_ascii=False, indent=1)[:4000])
-print("--- resumo ---")
-for e in eventos:
-    print(f"{e.get('date','?'):25s} | evento={e.get('event','?'):12s} | "
-          f"assunto={e.get('subject','?')[:60]!r} | messageId={e.get('messageId','?')}"
-          f" | tag={e.get('tag','?')}")
+resultado = {"destinatario": DEST, "total_eventos": len(eventos), "eventos": eventos,
+             "resposta_bruta": data}
+with open("resultado_eventos.json", "w", encoding="utf-8") as f:
+    json.dump(resultado, f, ensure_ascii=False, indent=1)
+print(f"Total de eventos encontrados para {DEST}: {len(eventos)} -- gravado em resultado_eventos.json")
