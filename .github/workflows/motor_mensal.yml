@@ -1,0 +1,41 @@
+name: Motor VERTTI - Mensal (ciclo completo)
+
+on:
+  schedule:
+    - cron: '0 6 20 * *'   # todo dia 20, 06:00 UTC (~03:00 Brasília) — a Receita publica ~meio do mês
+  workflow_dispatch: {}     # botão "Rodar agora" no ADM
+
+permissions:
+  contents: write
+
+jobs:
+  ciclo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340    # margem para o download de ~5 GB
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pipeline completo (download -> destilaria -> lote -> INPI -> Brevo)
+        env:
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+        run: python3 motor/pipeline_ci.py mensal
+
+      - name: Guardar lote como artefato privado (LGPD - e-mails nunca vao ao repositorio)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lote-do-mes
+          path: |
+            motor/prospectos_brevo.csv
+            motor/conferencia_inpi.csv
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Commitar status, historico e base RPI
+        if: always()
+        run: |
+          git config user.name  "Motor VERTTI"
+          git config user.email "motor@vertticonsultoria.com.br"
+          git add motor_status.json motor_enviados.json marcas_ms.sqlite || true
+          git diff --cached --quiet || git commit -m "Motor mensal: ciclo executado [skip ci]"
+          git push
