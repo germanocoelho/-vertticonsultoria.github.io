@@ -1,7 +1,12 @@
 name: TESTE - Enviar sequencia de e-mail unica
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      qual_email:
+        description: 'Qual e-mail enviar: 1, 2, 3 ou todos'
+        required: true
+        default: 'todos'
 
 permissions:
   contents: read
@@ -12,8 +17,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Enviar os 3 e-mails de teste via Brevo
+      - name: Enviar e-mail(s) de teste via Brevo
         env:
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
           DEST_EMAIL: germano.consneo@gmail.com
+          QUAL_EMAIL: ${{ github.event.inputs.qual_email }}
         run: python3 teste_email_unico.py
