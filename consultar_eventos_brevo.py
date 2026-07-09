@@ -18,7 +18,7 @@ params = urllib.parse.urlencode({
     "limit": 50,
     "sort": "desc",
 })
-url = f"https://api.brevo.com/v3/smtp/emailEvents?{params}"
+url = f"https://api.brevo.com/v3/smtp/statistics/events?{params}"
 req = urllib.request.Request(url, headers={"api-key": BREVO_KEY, "Accept": "application/json"})
 try:
     with urllib.request.urlopen(req) as r:
@@ -33,6 +33,9 @@ except Exception as e:
 
 eventos = data.get("events", [])
 print(f"Total de eventos encontrados para {DEST}: {len(eventos)}\n")
+print("--- JSON bruto (para garantir que nada fica escondido) ---")
+print(json.dumps(data, ensure_ascii=False, indent=1)[:4000])
+print("--- resumo ---")
 for e in eventos:
     print(f"{e.get('date','?'):25s} | evento={e.get('event','?'):12s} | "
           f"assunto={e.get('subject','?')[:60]!r} | messageId={e.get('messageId','?')}"
