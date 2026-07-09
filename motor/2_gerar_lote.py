@@ -95,6 +95,9 @@ def main():
     ap.add_argument("--raios", default="1,2,3,4")
     ap.add_argument("--jucems", default=None,
                     help="CSV opcional MUNICIPIO;ABERTURAS (dados oficiais)")
+    ap.add_argument("--expirar-meses", type=int, default=15,
+                    help="desiste de um candidato se ficou este tempo na fila sem "
+                         "ser selecionado (padrão: 15 meses)")
     ap.add_argument("--saida", default="lote_bruto.csv")
     args = ap.parse_args()
 
@@ -103,10 +106,25 @@ def main():
     mun = {cod: nome for cod, nome in con.execute("SELECT cod, nome FROM municipios")}
 
     from datetime import date, timedelta
-    corte = (date.today() - timedelta(days=args.meses * 31)).strftime("%Y%m%d")
+    hoje = date.today()
+    corte = (hoje - timedelta(days=args.meses * 31)).strftime("%Y%m%d")
+    corte_expira = (hoje - timedelta(days=args.expirar_meses * 31)).strftime("%Y-%m-%d")
 
     tem_empresas = con.execute(
         "SELECT name FROM sqlite_master WHERE name='empresas_ms'").fetchone()
+
+    # ------------------------------------------------------------------
+    # FILA PERSISTENTE — corrige o risco de "envelhecimento silencioso":
+    # sem isso, uma empresa que aparece como candidata mas não cabe no
+    # lote de um mês (corte da janela rolante de --meses) podia desaparecer
+    # para sempre, sem nunca ter sido contatada, assim que a janela avançasse.
+    # Agora, toda empresa elegível entra na fila UMA VEZ e só sai dela quando
+    # for de fato selecionada num lote, ou quando expirar (--expirar-meses).
+    # ------------------------------------------------------------------
+    con.execute("""CREATE TABLE IF NOT EXISTS fila_candidatos (
+        cnpj TEXT PRIMARY KEY, cnpj_basico TEXT, nome_fantasia TEXT, cnae TEXT,
+        municipio_cod TEXT, bairro TEXT, ddd TEXT, telefone TEXT, email TEXT,
+        raio INTEGER, data_inicio TEXT, primeiro_visto TEXT, selecionado TEXT)""")
 
     # ---- sinal de prioridade por município -------------------------------
     momento = {}
@@ -124,13 +142,13 @@ def main():
             momento[mun.get(cod, cod)] = n
         print("Sinal de momento calculado da própria base (equivalente JUCEMS).")
 
-    # ---- seleção ---------------------------------------------------------
+    # ---- passo 1: todo mundo elegível na janela recente ENTRA na fila -----
     q = """SELECT e.cnpj, e.cnpj_basico, e.nome_fantasia, e.cnae, e.data_inicio,
                   e.municipio_cod, e.bairro, e.ddd, e.telefone, e.email
            FROM estab_ms e
            WHERE e.situacao='02' AND e.matriz='1' AND e.data_inicio >= ?
                  AND e.email <> ''"""
-    candidatos = []
+    novos = 0
     for row in con.execute(q, (corte,)):
         cnpj, basico, fantasia, cnae, ini, mcod, bairro, ddd, tel, email = row
         if not any(cnae.startswith(p) for p in CNAES_PRIORITARIOS):
@@ -139,14 +157,61 @@ def main():
             continue
         nome_mun = mun.get(mcod, "?")
         r = raio_do(nome_mun)
-        if r not in raios_ativos:
-            continue
-        candidatos.append((r, -momento.get(nome_mun, 0), nome_mun, cnpj, basico,
-                           fantasia, cnae, ini, bairro, ddd, tel, email))
+        cur = con.execute(
+            """INSERT OR IGNORE INTO fila_candidatos
+               (cnpj, cnpj_basico, nome_fantasia, cnae, municipio_cod, bairro,
+                ddd, telefone, email, raio, data_inicio, primeiro_visto, selecionado)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,NULL)""",
+            (cnpj, basico, fantasia, cnae, mcod, bairro, ddd, tel, email, r, ini,
+             hoje.isoformat()))
+        novos += cur.rowcount
+    con.commit()
+    print(f"Fila persistente: {novos} candidatos novos entraram nesta execução.")
 
-    # ordena: raio crescente -> momento decrescente -> abertura mais recente
-    candidatos.sort(key=lambda c: (c[0], c[1], c[7]), reverse=False)
+    # ---- passo 2: expira quem ficou tempo demais na fila sem ser chamado --
+    expirados = con.execute(
+        "SELECT COUNT(*) FROM fila_candidatos WHERE selecionado IS NULL "
+        "AND primeiro_visto < ?", (corte_expira,)).fetchone()[0]
+    if expirados:
+        con.execute("DELETE FROM fila_candidatos WHERE selecionado IS NULL "
+                    "AND primeiro_visto < ?", (corte_expira,))
+        con.commit()
+        print(f"Fila persistente: {expirados} candidatos expiraram "
+              f"(mais de {args.expirar_meses} meses na fila sem ser contatados).")
+
+    # ---- passo 3: seleção do lote vem da FILA, não da janela do mês -------
+    # (assim, quem entrou há 2 meses e não coube no lote de então continua
+    # na frente da fila agora, em vez de ter sumido silenciosamente)
+    placeholders = ",".join("?" * len(raios_ativos))
+    pendentes = con.execute(
+        f"""SELECT cnpj, cnpj_basico, nome_fantasia, cnae, municipio_cod, bairro,
+                   ddd, telefone, email, raio, data_inicio, primeiro_visto
+            FROM fila_candidatos
+            WHERE selecionado IS NULL AND raio IN ({placeholders})""",
+        raios_ativos).fetchall()
+
+    candidatos = []
+    for (cnpj, basico, fantasia, cnae, mcod, bairro, ddd, tel, email, r,
+         ini, primeiro_visto) in pendentes:
+        nome_mun = mun.get(mcod, "?")
+        candidatos.append((r, -momento.get(nome_mun, 0), primeiro_visto, nome_mun,
+                           cnpj, basico, fantasia, cnae, ini, bairro, ddd, tel, email))
+
+    # ordena: raio crescente -> cidade mais quente primeiro -> quem está na
+    # fila há mais tempo primeiro (evita novo envelhecimento dentro da própria fila)
+    candidatos.sort(key=lambda c: (c[0], c[1], c[2]))
     lote = candidatos[: args.lote]
+
+    if lote:
+        con.executemany(
+            "UPDATE fila_candidatos SET selecionado = ? WHERE cnpj = ?",
+            [(hoje.isoformat(), c[4]) for c in lote])
+        con.commit()
+
+    fila_restante = len(candidatos) - len(lote)
+    print(f"Fila de espera após este lote: {fila_restante} candidatos pendentes "
+          f"(entram no próximo lote automaticamente, sem precisar reaparecer na "
+          f"janela de {args.meses} meses).")
 
     razoes = {}
     if tem_empresas:
@@ -158,7 +223,7 @@ def main():
         w.writerow(["RAIO", "MUNICIPIO", "CNPJ", "RAZAO_SOCIAL", "NOME_FANTASIA",
                     "CNAE", "DATA_ABERTURA", "BAIRRO", "DDD", "TELEFONE", "EMAIL"])
         for c in lote:
-            r, _neg, nome_mun, cnpj, basico, fantasia, cnae, ini, bairro, ddd, tel, email = c
+            r, _neg, _visto, nome_mun, cnpj, basico, fantasia, cnae, ini, bairro, ddd, tel, email = c
             w.writerow([r, nome_mun, cnpj, razoes.get(basico, ""), fantasia,
                         cnae, ini, bairro, ddd, tel, email])
 
