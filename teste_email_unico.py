@@ -22,9 +22,9 @@ def enviar(assunto, html, tag):
         "sender": {"name": "Germano Coelho Ramos Rocha-Silva",
                    "email": "contato@vertticonsultoria.com.br"},
         "to": [{"email": DEST, "name": "Germano (teste)"}],
-        "subject": f"[TESTE {tag}] " + assunto,
+        "subject": f"[TESTE ESPAÇADO {tag}] " + assunto,
         "htmlContent": html,
-        "tags": ["teste-motor-vertti"],
+        "tags": ["teste-motor-vertti-espacado"],
     }
     req = urllib.request.Request(API, data=json.dumps(corpo).encode(), method="POST",
         headers={"api-key": BREVO_KEY, "Content-Type": "application/json",
@@ -120,9 +120,15 @@ VERTTI Consultoria · Campo Grande/MS<br>
 vertticonsultoria.com.br</p>
 """ + rodape
 
-r1 = enviar(f'O nome "{NOME_EMPRESA}" já está protegido?', email1, "DIA 0")
-r2 = enviar("O que acontece quando outra empresa registra o seu nome primeiro", email2, "DIA 4")
-r3 = enviar(f"Última mensagem — e uma condição especial para {NOME_EMPRESA}", email3, "DIA 11")
+r1 = r2 = r3 = True
+qual = os.environ.get("QUAL_EMAIL", "todos")  # "1", "2", "3" ou "todos"
+
+if qual in ("1", "todos"):
+    r1 = enviar(f'O nome "{NOME_EMPRESA}" já está protegido?', email1, "DIA 0")
+if qual in ("2", "todos"):
+    r2 = enviar("O que acontece quando outra empresa registra o seu nome primeiro", email2, "DIA 4")
+if qual in ("3", "todos"):
+    r3 = enviar(f"Última mensagem — e uma condição especial para {NOME_EMPRESA}", email3, "DIA 11")
 
 print()
 if r1 and r2 and r3:
