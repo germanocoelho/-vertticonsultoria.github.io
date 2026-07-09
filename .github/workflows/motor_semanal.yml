@@ -1,0 +1,27 @@
+name: Motor VERTTI - Semanal (RPI/INPI)
+
+on:
+  schedule:
+    - cron: '0 9 * * 3'   # toda quarta-feira, 09:00 UTC (~06:00 Brasília)
+  workflow_dispatch: {}    # botão "Rodar agora" no ADM
+
+permissions:
+  contents: write
+
+jobs:
+  rpi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Atualizar base RPI/INPI
+        run: python3 motor/pipeline_ci.py semanal
+
+      - name: Commitar base e status
+        run: |
+          git config user.name  "Motor VERTTI"
+          git config user.email "motor@vertticonsultoria.com.br"
+          git add marcas_ms.sqlite motor_status.json || true
+          git diff --cached --quiet || git commit -m "Motor semanal: base RPI atualizada [skip ci]"
+          git push
