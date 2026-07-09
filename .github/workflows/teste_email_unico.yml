@@ -1,0 +1,19 @@
+name: TESTE - Enviar sequencia de e-mail unica
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  teste:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enviar os 3 e-mails de teste via Brevo
+        env:
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          DEST_EMAIL: germano.consneo@gmail.com
+        run: python3 teste_email_unico.py
