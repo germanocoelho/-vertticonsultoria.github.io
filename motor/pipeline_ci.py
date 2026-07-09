@@ -195,15 +195,43 @@ def et_rpi(st, cfg):
 
 
 def et_lote(st, cfg):
+    raios = str(cfg.get("raios", "1,2"))
     r = rodar([sys.executable, "2_gerar_lote.py", "--db", BASE_DB,
                "--meses", str(cfg.get("meses", 3)),
                "--lote", str(cfg.get("lote", 100)),
-               "--raios", str(cfg.get("raios", "1,2")),
+               "--raios", raios,
                "--saida", os.path.join(RAIZ, "lote_bruto.csv")])
-    print(r.stdout[-1200:])
+    print(r.stdout[-1500:])
     if r.returncode != 0:
         etapa(st, "lote", "erro", "falha ao gerar lote", r.stderr[-300:])
         return False
+
+    # MITIGAÇÃO — raios configurados podem, com o tempo, esgotar o estoque de
+    # candidatos qualificados (empresas novas no CNAE certo). Sem isso, o
+    # lote mensal simplesmente encolheria mês a mês, silenciosamente, sem
+    # ninguém perceber. Dois comportamentos possíveis, ambos vindos da config:
+    gerados = re.search(r"Lote gerado \((\d+) contatos", r.stdout)
+    n_gerado = int(gerados.group(1)) if gerados else 0
+    alvo = int(cfg.get("lote", 100))
+    if n_gerado < 0.5 * alvo:
+        raios_atuais = [int(x) for x in raios.split(",")]
+        proximo = min(max(raios_atuais) + 1, 4)
+        if cfg.get("raios_auto_expandir", False) and proximo not in raios_atuais and proximo <= 4:
+            novos_raios = raios + f",{proximo}"
+            alerta(st, "aviso",
+                   f"Lote veio com só {n_gerado}/{alvo} contatos (raios {raios} "
+                   f"esgotando). Auto-expansão LIGADA: incluindo Raio {proximo} "
+                   f"a partir do próximo ciclo (motor_config.json atualizado).")
+            cfg["raios"] = novos_raios
+            gravar(CONFIG, cfg)
+        else:
+            texto_raio4 = " (você já está no Raio 4, cobertura máxima de MS)" if max(raios_atuais) >= 4 else ""
+            alerta(st, "aviso",
+                   f"Lote veio com só {n_gerado}/{alvo} contatos nos raios {raios} — "
+                   f"estoque de empresas novas qualificadas está diminuindo nesta "
+                   f"região{texto_raio4}. Ligue 'raios_auto_expandir' na configuração, "
+                   f"ou amplie os raios manualmente, se quiser manter o volume.")
+
     r2 = rodar([sys.executable, "3_cruzar_inpi_exportar.py",
                 "--db-marcas", MARCAS_DB, "--lote", os.path.join(RAIZ, "lote_bruto.csv")])
     print(r2.stdout[-1200:])
@@ -227,9 +255,10 @@ def et_lote(st, cfg):
     removidos_txt = re.search(r"Removidos.*?: (\d+)", r2.stdout)
     etapa(st, "filtro_inpi", "ok",
           f"{removidos_txt.group(1) if removidos_txt else '0'} removidos por marca existente")
-    etapa(st, "lote", "ok", f"{len(linhas)} contatos válidos "
-          f"(raios {cfg.get('raios','1,2')})",
-          f"dedupe ok; {invalidos} e-mails inválidos descartados")
+    fila_txt = re.search(r"Fila de espera após este lote: (\d+)", r.stdout)
+    etapa(st, "lote", "ok", f"{len(linhas)} contatos válidos (raios {raios})",
+          f"dedupe ok; {invalidos} e-mails inválidos descartados; "
+          f"fila persistente: {fila_txt.group(1) if fila_txt else '?'} aguardando o próximo ciclo")
     st["_lote"] = linhas
     return True
 
