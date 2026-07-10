@@ -2,51 +2,35 @@ name: Motor VERTTI - Mensal (ciclo completo)
 
 on:
   schedule:
-    - cron: '0 12 20 * *'  # todo dia 20, 12:00 UTC (~08:00 em Campo Grande/MS) — Receita publica ~meio do mês
-    # Início logo no começo do expediente: dá o dia inteiro de folga antes do
-    # limite de fila de 24h do GitHub, e cai num horário em que a máquina da
-    # empresa já costuma estar ligada — sem depender de ninguém madrugar.
+    - cron: '0 12 20 * *'  # todo dia 20, 12:00 UTC (~09:00 em Campo Grande/MS) — Receita publica ~meio do mês
   workflow_dispatch: {}     # botão "Rodar agora" no ADM
 
 permissions:
   contents: write
+  actions: write   # necessário para o motor_retry_diario.yml poder re-disparar este workflow
+
+concurrency:
+  group: motor-mensal
+  cancel-in-progress: false   # se o retry diário disparar de novo, ele espera na fila em vez de rodar em paralelo
 
 jobs:
   ciclo:
-    runs-on: [self-hosted, vertti-local]
+    runs-on: ubuntu-latest
     timeout-minutes: 340    # margem para o download de ~5 GB
-    defaults:
-      run:
-        shell: bash
     steps:
       - uses: actions/checkout@v4
-
-      - name: Detectar o comando Python desta máquina
-        id: py
-        run: |
-          if command -v python3 >/dev/null 2>&1; then
-            echo "cmd=python3" >> "$GITHUB_OUTPUT"
-          elif command -v python >/dev/null 2>&1; then
-            echo "cmd=python" >> "$GITHUB_OUTPUT"
-          else
-            echo "Python não encontrado nesta máquina. Instale Python 3.10+ e "
-            echo "garanta que 'python3' ou 'python' funcionem no Git Bash."
-            exit 1
-          fi
-          echo "Usando: $(command -v python3 || command -v python)"
 
       - name: Pipeline completo (download -> destilaria -> lote -> INPI -> Brevo)
         id: pipeline
         continue-on-error: true
         env:
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
-        run: ${{ steps.py.outputs.cmd }} motor/pipeline_ci.py mensal
+        run: python3 motor/pipeline_ci.py mensal
 
       - name: Diagnóstico (publicado direto pela API, sem depender de git)
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-          PY: ${{ steps.py.outputs.cmd }}
         run: |
           {
             echo "=== resultado do passo pipeline: ${{ steps.pipeline.outcome }} ==="
@@ -57,17 +41,17 @@ jobs:
             echo "=== motor/dados_receita (se existir) ==="; ls -la motor/dados_receita 2>&1 | head -30
             echo "=== conteudo motor_status.json (se existir) ==="; cat motor_status.json 2>&1
             echo "=== espaco em disco ==="; df -h . 2>&1
-            echo "=== python e versao ==="; $PY --version; command -v $PY
+            echo "=== python e versao ==="; python3 --version; command -v python3
           } > /tmp/diag.txt 2>&1
           cat /tmp/diag.txt
           B64=$(base64 -w0 /tmp/diag.txt 2>/dev/null || base64 /tmp/diag.txt | tr -d '\n')
-          SHA=$(curl -s -H "Authorization: token $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/contents/diagnostico_ultima_execucao.txt" | $PY -c "import json,sys; print(json.load(sys.stdin).get('sha',''))" 2>/dev/null || true)
+          SHA=$(curl -s -H "Authorization: token $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/contents/diagnostico_ultima_execucao.txt" | python3 -c "import json,sys; print(json.load(sys.stdin).get('sha',''))" 2>/dev/null || true)
           if [ -n "$SHA" ]; then
             BODY="{\"message\":\"Diagnóstico da execução\",\"content\":\"$B64\",\"sha\":\"$SHA\"}"
           else
             BODY="{\"message\":\"Diagnóstico da execução\",\"content\":\"$B64\"}"
           fi
-          curl -s -X PUT -H "Authorization: token $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/contents/diagnostico_ultima_execucao.txt" -d "$BODY" | $PY -c "import json,sys; d=json.load(sys.stdin); print('commit:', str(d.get('commit',{}).get('sha') or d)[:80])"
+          curl -s -X PUT -H "Authorization: token $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/contents/diagnostico_ultima_execucao.txt" -d "$BODY" | python3 -c "import json,sys; d=json.load(sys.stdin); print('commit:', str(d.get('commit',{}).get('sha') or d)[:80])"
 
       - name: Falhar o job de verdade se o pipeline falhou
         if: steps.pipeline.outcome == 'failure'

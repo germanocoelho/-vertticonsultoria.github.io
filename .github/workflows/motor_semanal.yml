@@ -2,11 +2,7 @@ name: Motor VERTTI - Semanal (RPI/INPI)
 
 on:
   schedule:
-    - cron: '0 13 * * 3'  # toda quarta-feira, 13:00 UTC (~09:00 em Campo Grande/MS, UTC-4)
-    # Horário de expediente de propósito: mesmo que o runner self-hosted não
-    # esteja online no minuto exato, o GitHub mantém o job na fila por até
-    # 24h esperando a máquina ligar — rodar dentro do expediente normal
-    # praticamente garante que isso nunca precise dessa margem.
+    - cron: '0 13 * * 3'  # toda quarta-feira, 13:00 UTC (~10:00 em Campo Grande/MS)
   workflow_dispatch: {}    # botão "Rodar agora" no ADM
 
 permissions:
@@ -14,28 +10,13 @@ permissions:
 
 jobs:
   rpi:
-    runs-on: [self-hosted, vertti-local]
+    runs-on: ubuntu-latest
     timeout-minutes: 30
-    defaults:
-      run:
-        shell: bash
     steps:
       - uses: actions/checkout@v4
 
-      - name: Detectar o comando Python desta máquina
-        id: py
-        run: |
-          if command -v python3 >/dev/null 2>&1; then
-            echo "cmd=python3" >> "$GITHUB_OUTPUT"
-          elif command -v python >/dev/null 2>&1; then
-            echo "cmd=python" >> "$GITHUB_OUTPUT"
-          else
-            echo "Python não encontrado nesta máquina."
-            exit 1
-          fi
-
       - name: Atualizar base RPI/INPI
-        run: ${{ steps.py.outputs.cmd }} motor/pipeline_ci.py semanal
+        run: python3 motor/pipeline_ci.py semanal
 
       - name: Commitar base e status
         if: always()

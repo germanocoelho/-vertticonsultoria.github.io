@@ -65,8 +65,8 @@ def status_novo(tipo):
         "etapas": {},
         "alertas": [],
         "metricas": carregar(STATUS, {}).get("metricas", {"enviados_total": 0}),
-        "proximas": {"semanal": "toda quarta-feira, 09:00 (Brasília ~06:00)",
-                      "mensal": "todo dia 20, 06:00 (Brasília ~03:00)"},
+        "proximas": {"semanal": "toda quarta-feira, 13:00 UTC (~10:00 Campo Grande/MS)",
+                      "mensal": "todo dia 20, 12:00 UTC (~09:00 Campo Grande/MS)"},
     }
 
 
@@ -107,12 +107,11 @@ def et_download(st, cfg):
         etapa(st, "download", "erro", detalhe_real, "ver diagnostico_ultima_execucao.txt")
         alerta(st, "erro",
                f"Download automático falhou: {detalhe_real}. "
-               "Isso já rodou na sua própria máquina (não é mais bloqueio de IP "
-               "de nuvem — esse problema foi eliminado ao mudar para runner "
-               "self-hosted). Prováveis causas agora: portal fora do ar, "
-               "formato de arquivo mudou, ou espaço em disco insuficiente. "
-               "Confira diagnostico_ultima_execucao.txt e, se for algo "
-               "temporário do portal, use o botão \"Rodar agora\" no ADM depois.")
+               "Isso roda 100% na nuvem do GitHub — não depende de nenhuma "
+               "máquina sua. Se for uma instabilidade temporária do portal da "
+               "Receita, o motor_retry_diario.yml tenta de novo sozinho, uma "
+               "vez por dia, até o dia 28 ou até dar certo. Nenhuma ação sua "
+               "é necessária a não ser que o alerta persista por vários dias.")
         return False
     m = re.search(r"Mês escolhido: (\d{4}-\d{2})", r.stdout)
     st["ref"] = m.group(1) if m else datetime.now().strftime("%Y-%m")

@@ -1,37 +1,40 @@
 # MOTOR VERTTI — Manual de Operação Mensal
 
-## Automação real na máquina da empresa (sem precisar de outro computador)
+## Automação real, 100% na nuvem — nada instalado em máquina nenhuma
 
-Os workflows rodam num **self-hosted runner** (label `vertti-local`) — ou seja,
-na própria máquina da empresa, não na nuvem do GitHub. Isso existe por um
-motivo específico: a Receita Federal às vezes bloqueia downloads vindos de
-IPs de datacenter; o IP normal da empresa não sofre esse bloqueio.
+Os workflows rodam em runners do próprio GitHub (`ubuntu-latest`), na nuvem.
+Não há nenhum runner self-hosted, nenhum serviço, nenhum instalador — porque
+você não tem como instalar nada na máquina da empresa, e não existe uma
+segunda máquina disponível. Essa restrição é definitiva e a arquitetura
+inteira respeita ela: zero dependência de qualquer computador seu ligado,
+zero passo manual recorrente.
 
-Isso só é "automático de verdade" se duas coisas estiverem garantidas:
+O ponto de atenção real é outro: o portal de dados abertos da Receita
+Federal é historicamente instável (cai com frequência, é lento, às vezes
+falha o download inteiro) — isso afeta qualquer cliente automatizado,
+não é algo específico da nuvem. Como o ciclo mensal só tem uma janela por
+mês, uma falha nesse dia poderia, em teoria, custar o mês inteiro. Por isso
+existe uma rede de segurança automática:
 
-**1. O runner precisa estar instalado como *serviço* do Windows** (não como
-algo que se abre manualmente numa janela). Isso é feito **uma única vez**:
-```
-config.cmd --url https://github.com/germanocoelho/-vertticonsultoria.github.io --token SEU_TOKEN_DE_REGISTRO --labels vertti-local
-```
-Quando ele perguntar `Would you like to run the runner as service? (Y/N)`,
-responda **Y**. A partir daí o runner liga sozinho todo boot do Windows,
-roda em segundo plano sem janela aberta, e você nunca mais precisa tocar
-nisso — nenhum duplo-clique, nenhum `.bat` para lembrar de rodar.
-
-**2. Você não precisa que o computador esteja ligado no minuto exato do
-agendamento.** O próprio GitHub garante isso: se o runner não estiver
-online na hora do cron, o job **fica na fila esperando até 24 horas** até
-uma máquina com o label certo aparecer online — só falha depois disso.
-Como os horários dos crons abaixo já caem dentro do expediente normal
-(quando o computador da empresa já costuma estar ligado), essa margem de
-24h praticamente nunca precisa ser usada.
+- **`motor_mensal.yml`** dispara todo dia 20 às 12:00 UTC e tenta o ciclo
+  completo (download → destilaria → lote → INPI → Brevo).
+- **`motor_retry_diario.yml`** roda sozinho todo dia, do dia 20 ao 28,
+  verificando se o ciclo deste mês já terminou com sucesso
+  (`motor_status.json` → `ref` bate com o mês atual e `etapas.download.status
+  == "ok"`). Se não bateu, ele **redispara o `motor_mensal.yml` sozinho**,
+  sem qualquer ação sua. Isso se repete diariamente até dar certo ou até o
+  dia 28, quando então vira um alerta que exige olhar o
+  `diagnostico_ultima_execucao.txt`.
+- Os dois workflows compartilham um `concurrency group`, então mesmo que o
+  retry dispare enquanto outra execução ainda está rodando, eles nunca
+  rodam em paralelo — um espera o outro.
 
 Os agendamentos atuais:
-- **Semanal** (RPI/INPI): toda quarta-feira, 13:00 UTC (~09:00 Campo Grande/MS)
-- **Mensal** (ciclo completo): todo dia 20, 12:00 UTC (~08:00 Campo Grande/MS)
+- **Semanal** (RPI/INPI): toda quarta-feira, 13:00 UTC (~10:00 Campo Grande/MS)
+- **Mensal** (ciclo completo): todo dia 20, 12:00 UTC (~09:00 Campo Grande/MS)
+- **Retry diário** (só do ciclo mensal): todo dia 20–28, 23:00 UTC
 
-Ambos também têm o botão **"Rodar agora"** (`workflow_dispatch`) no ADM,
+Todos também têm o botão **"Rodar agora"** (`workflow_dispatch`) no ADM,
 para disparar manualmente quando quiser, sem esperar o cron.
 
 ## A arquitetura em uma frase
