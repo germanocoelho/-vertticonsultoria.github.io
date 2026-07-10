@@ -39,20 +39,13 @@ jobs:
           } > /tmp/diag.txt 2>&1
           cat /tmp/diag.txt
           B64=$(base64 -w0 /tmp/diag.txt)
-          SHA=$(curl -s -H "Authorization: token $GH_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/contents/diagnostico_ultima_execucao.txt" \
-            | python3 -c "import json,sys
-try: print(json.load(sys.stdin)['sha'])
-except: pass")
+          SHA=$(curl -s -H "Authorization: token $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/contents/diagnostico_ultima_execucao.txt" | python3 -c "import json,sys; print(json.load(sys.stdin).get('sha',''))" 2>/dev/null || true)
           if [ -n "$SHA" ]; then
             BODY="{\"message\":\"Diagnóstico da execução\",\"content\":\"$B64\",\"sha\":\"$SHA\"}"
           else
             BODY="{\"message\":\"Diagnóstico da execução\",\"content\":\"$B64\"}"
           fi
-          curl -s -X PUT -H "Authorization: token $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/contents/diagnostico_ultima_execucao.txt" \
-            -d "$BODY" | python3 -c "import json,sys; d=json.load(sys.stdin); print('commit:', d.get('commit',{}).get('sha','ERRO: '+str(d))[:60])"
+          curl -s -X PUT -H "Authorization: token $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/contents/diagnostico_ultima_execucao.txt" -d "$BODY" | python3 -c "import json,sys; d=json.load(sys.stdin); print('commit:', str(d.get('commit',{}).get('sha') or d)[:80])"
 
       - name: Falhar o job de verdade se o pipeline falhou
         if: steps.pipeline.outcome == 'failure'
@@ -74,6 +67,6 @@ except: pass")
         run: |
           git config user.name  "Motor VERTTI"
           git config user.email "motor@vertticonsultoria.com.br"
-          git add motor_status.json motor_enviados.json marcas_ms.sqlite diagnostico_ultima_execucao.txt || true
+          git add motor_status.json motor_enviados.json marcas_ms.sqlite || true
           git diff --cached --quiet || git commit -m "Motor mensal: ciclo executado [skip ci]"
           git push
