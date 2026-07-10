@@ -194,13 +194,37 @@ def et_rpi(st, cfg):
     return True
 
 
-def et_lote(st, cfg):
+def et_jucems_real(st, cfg):
+    """Tenta buscar o dado oficial da JUCEMS via API do CKAN. Se falhar por
+    qualquer motivo (rede, formato do portal mudou, recurso renomeado), cai
+    de volta sozinho para o sinal calculado da própria base — nunca derruba
+    o ciclo mensal."""
+    caminho_jucems = os.path.join(RAIZ, "jucems_atual.csv")
+    r = rodar([sys.executable, "jucems_real.py", "--saida", caminho_jucems])
+    print(r.stdout[-800:])
+    if r.returncode == 0 and os.path.exists(os.path.join(RAIZ, "jucems_atual.csv")):
+        etapa(st, "jucems", "ok",
+              "dado oficial da JUCEMS obtido via API do CKAN (dados.ms.gov.br)",
+              "coluna localizada por nome, não por posição — tolera mudança de layout")
+        return caminho_jucems
+    else:
+        etapa(st, "jucems", "aviso",
+              "JUCEMS oficial indisponível neste ciclo — usando sinal calculado "
+              "da própria base (equivalente, sem depender do portal externo)",
+              "mitigação automática, não impede o ciclo de continuar")
+        return None
+
+
+def et_lote(st, cfg, caminho_jucems=None):
     raios = str(cfg.get("raios", "1,2"))
-    r = rodar([sys.executable, "2_gerar_lote.py", "--db", BASE_DB,
-               "--meses", str(cfg.get("meses", 3)),
-               "--lote", str(cfg.get("lote", 100)),
-               "--raios", raios,
-               "--saida", os.path.join(RAIZ, "lote_bruto.csv")])
+    cmd = [sys.executable, "2_gerar_lote.py", "--db", BASE_DB,
+           "--meses", str(cfg.get("meses", 3)),
+           "--lote", str(cfg.get("lote", 100)),
+           "--raios", raios,
+           "--saida", os.path.join(RAIZ, "lote_bruto.csv")]
+    if caminho_jucems:
+        cmd += ["--jucems", caminho_jucems]
+    r = rodar(cmd)
     print(r.stdout[-1500:])
     if r.returncode != 0:
         etapa(st, "lote", "erro", "falha ao gerar lote", r.stderr[-300:])
@@ -340,10 +364,6 @@ def main():
     args = ap.parse_args()
     cfg = carregar(CONFIG, {})
     st = status_novo(args.modo)
-    st["etapas"]["jucems"] = {
-        "status": "ok", "quando": agora(),
-        "detalhe": "sinal de momento calculado da própria base destilada",
-        "integridade": "equivalente ao Mapa de Empresas, sem dependência externa"}
 
     if args.modo == "semanal":
         et_rpi(st, cfg)
@@ -362,7 +382,8 @@ def main():
     if not et_destilaria(st, cfg):
         gravar(STATUS, st); return
     et_rpi(st, cfg)
-    if not et_lote(st, cfg):
+    caminho_jucems = et_jucems_real(st, cfg)
+    if not et_lote(st, cfg, caminho_jucems):
         gravar(STATUS, st); return
     et_dedupe_historico(st)
     et_brevo(st, cfg)
