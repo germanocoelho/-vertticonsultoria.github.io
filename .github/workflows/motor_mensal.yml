@@ -22,8 +22,10 @@ jobs:
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
         run: python3 motor/pipeline_ci.py mensal
 
-      - name: Diagnóstico (sempre grava o que houver, mesmo se o Python falhou)
+      - name: Diagnóstico (publicado direto pela API, sem depender de git)
         if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           {
             echo "=== resultado do passo pipeline: ${{ steps.pipeline.outcome }} ==="
@@ -33,8 +35,24 @@ jobs:
             echo "=== motor/dados_receita (se existir) ==="; ls -la motor/dados_receita 2>&1 | head -30
             echo "=== conteudo motor_status.json (se existir) ==="; cat motor_status.json 2>&1
             echo "=== espaco em disco ==="; df -h .
-          } > diagnostico_ultima_execucao.txt 2>&1
-          cat diagnostico_ultima_execucao.txt
+            echo "=== python e versao ==="; python3 --version; which python3
+          } > /tmp/diag.txt 2>&1
+          cat /tmp/diag.txt
+          B64=$(base64 -w0 /tmp/diag.txt)
+          SHA=$(curl -s -H "Authorization: token $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/contents/diagnostico_ultima_execucao.txt" \
+            | python3 -c "import json,sys
+try: print(json.load(sys.stdin)['sha'])
+except: pass")
+          if [ -n "$SHA" ]; then
+            BODY="{\"message\":\"Diagnóstico da execução\",\"content\":\"$B64\",\"sha\":\"$SHA\"}"
+          else
+            BODY="{\"message\":\"Diagnóstico da execução\",\"content\":\"$B64\"}"
+          fi
+          curl -s -X PUT -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/contents/diagnostico_ultima_execucao.txt" \
+            -d "$BODY" | python3 -c "import json,sys; d=json.load(sys.stdin); print('commit:', d.get('commit',{}).get('sha','ERRO: '+str(d))[:60])"
 
       - name: Falhar o job de verdade se o pipeline falhou
         if: steps.pipeline.outcome == 'failure'
