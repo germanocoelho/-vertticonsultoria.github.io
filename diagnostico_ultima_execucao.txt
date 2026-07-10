@@ -3,56 +3,56 @@
 /home/runner/work/-vertticonsultoria.github.io/-vertticonsultoria.github.io
 === arquivos na raiz do repo ===
 total 352
-drwxr-xr-x 5 runner runner   4096 Jul 10 03:35 .
-drwxr-xr-x 3 runner runner   4096 Jul 10 03:34 ..
-drwxr-xr-x 7 runner runner   4096 Jul 10 03:34 .git
-drwxr-xr-x 3 runner runner   4096 Jul 10 03:34 .github
--rw-r--r-- 1 runner runner     24 Jul 10 03:34 CNAME
--rw-r--r-- 1 runner runner     30 Jul 10 03:34 README.md
--rw-r--r-- 1 runner runner  17059 Jul 10 03:34 VERTTI_NOTICIAS.zip
--rw-r--r-- 1 runner runner  16940 Jul 10 03:34 captura.html
--rw-r--r-- 1 runner runner   2836 Jul 10 03:34 diagnostico_ultima_execucao.txt
--rw-r--r-- 1 runner runner  83869 Jul 10 03:34 escritorio.html
--rw-r--r-- 1 runner runner 168185 Jul 10 03:34 index.html
--rw-r--r-- 1 runner runner   8751 Jul 10 03:34 marca.html
-drwxr-xr-x 3 runner runner   4096 Jul 10 03:34 motor
--rw-r--r-- 1 runner runner    175 Jul 10 03:34 motor_config.json
--rw-r--r-- 1 runner runner    799 Jul 10 03:35 motor_status.json
--rw-r--r-- 1 runner runner     77 Jul 10 03:34 robots.txt
--rw-r--r-- 1 runner runner    280 Jul 10 03:34 sitemap.xml
+drwxr-xr-x 5 runner runner   4096 Jul 10 03:37 .
+drwxr-xr-x 3 runner runner   4096 Jul 10 03:36 ..
+drwxr-xr-x 7 runner runner   4096 Jul 10 03:36 .git
+drwxr-xr-x 3 runner runner   4096 Jul 10 03:36 .github
+-rw-r--r-- 1 runner runner     24 Jul 10 03:36 CNAME
+-rw-r--r-- 1 runner runner     30 Jul 10 03:36 README.md
+-rw-r--r-- 1 runner runner  17059 Jul 10 03:36 VERTTI_NOTICIAS.zip
+-rw-r--r-- 1 runner runner  16940 Jul 10 03:36 captura.html
+-rw-r--r-- 1 runner runner   2976 Jul 10 03:36 diagnostico_ultima_execucao.txt
+-rw-r--r-- 1 runner runner  83869 Jul 10 03:36 escritorio.html
+-rw-r--r-- 1 runner runner 168185 Jul 10 03:36 index.html
+-rw-r--r-- 1 runner runner   8751 Jul 10 03:36 marca.html
+drwxr-xr-x 3 runner runner   4096 Jul 10 03:36 motor
+-rw-r--r-- 1 runner runner    175 Jul 10 03:36 motor_config.json
+-rw-r--r-- 1 runner runner    935 Jul 10 03:37 motor_status.json
+-rw-r--r-- 1 runner runner     77 Jul 10 03:36 robots.txt
+-rw-r--r-- 1 runner runner    280 Jul 10 03:36 sitemap.xml
 === arquivos em motor/ ===
 total 92
-drwxr-xr-x 3 runner runner  4096 Jul 10 03:34 .
-drwxr-xr-x 5 runner runner  4096 Jul 10 03:35 ..
--rw-r--r-- 1 runner runner  9160 Jul 10 03:34 0_baixar_receita.py
--rw-r--r-- 1 runner runner  8329 Jul 10 03:34 1_destilar_ms.py
--rw-r--r-- 1 runner runner 10780 Jul 10 03:34 2_gerar_lote.py
--rw-r--r-- 1 runner runner  7712 Jul 10 03:34 3_cruzar_inpi_exportar.py
--rw-r--r-- 1 runner runner  7406 Jul 10 03:34 README_MOTOR.md
-drwxr-xr-x 2 runner runner  4096 Jul 10 03:34 dados_receita
--rw-r--r-- 1 runner runner  7807 Jul 10 03:34 jucems_real.py
--rw-r--r-- 1 runner runner 17799 Jul 10 03:34 pipeline_ci.py
+drwxr-xr-x 3 runner runner  4096 Jul 10 03:36 .
+drwxr-xr-x 5 runner runner  4096 Jul 10 03:37 ..
+-rw-r--r-- 1 runner runner  9160 Jul 10 03:36 0_baixar_receita.py
+-rw-r--r-- 1 runner runner  8329 Jul 10 03:36 1_destilar_ms.py
+-rw-r--r-- 1 runner runner 10780 Jul 10 03:36 2_gerar_lote.py
+-rw-r--r-- 1 runner runner  7712 Jul 10 03:36 3_cruzar_inpi_exportar.py
+-rw-r--r-- 1 runner runner  7406 Jul 10 03:36 README_MOTOR.md
+drwxr-xr-x 2 runner runner  4096 Jul 10 03:36 dados_receita
+-rw-r--r-- 1 runner runner  7807 Jul 10 03:36 jucems_real.py
+-rw-r--r-- 1 runner runner 17973 Jul 10 03:36 pipeline_ci.py
 === motor/dados_receita (se existir) ===
 total 8
-drwxr-xr-x 2 runner runner 4096 Jul 10 03:34 .
-drwxr-xr-x 3 runner runner 4096 Jul 10 03:34 ..
+drwxr-xr-x 2 runner runner 4096 Jul 10 03:36 .
+drwxr-xr-x 3 runner runner 4096 Jul 10 03:36 ..
 === conteudo motor_status.json (se existir) ===
 {
- "atualizado_em": "2026-07-10T03:35:14Z",
+ "atualizado_em": "2026-07-10T03:37:37Z",
  "tipo_ultima_execucao": "mensal",
  "etapas": {
   "download": {
    "status": "erro",
-   "quando": "2026-07-10T03:35:14Z",
-   "detalhe": "Consultando meses disponíveis no portal da Receita Federal...",
+   "quando": "2026-07-10T03:37:37Z",
+   "detalhe": "Não consegui conectar ao portal da Receita: timed out. URL: https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/",
    "integridade": "ver diagnostico_ultima_execucao.txt"
   }
  },
  "alertas": [
   {
    "nivel": "erro",
-   "msg": "Download automático falhou: Consultando meses disponíveis no portal da Receita Federal.... Mitigação: rode rodar_motor.bat na sua máquina este mês; o resto do pipeline continua funcionando localmente do mesmo jeito.",
-   "quando": "2026-07-10T03:35:14Z"
+   "msg": "Download automático falhou: Não consegui conectar ao portal da Receita: timed out. URL: https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/. Mitigação: rode rodar_motor.bat na sua máquina este mês; o resto do pipeline continua funcionando localmente do mesmo jeito.",
+   "quando": "2026-07-10T03:37:37Z"
   }
  ],
  "metricas": {
