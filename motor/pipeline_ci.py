@@ -34,6 +34,7 @@ REPO_RAIZ = os.path.dirname(RAIZ)
 STATUS = os.path.join(REPO_RAIZ, "motor_status.json")
 CONFIG = os.path.join(REPO_RAIZ, "motor_config.json")
 ENVIADOS = os.path.join(REPO_RAIZ, "motor_enviados.json")   # só hashes SHA-256
+FUNIL = os.path.join(REPO_RAIZ, "funil_historico.json")      # série histórica agregada, sem PII
 DADOS = os.path.join(RAIZ, "dados_receita")
 MARCAS_DB = os.path.join(REPO_RAIZ, "marcas_ms.sqlite")
 BASE_DB = os.path.join(RAIZ, "base_ms.sqlite")
@@ -292,10 +293,12 @@ def et_lote(st, cfg, caminho_jucems=None):
     etapa(st, "filtro_inpi", "ok",
           f"{removidos_txt.group(1) if removidos_txt else '0'} removidos por marca existente")
     fila_txt = re.search(r"Fila de espera após este lote: (\d+)", r.stdout)
+    fila_restante = int(fila_txt.group(1)) if fila_txt else None
     etapa(st, "lote", "ok", f"{len(linhas)} contatos válidos (raios {raios})",
           f"dedupe ok; {invalidos} e-mails inválidos descartados; "
-          f"fila persistente: {fila_txt.group(1) if fila_txt else '?'} aguardando o próximo ciclo")
+          f"fila persistente: {fila_restante if fila_restante is not None else '?'} aguardando o próximo ciclo")
     st["_lote"] = linhas
+    st["_fila_restante"] = fila_restante
     return True
 
 
@@ -368,6 +371,28 @@ def et_brevo(st, cfg):
     return True
 
 
+def et_funil(st, fila_restante=None):
+    """Registra uma linha no histórico agregado do funil, sem nenhum dado
+    pessoal (só contagens) -- serve para acompanhar a evolução mês a mês
+    sem depender de endpoints da Brevo que exigiriam e-mail/ID de contato
+    (o que o motor não guarda, por design, para respeitar a LGPD) ou de
+    campos que a própria Brevo já avisou que estão sendo depreciados."""
+    historico = carregar(FUNIL, [])
+    historico.append({
+        "data": agora(),
+        "tipo": st.get("tipo_ultima_execucao", ""),
+        "ref_dados": st.get("ref", ""),
+        "enviados_neste_ciclo": st.get("metricas", {}).get("ultimo_lote", 0),
+        "enviados_total_historico": st.get("metricas", {}).get("enviados_total", 0),
+        "fila_restante": fila_restante,
+    })
+    gravar(FUNIL, historico)
+    etapa(st, "funil", "ok",
+          f"{len(historico)} ciclo(s) no histórico — abertura/clique real fica em "
+          "Brevo: Automations > Workflows > Activity (não duplicado aqui para não "
+          "arriscar guardar dado pessoal nem depender de campo em depreciação)")
+
+
 # ======================================================================
 def main():
     ap = argparse.ArgumentParser()
@@ -399,7 +424,9 @@ def main():
         gravar(STATUS, st); sys.exit(1)
     et_dedupe_historico(st)
     et_brevo(st, cfg)
+    et_funil(st, fila_restante=st.get("_fila_restante"))
     st.pop("_lote", None)
+    st.pop("_fila_restante", None)
     gravar(STATUS, st)
     print("\n=== Pipeline mensal concluído — status gravado ===")
 
