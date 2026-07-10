@@ -246,6 +246,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600}
       <div class="tab" onclick="showPage('acoes',this)">Ações</div>
       <div class="tab" onclick="showPage('reposicionamento',this)">Reposicionamento</div>
       <div class="tab" onclick="showPage('captacao',this)">Captação</div>
+      <div class="tab" onclick="showPage('contratos',this)">Contratos</div>
       <div class="tab" onclick="showPage('motorauto',this);vMotorLoad()">Motor Auto</div>
       <div class="tab" onclick="showPage('motor',this)">Relatório Motor</div>
       <div class="tab" onclick="showPage('relatorios',this)">Relatórios</div>
@@ -466,7 +467,7 @@ function money(v){ return 'R$ '+v.toLocaleString('pt-BR'); }
 
 function renderAll(){
   const c=document.getElementById('pages');
-  c.innerHTML = pageHoje()+pageLeads()+pageFechamento()+pageFinanceiro()+pageSegmentacao()+pageNichos()+pageAcoes()+pageReposicionamento()+pageCaptacao()+pageMotorAuto()+pageMotor()+pageRelatorios();
+  c.innerHTML = pageHoje()+pageLeads()+pageFechamento()+pageFinanceiro()+pageSegmentacao()+pageNichos()+pageAcoes()+pageReposicionamento()+pageCaptacao()+pageContratos()+pageMotorAuto()+pageMotor()+pageRelatorios();
   // animar barras do funil
   setTimeout(()=>{
     document.querySelectorAll('[data-w]').forEach(b=>{ b.style.width=b.dataset.w+'%'; });
@@ -864,6 +865,22 @@ function vRefresh(tab){
 }
 function vMes(){ return new Date().toISOString().slice(0,7); }
 function vHoje(){ return new Date().toISOString().slice(0,10); }
+function vFmtData(iso){
+  if(!iso) return '—';
+  const [y,m,d]=iso.split('-');
+  return (d&&m&&y) ? `${d}/${m}/${y}` : iso;
+}
+function vAddMonthsClamp(iso,n){
+  // soma N meses a uma data ISO, "grudando" no último dia do mês de destino
+  // quando o mês de destino é mais curto (ex.: 31/jan +1 mês = 28/fev, não 3/mar)
+  const d=new Date(iso+'T00:00:00');
+  const dia=d.getDate();
+  d.setDate(1);
+  d.setMonth(d.getMonth()+n);
+  const ultimoDia=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+  d.setDate(Math.min(dia,ultimoDia));
+  return d.toISOString().slice(0,10);
+}
 function escHtml(s){ return String(s||'').replace(/[<>&"]/g,ch=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[ch])); }
 
 /* ---- CRUD leads reais ---- */
@@ -880,6 +897,206 @@ function vAddLead(){
 }
 function vLeadStatus(i,st){ const db=vdb(); db.leads[i].status=st; vsave(db); vRefresh('captacao'); }
 function vLeadDel(i){ if(!confirm('Excluir este lead?'))return; const db=vdb(); db.leads.splice(i,1); vsave(db); vRefresh('captacao'); }
+
+/* ---- CONTRATOS: fluxo real de fechamento ---- */
+function pageContratos(){
+  const db=vdb();
+  const fechados=db.leads.map((l,i)=>({...l,_i:i})).filter(l=>l.status==='fechado');
+  const inp='style="padding:9px 12px;border:1px solid var(--linha);border-radius:8px;font-family:inherit;font-size:.85rem;background:#fff"';
+  const btn='style="padding:9px 16px;border:none;border-radius:8px;background:var(--petroleo);color:#fff;font-weight:600;cursor:pointer;font-size:.85rem"';
+  const btng='style="padding:7px 13px;border:1px solid var(--linha);border-radius:8px;background:#fff;cursor:pointer;font-size:.78rem"';
+  const hoje=vHoje();
+  const statusLabel={pago:'Pago',aberto:'Em aberto',vence_breve:'Vence em breve',atrasado:'Atrasado'};
+  const statusTag={pago:'fin-pago',aberto:'fin-aberto',vence_breve:'fin-breve',atrasado:'fin-atraso'};
+  function statusParcela(p){
+    if(p.pago) return 'pago';
+    if(p.vencimento<hoje) return 'atrasado';
+    if((new Date(p.vencimento)-new Date(hoje))/86400000<=5) return 'vence_breve';
+    return 'aberto';
+  }
+  const tipos=['Busca e registro completo','Pacote completo','MEI/ME','Registro completo','Outro'];
+
+  const blocos=fechados.map(l=>{
+    const c=l.contrato||{};
+    const parcelas=c.parcelas||[];
+    const pagas=parcelas.filter(p=>p.pago).length;
+    const hist=(c.historicoValores||[]).slice().reverse();
+    const parcelaRows=parcelas.map((p,pi)=>{
+      const st=statusParcela(p);
+      return `<tr>
+        <td>${p.numero}/${parcelas.length}</td>
+        <td style="font-weight:600">${money(p.valor)}</td>
+        <td>${vFmtData(p.vencimento)}</td>
+        <td><span class="tag ${statusTag[st]}">${statusLabel[st]}</span></td>
+        <td>${p.pago?'':`<button onclick="vParcelaMarcar(${l._i},${pi})" ${btng}>Marcar pago</button>`}</td>
+      </tr>`;
+    }).join('') || `<tr><td colspan="5" style="color:var(--cinza)">Sem parcelamento gerado ainda — preencha e salve abaixo.</td></tr>`;
+    const histRows=hist.map(h=>`<div class="insight" style="margin-top:6px;padding:8px 12px;font-size:.8rem">
+        ${vFmtData(h.data)} — <b>${money(h.valor)}</b>${h.obs?' · '+escHtml(h.obs):''}</div>`).join('')
+      || '<div style="color:var(--cinza);font-size:.82rem">Nenhum valor lançado ainda.</div>';
+
+    return `<div class="panel" style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
+        <div><h3 style="margin-bottom:2px">${escHtml(l.empresa)}</h3>
+          <div class="ramo">${escHtml(l.cidade||'')}${l.contato?' · '+escHtml(l.contato):''}</div></div>
+        <div style="text-align:right">
+          <div style="font-weight:700;font-size:1.15rem">${money(c.valorTotal||l.valor||0)}</div>
+          <div style="font-size:.78rem;color:var(--cinza)">${pagas}/${parcelas.length||0} parcelas pagas</div>
+        </div>
+      </div>
+
+      <details style="margin-top:12px">
+        <summary style="cursor:pointer;font-weight:600;font-size:.85rem;color:var(--petroleo)">Editar contrato / lançar valor</summary>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px">
+          <select id="ct-tipo-${l._i}" ${inp}>${tipos.map(t=>`<option ${c.tipoContrato===t?'selected':''}>${t}</option>`).join('')}</select>
+          <input id="ct-total-${l._i}" type="number" placeholder="Valor total" value="${c.valorTotal||l.valor||''}" ${inp} style="width:130px">
+          <input id="ct-entrada-${l._i}" type="number" placeholder="Valor de entrada" value="${c.valorEntrada||''}" ${inp} style="width:130px">
+          <input id="ct-dataentrada-${l._i}" type="date" value="${c.dataEntrada||hoje}" ${inp}>
+          <input id="ct-numparc-${l._i}" type="number" min="1" placeholder="Nº parcelas do saldo" value="${c.numParcelas||1}" ${inp} style="width:170px">
+          <input id="ct-obs-${l._i}" placeholder="Observação (opcional)" ${inp} style="flex:1;min-width:160px">
+          <button onclick="vContratoSalvar(${l._i})" ${btn}>Salvar / gerar parcelas</button>
+        </div>
+        <div style="margin-top:10px">
+          <div style="font-size:.78rem;color:var(--cinza);margin-bottom:4px">Histórico de valores lançados (toda vez que o valor é salvo, fica registrado aqui)</div>
+          ${histRows}
+        </div>
+      </details>
+
+      <table class="lead-table" style="margin-top:14px">
+        <thead><tr><th>Parcela</th><th>Valor</th><th>Vencimento</th><th>Status</th><th></th></tr></thead>
+        <tbody>${parcelaRows}</tbody>
+      </table>
+
+      <div style="margin-top:12px">
+        <button onclick="vGerarContratoDoc(${l._i})" ${btng}>📄 Gerar contrato para envio</button>
+      </div>
+    </div>`;
+  }).join('') || `<div class="panel">Nenhum lead fechado ainda. Marque um lead como "Fechado" na aba Captação para começar um contrato aqui.</div>`;
+
+  return `<div class="page" id="page-contratos">
+    <h2 class="sec-title">Contratos</h2>
+    <div class="sec-sub">Fluxo real de fechamento: valor, entrada, parcelas e o contrato padrão pronto para enviar — sincronizado com a aba Captação.</div>
+    ${blocos}
+  </div>`;
+}
+
+function vContratoSalvar(i){
+  const g=id=>document.getElementById(id);
+  const db=vdb(); const l=db.leads[i];
+  if(!l){ alert('Lead não encontrado.'); return; }
+  const tipoContrato=g('ct-tipo-'+i).value;
+  const valorTotal=parseFloat(g('ct-total-'+i).value)||0;
+  const valorEntrada=parseFloat(g('ct-entrada-'+i).value)||0;
+  const dataEntrada=g('ct-dataentrada-'+i).value||vHoje();
+  const numParcelas=Math.max(1,parseInt(g('ct-numparc-'+i).value)||1);
+  const obs=g('ct-obs-'+i).value.trim();
+  if(valorTotal<=0){ alert('Informe o valor total do contrato.'); return; }
+  if(valorEntrada>valorTotal){ alert('O valor de entrada não pode ser maior que o valor total.'); return; }
+
+  l.contrato=l.contrato||{parcelas:[],historicoValores:[]};
+  const c=l.contrato;
+  c.historicoValores=c.historicoValores||[];
+  c.historicoValores.push({data:vHoje(),valor:valorTotal,obs});   // rastro de toda vez que um valor foi lançado/renegociado
+  c.tipoContrato=tipoContrato; c.valorTotal=valorTotal;
+  c.valorEntrada=valorEntrada; c.dataEntrada=dataEntrada; c.numParcelas=numParcelas;
+
+  const saldo=Math.max(0,valorTotal-valorEntrada);
+  const valorParcela=Math.floor((saldo/numParcelas)*100)/100;
+  const parcelas=[]; let acumulado=0;
+  for(let n=1;n<=numParcelas;n++){
+    const valor=n<numParcelas?valorParcela:Math.round((saldo-acumulado)*100)/100;
+    acumulado+=valor;
+    parcelas.push({numero:n,valor,vencimento:vAddMonthsClamp(dataEntrada,n),pago:false});
+  }
+  c.parcelas=parcelas;
+  l.valor=valorTotal;
+  vsave(db); vRefresh('contratos');
+}
+
+function vParcelaMarcar(i,pi){
+  const db=vdb(); const p=db.leads[i]&&db.leads[i].contrato&&db.leads[i].contrato.parcelas&&db.leads[i].contrato.parcelas[pi];
+  if(!p) return;
+  p.pago=true; p.pagoEm=vHoje();
+  vsave(db); vRefresh('contratos');
+}
+
+/* ---- Documento padrão do contrato: enxuto, com a marca, protetor sem ser abusivo ---- */
+function vGerarContratoDoc(i){
+  const db=vdb(); const l=db.leads[i];
+  if(!l){ alert('Lead não encontrado.'); return; }
+  const c=l.contrato||{};
+  const parcelas=c.parcelas||[];
+  const valorTotal=c.valorTotal||l.valor||0;
+  const valorEntrada=c.valorEntrada||0;
+  const parcelasHtml=parcelas.length
+    ? parcelas.map(p=>`<tr><td>${p.numero}ª parcela</td><td>${money(p.valor)}</td><td>${vFmtData(p.vencimento)}</td></tr>`).join('')
+    : `<tr><td colspan="3">${valorEntrada>0?'Saldo único após a entrada.':'Pagamento à vista, sem parcelamento.'}</td></tr>`;
+
+  const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Contrato — ${escHtml(l.empresa)}</title>
+<style>
+  body{font-family:'Georgia','Times New Roman',serif;max-width:720px;margin:36px auto;padding:0 22px;line-height:1.55;color:#222;font-size:.96rem}
+  .head{display:flex;align-items:center;gap:14px;border-bottom:2px solid #C9A24B;padding-bottom:14px;margin-bottom:22px}
+  .mark{width:46px;height:46px;border-radius:12px;flex:none;background:linear-gradient(135deg,#C9A24B,#E3C77E);
+    display:grid;place-items:center;font-family:Georgia,serif;font-weight:700;font-size:1.3rem;color:#0E2A36}
+  .brand b{font-family:Georgia,serif;font-size:1.15rem;color:#0E2A36;display:block;line-height:1.1}
+  .brand span{font-family:Arial,sans-serif;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:#8a6d2a}
+  h1{font-size:1.08rem;text-align:center;margin:0 0 4px}
+  .sub{text-align:center;color:#888;font-size:.76rem;margin-bottom:22px}
+  h2{font-size:.9rem;margin:20px 0 6px;color:#0E2A36}
+  p{margin:4px 0}
+  table{width:100%;border-collapse:collapse;margin:8px 0}
+  td,th{border:1px solid #ddd;padding:6px 9px;text-align:left;font-size:.86rem}
+  .clausula-protecao{font-size:.82rem;color:#444}
+  .assinaturas{margin-top:50px;display:flex;justify-content:space-between;gap:20px}
+  .assinaturas div{width:46%;text-align:center;border-top:1px solid #333;padding-top:6px;font-size:.86rem}
+  .print-btn{position:fixed;top:16px;right:16px;padding:10px 18px;background:#0E2A36;color:#fff;
+    border:none;border-radius:8px;cursor:pointer;font-family:Arial,sans-serif;font-size:.85rem}
+  @media print{ .print-btn{display:none} body{margin:0 auto} }
+</style></head><body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar como PDF</button>
+
+<div class="head">
+  <div class="mark">V</div>
+  <div class="brand"><b>VERTTI</b><span>Consultoria&nbsp;·&nbsp;Propriedade Industrial</span></div>
+</div>
+
+<h1>CONTRATO DE PRESTAÇÃO DE SERVIÇOS</h1>
+<div class="sub">Modelo padrão — revisar antes do primeiro uso real</div>
+
+<h2>Partes</h2>
+<p><b>Contratada:</b> VERTTI Consultoria, por Germano Coelho Ramos Rocha da Silva, Agente da Propriedade Industrial (INPI nº 588), Campo Grande/MS.</p>
+<p><b>Contratante:</b> ${escHtml(l.empresa)}${l.contato?', representada por '+escHtml(l.contato):''}, ${escHtml(l.cidade||'Campo Grande/MS')}.</p>
+
+<h2>Objeto</h2>
+<p>Prestação de serviços de <b>${escHtml(c.tipoContrato||'consultoria em propriedade industrial')}</b> perante o INPI, conforme escopo já apresentado e aceito pelas partes. Serviços adicionais não previstos aqui — como resposta a exigências, oposições de terceiros ou recursos — são orçados à parte.</p>
+
+<h2>Valor e forma de pagamento</h2>
+<p>Valor total: <b>${money(valorTotal)}</b>.${valorEntrada>0?` Entrada de <b>${money(valorEntrada)}</b> em ${vFmtData(c.dataEntrada||vHoje())}; saldo`:' Saldo'}${parcelas.length?` em ${parcelas.length} parcela(s):`:' à vista.'}</p>
+<table><thead><tr><th>Parcela</th><th>Valor</th><th>Vencimento</th></tr></thead><tbody>${parcelasHtml}</tbody></table>
+
+<h2>Condições gerais</h2>
+<div class="clausula-protecao">
+<p>• Taxas oficiais do INPI (GRU) não estão incluídas no valor acima; são repassadas pelo valor da tabela oficial vigente e, uma vez recolhidas ao INPI, não são reembolsáveis por serem taxas de terceiro.</p>
+<p>• O andamento e o resultado dos pedidos perante o INPI dependem do próprio Instituto e não são garantidos pela Contratada, que se compromete a manter a Contratante informada sobre despachos relevantes.</p>
+<p>• Atraso no pagamento além de 5 dias sujeita a parcela a multa de 2% e juros de 1% ao mês, sem prejuízo da suspensão dos atos processuais até a regularização.</p>
+<p>• O valor de entrada remunera os atos técnicos já iniciados (busca, análise, protocolo) e não é reembolsável após o início desses trabalhos.</p>
+<p>• As partes tratam como confidenciais as informações trocadas para a execução deste contrato.</p>
+<p>• Rescisão a qualquer tempo, mediante aviso por escrito, respeitados os serviços já prestados e valores já devidos.</p>
+<p>• Fica eleito o foro de Campo Grande/MS.</p>
+</div>
+
+<p style="margin-top:22px">Campo Grande/MS, ${vFmtData(vHoje())}.</p>
+<div class="assinaturas">
+  <div>VERTTI Consultoria<br>Germano Coelho Ramos Rocha da Silva</div>
+  <div>${escHtml(l.empresa)}</div>
+</div>
+</body></html>`;
+
+  const win=window.open('','_blank');
+  if(!win){ alert('O navegador bloqueou a nova janela. Permita pop-ups para gerar o contrato.'); return; }
+  win.document.write(html); win.document.close();
+}
 
 /* ---- CRUD lotes do motor ---- */
 function vAddLote(){
