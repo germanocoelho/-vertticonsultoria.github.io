@@ -99,9 +99,11 @@ def et_download(st, cfg):
     if r.stderr:
         print("STDERR:", r.stderr[-1000:])
     if r.returncode != 0 or "com falha" in r.stdout and ", 0 com falha" not in r.stdout:
-        detalhe_real = (r.stdout.strip().splitlines()[-1] if r.stdout.strip()
-                        else (r.stderr.strip().splitlines()[-1] if r.stderr.strip()
-                              else "sem saída do script"))
+        linhas_err = [l for l in r.stderr.strip().splitlines() if l.strip()]
+        linhas_out = [l for l in r.stdout.strip().splitlines() if l.strip()]
+        # sys.exit(mensagem) e tracebacks vão para o stderr — prioriza ali quando há falha real
+        detalhe_real = (linhas_err[-1] if linhas_err
+                        else (linhas_out[-1] if linhas_out else "sem saída do script"))
         etapa(st, "download", "erro", detalhe_real, "ver diagnostico_ultima_execucao.txt")
         alerta(st, "erro",
                f"Download automático falhou: {detalhe_real}. "
