@@ -22,9 +22,9 @@ def enviar(assunto, html, tag):
         "sender": {"name": "Germano Coelho Ramos Rocha-Silva",
                    "email": "contato@vertticonsultoria.com.br"},
         "to": [{"email": DEST, "name": "Germano (teste)"}],
-        "subject": f"[TESTE ESPAÇADO {tag}] " + assunto,
+        "subject": f"[TESTE REVISADO {tag}] " + assunto,
         "htmlContent": html,
-        "tags": ["teste-motor-vertti-espacado"],
+        "tags": ["teste-motor-vertti-revisado"],
     }
     req = urllib.request.Request(API, data=json.dumps(corpo).encode(), method="POST",
         headers={"api-key": BREVO_KEY, "Content-Type": "application/json",
@@ -47,19 +47,19 @@ rodape = ("<hr style='border:none;border-top:1px solid #ddd;margin:24px 0 10px'>
 
 email1 = f"""
 <p style='margin:0 0 14px'>Olá,</p>
-<p style='margin:0 0 14px'>Vi que a {NOME_EMPRESA} foi aberta há pouco tempo em
-{MUNICIPIO} — antes de mais nada, parabéns. Começar um
-negócio é das coisas mais difíceis e corajosas que existem.</p>
-<p style='margin:0 0 14px'>Escrevo por um motivo simples: o CNPJ protege a sua empresa, mas não
-protege o seu nome. São registros diferentes, em órgãos diferentes.
-Enquanto a marca não está registrada no INPI, qualquer outra empresa
-do Brasil pode registrar o mesmo nome primeiro — e aí quem muda de
-nome, refaz fachada, embalagem e redes sociais é quem chegou depois.</p>
-<p style='margin:0 0 14px'>Faço uma busca de viabilidade gratuita: verifico no INPI se o nome
-"{NOME_EMPRESA}" está livre e te devolvo um parecer curto,
-sem compromisso. Se estiver tudo livre, você fica sabendo que está no
-caminho certo. Se houver risco, melhor descobrir agora do que depois
-do negócio crescer.</p>
+<p style='margin:0 0 14px'>O CNPJ protege a sua empresa, mas não protege o seu nome. São registros
+diferentes, em órgãos diferentes: enquanto a marca não está registrada
+no INPI, qualquer outra empresa do Brasil pode registrar o mesmo nome
+primeiro — e aí quem muda de nome, refaz fachada, embalagem e redes
+sociais é quem chegou depois.</p>
+<p style='margin:0 0 14px'>Como a {NOME_EMPRESA} está começando agora em {MUNICIPIO}, este é
+justamente o melhor momento para verificar isso, antes de investir mais
+em fachada, embalagem e redes sociais em torno de um nome ainda não
+protegido.</p>
+<p style='margin:0 0 14px'>Posso verificar no INPI se o nome da empresa está livre e te devolvo um
+parecer curto, sem compromisso. Se estiver tudo livre, você fica sabendo
+que está no caminho certo. Se houver risco, melhor descobrir agora do
+que depois do negócio crescer.</p>
 <p style='margin:0 0 14px'>Quer que eu verifique? É só responder este e-mail ou me chamar no
 WhatsApp: <a href="https://wa.me/5567981644664?text=Ol%C3%A1%2C%20recebi%20o%20e-mail%20da%20VERTTI%20e%20quero%20a%20busca%20gratuita%20da%20minha%20marca">clique aqui</a></p>
 <p style='margin:0 0 14px'>Abraço,</p>
@@ -95,23 +95,22 @@ VERTTI Consultoria · Campo Grande/MS</p>
 
 email3 = f"""
 <p style='margin:0 0 14px'>Olá,</p>
-<p style='margin:0 0 14px'>Esta é a minha última mensagem — prometo não insistir.</p>
-<p style='margin:0 0 14px'>Só quero deixar claro com quem você estaria falando, porque em registro
-de marca a diferença entre um despachante e um especialista aparece
-justamente quando surge um problema:</p>
-<p style='margin:0 0 14px'>— 30+ anos de atuação em propriedade industrial;<br>
-— Agente da Propriedade Industrial habilitado no INPI (nº 588);<br>
-— Representei o Brasil em comitês da OMPI, em Genebra, nas negociações
-internacionais de tratados de propriedade industrial;<br>
-— Responsável pelo registro da primeira marca coletiva indígena do
-Brasil, reconhecida nacionalmente.</p>
-<p style='margin:0 0 14px'>Esse currículo normalmente vem com preço de São Paulo. Como a VERTTI atende
-empresas em todo o Mato Grosso do Sul, o valor é de mercado local —
-e para empresas recém-abertas como a {NOME_EMPRESA}, mantenho
-uma condição de entrada facilitada, além da taxa reduzida de 60% que o
-INPI já dá ao pequeno negócio.</p>
-<p style='margin:0 0 14px'>Se quiser a busca gratuita, é responder este e-mail. Se preferir deixar
-para depois, sem problema — só guarde este contato para quando precisar.</p>
+<p style='margin:0 0 14px'>Encerro por aqui o assunto da proteção do nome da {NOME_EMPRESA}, e
+aproveito para deixar claro com quem você estaria falando, porque em
+registro de marca a diferença entre um despachante e um especialista
+aparece justamente quando surge um problema:</p>
+<p style='margin:0 0 14px'>30+ anos de atuação em propriedade industrial. Agente da Propriedade
+Industrial habilitado no INPI, registro nº 588. Já representei o
+Brasil em comitês da OMPI, em Genebra, nas negociações internacionais
+de tratados de propriedade industrial, e fui responsável pelo registro
+da primeira marca coletiva indígena do Brasil, reconhecida
+nacionalmente.</p>
+<p style='margin:0 0 14px'>A VERTTI atende empresas em todo o Mato Grosso do Sul, com valor de
+mercado local, e empresas recém-abertas como a {NOME_EMPRESA} contam
+ainda com a taxa reduzida que o INPI aplica ao pequeno negócio.</p>
+<p style='margin:0 0 14px'>Se quiser a busca de viabilidade, é só responder este e-mail. Se
+preferir deixar para depois, sem problema — guarde este contato para
+quando precisar.</p>
 <p style='margin:0 0 14px'>WhatsApp: <a href="https://wa.me/5567981644664?text=Ol%C3%A1%2C%20quero%20aproveitar%20a%20condi%C3%A7%C3%A3o%20especial%20para%20registrar%20minha%20marca">clique aqui</a></p>
 <p style='margin:0 0 14px'>Um abraço, e sucesso com a {NOME_EMPRESA},</p>
 <p style='margin:0'>Germano Coelho Ramos Rocha da Silva<br>
@@ -124,11 +123,11 @@ r1 = r2 = r3 = True
 qual = os.environ.get("QUAL_EMAIL", "todos")  # "1", "2", "3" ou "todos"
 
 if qual in ("1", "todos"):
-    r1 = enviar(f'O nome "{NOME_EMPRESA}" já está protegido?', email1, "DIA 0")
+    r1 = enviar(f"A proteção do nome da {NOME_EMPRESA}", email1, "DIA 0")
 if qual in ("2", "todos"):
     r2 = enviar("O que acontece quando outra empresa registra o seu nome primeiro", email2, "DIA 4")
 if qual in ("3", "todos"):
-    r3 = enviar(f"Última mensagem — e uma condição especial para {NOME_EMPRESA}", email3, "DIA 11")
+    r3 = enviar(f"Fechando o assunto: registro de marca da {NOME_EMPRESA}", email3, "DIA 11")
 
 print()
 if r1 and r2 and r3:
