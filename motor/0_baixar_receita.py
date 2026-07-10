@@ -37,8 +37,8 @@ import urllib.error
 import urllib.request
 
 BASE = "https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/"
-UA = ("VERTTI-Consultoria-MotorCaptacao/1.0 "
-      "(uso de dados publicos para prospeccao B2B; contato@vertticonsultoria.com.br)")
+UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+      "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
 
 
 def http_get(url, timeout=60):
@@ -48,8 +48,14 @@ def http_get(url, timeout=60):
 
 def listar_meses_disponiveis():
     """Lê o índice raiz e devolve as pastas AAAA-MM em ordem decrescente (mais novo primeiro)."""
-    with http_get(BASE) as r:
-        html = r.read().decode("utf-8", errors="ignore")
+    try:
+        with http_get(BASE) as r:
+            html = r.read().decode("utf-8", errors="ignore")
+    except urllib.error.HTTPError as exc:
+        sys.exit(f"O portal da Receita recusou o acesso: HTTP {exc.code} ({exc.reason}). "
+                  f"URL: {BASE}")
+    except urllib.error.URLError as exc:
+        sys.exit(f"Não consegui conectar ao portal da Receita: {exc.reason}. URL: {BASE}")
     meses = sorted(set(re.findall(r'href="(\d{4}-\d{2})/"', html)), reverse=True)
     if not meses:
         sys.exit("Não consegui ler a lista de meses no portal. O site pode ter mudado "
@@ -60,8 +66,14 @@ def listar_meses_disponiveis():
 
 def listar_arquivos_do_mes(mes):
     url = f"{BASE}{mes}/"
-    with http_get(url) as r:
-        html = r.read().decode("utf-8", errors="ignore")
+    try:
+        with http_get(url) as r:
+            html = r.read().decode("utf-8", errors="ignore")
+    except urllib.error.HTTPError as exc:
+        sys.exit(f"O portal da Receita recusou o acesso à pasta do mês: HTTP {exc.code} "
+                  f"({exc.reason}). URL: {url}")
+    except urllib.error.URLError as exc:
+        sys.exit(f"Não consegui conectar à pasta do mês: {exc.reason}. URL: {url}")
     arquivos = sorted(set(re.findall(r'href="([^"]+\.zip)"', html)))
     return url, arquivos
 
