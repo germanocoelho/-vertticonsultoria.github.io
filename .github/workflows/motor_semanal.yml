@@ -2,7 +2,11 @@ name: Motor VERTTI - Semanal (RPI/INPI)
 
 on:
   schedule:
-    - cron: '0 9 * * 3'   # toda quarta-feira, 09:00 UTC (~06:00 Brasília)
+    - cron: '0 13 * * 3'  # toda quarta-feira, 13:00 UTC (~09:00 em Campo Grande/MS, UTC-4)
+    # Horário de expediente de propósito: mesmo que o runner self-hosted não
+    # esteja online no minuto exato, o GitHub mantém o job na fila por até
+    # 24h esperando a máquina ligar — rodar dentro do expediente normal
+    # praticamente garante que isso nunca precise dessa margem.
   workflow_dispatch: {}    # botão "Rodar agora" no ADM
 
 permissions:

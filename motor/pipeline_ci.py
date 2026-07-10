@@ -107,8 +107,12 @@ def et_download(st, cfg):
         etapa(st, "download", "erro", detalhe_real, "ver diagnostico_ultima_execucao.txt")
         alerta(st, "erro",
                f"Download automático falhou: {detalhe_real}. "
-               "Mitigação: rode rodar_motor.bat na sua máquina este mês; o resto "
-               "do pipeline continua funcionando localmente do mesmo jeito.")
+               "Isso já rodou na sua própria máquina (não é mais bloqueio de IP "
+               "de nuvem — esse problema foi eliminado ao mudar para runner "
+               "self-hosted). Prováveis causas agora: portal fora do ar, "
+               "formato de arquivo mudou, ou espaço em disco insuficiente. "
+               "Confira diagnostico_ultima_execucao.txt e, se for algo "
+               "temporário do portal, use o botão \"Rodar agora\" no ADM depois.")
         return False
     m = re.search(r"Mês escolhido: (\d{4}-\d{2})", r.stdout)
     st["ref"] = m.group(1) if m else datetime.now().strftime("%Y-%m")

@@ -1,5 +1,39 @@
 # MOTOR VERTTI — Manual de Operação Mensal
 
+## Automação real na máquina da empresa (sem precisar de outro computador)
+
+Os workflows rodam num **self-hosted runner** (label `vertti-local`) — ou seja,
+na própria máquina da empresa, não na nuvem do GitHub. Isso existe por um
+motivo específico: a Receita Federal às vezes bloqueia downloads vindos de
+IPs de datacenter; o IP normal da empresa não sofre esse bloqueio.
+
+Isso só é "automático de verdade" se duas coisas estiverem garantidas:
+
+**1. O runner precisa estar instalado como *serviço* do Windows** (não como
+algo que se abre manualmente numa janela). Isso é feito **uma única vez**:
+```
+config.cmd --url https://github.com/germanocoelho/-vertticonsultoria.github.io --token SEU_TOKEN_DE_REGISTRO --labels vertti-local
+```
+Quando ele perguntar `Would you like to run the runner as service? (Y/N)`,
+responda **Y**. A partir daí o runner liga sozinho todo boot do Windows,
+roda em segundo plano sem janela aberta, e você nunca mais precisa tocar
+nisso — nenhum duplo-clique, nenhum `.bat` para lembrar de rodar.
+
+**2. Você não precisa que o computador esteja ligado no minuto exato do
+agendamento.** O próprio GitHub garante isso: se o runner não estiver
+online na hora do cron, o job **fica na fila esperando até 24 horas** até
+uma máquina com o label certo aparecer online — só falha depois disso.
+Como os horários dos crons abaixo já caem dentro do expediente normal
+(quando o computador da empresa já costuma estar ligado), essa margem de
+24h praticamente nunca precisa ser usada.
+
+Os agendamentos atuais:
+- **Semanal** (RPI/INPI): toda quarta-feira, 13:00 UTC (~09:00 Campo Grande/MS)
+- **Mensal** (ciclo completo): todo dia 20, 12:00 UTC (~08:00 Campo Grande/MS)
+
+Ambos também têm o botão **"Rodar agora"** (`workflow_dispatch`) no ADM,
+para disparar manualmente quando quiser, sem esperar o cron.
+
 ## A arquitetura em uma frase
 Um script baixa a base sozinho (com retomada se cair a conexão); uma passada
 pesada **única** destila os 60 GB numa base local só-MS (SQLite); depois

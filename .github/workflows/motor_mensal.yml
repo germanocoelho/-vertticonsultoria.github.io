@@ -2,7 +2,10 @@ name: Motor VERTTI - Mensal (ciclo completo)
 
 on:
   schedule:
-    - cron: '0 6 20 * *'   # todo dia 20, 06:00 UTC (~03:00 Brasília) — a Receita publica ~meio do mês
+    - cron: '0 12 20 * *'  # todo dia 20, 12:00 UTC (~08:00 em Campo Grande/MS) — Receita publica ~meio do mês
+    # Início logo no começo do expediente: dá o dia inteiro de folga antes do
+    # limite de fila de 24h do GitHub, e cai num horário em que a máquina da
+    # empresa já costuma estar ligada — sem depender de ninguém madrugar.
   workflow_dispatch: {}     # botão "Rodar agora" no ADM
 
 permissions:
