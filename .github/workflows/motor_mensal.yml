@@ -16,9 +16,29 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Pipeline completo (download -> destilaria -> lote -> INPI -> Brevo)
+        id: pipeline
+        continue-on-error: true
         env:
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
         run: python3 motor/pipeline_ci.py mensal
+
+      - name: Diagnóstico (sempre grava o que houver, mesmo se o Python falhou)
+        if: always()
+        run: |
+          {
+            echo "=== resultado do passo pipeline: ${{ steps.pipeline.outcome }} ==="
+            echo "=== pwd ==="; pwd
+            echo "=== arquivos na raiz do repo ==="; ls -la
+            echo "=== arquivos em motor/ ==="; ls -la motor/ 2>&1
+            echo "=== motor/dados_receita (se existir) ==="; ls -la motor/dados_receita 2>&1 | head -30
+            echo "=== conteudo motor_status.json (se existir) ==="; cat motor_status.json 2>&1
+            echo "=== espaco em disco ==="; df -h .
+          } > diagnostico_ultima_execucao.txt 2>&1
+          cat diagnostico_ultima_execucao.txt
+
+      - name: Falhar o job de verdade se o pipeline falhou
+        if: steps.pipeline.outcome == 'failure'
+        run: exit 1
 
       - name: Guardar lote como artefato privado (LGPD - e-mails nunca vao ao repositorio)
         if: always()
@@ -31,11 +51,11 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
-      - name: Commitar status, historico e base RPI
+      - name: Commitar status, historico, base RPI e diagnostico
         if: always()
         run: |
           git config user.name  "Motor VERTTI"
           git config user.email "motor@vertticonsultoria.com.br"
-          git add motor_status.json motor_enviados.json marcas_ms.sqlite || true
+          git add motor_status.json motor_enviados.json marcas_ms.sqlite diagnostico_ultima_execucao.txt || true
           git diff --cached --quiet || git commit -m "Motor mensal: ciclo executado [skip ci]"
           git push
