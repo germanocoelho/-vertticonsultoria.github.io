@@ -373,18 +373,18 @@ def main():
     # mensal — cada etapa só roda se a anterior passou (mitigação em cascata)
     if not args.sem_download:
         if not et_download(st, cfg):
-            gravar(STATUS, st); return
+            gravar(STATUS, st); sys.exit(1)
     else:
         etapa(st, "download", "pulado", "usando ./dados_receita local")
         st.setdefault("ref", datetime.now().strftime("%Y-%m"))
     if not et_integridade_zips(st):
-        gravar(STATUS, st); return
+        gravar(STATUS, st); sys.exit(1)
     if not et_destilaria(st, cfg):
-        gravar(STATUS, st); return
+        gravar(STATUS, st); sys.exit(1)
     et_rpi(st, cfg)
     caminho_jucems = et_jucems_real(st, cfg)
     if not et_lote(st, cfg, caminho_jucems):
-        gravar(STATUS, st); return
+        gravar(STATUS, st); sys.exit(1)
     et_dedupe_historico(st)
     et_brevo(st, cfg)
     st.pop("_lote", None)
@@ -393,4 +393,20 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except Exception as exc:
+        import traceback
+        erro_txt = traceback.format_exc()
+        print("ERRO NÃO TRATADO:\n" + erro_txt, file=sys.stderr)
+        try:
+            st_emergencia = carregar(STATUS, status_novo("mensal"))
+            st_emergencia.setdefault("alertas", []).append({
+                "nivel": "erro", "quando": agora(),
+                "msg": f"Falha não tratada no pipeline: {exc}\n{erro_txt[-1500:]}"})
+            gravar(STATUS, st_emergencia)
+        except Exception:
+            pass  # mesmo o registro de emergência não pode travar a saída de erro
+        sys.exit(1)
