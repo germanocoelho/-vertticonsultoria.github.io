@@ -75,4 +75,11 @@ jobs:
           git config user.email "motor@vertticonsultoria.com.br"
           git add motor_status.json motor_enviados.json marcas_ms.sqlite || true
           git diff --cached --quiet || git commit -m "Motor mensal: ciclo executado [skip ci]"
-          git push
+          for tentativa in 1 2 3 4 5; do
+            if git push; then
+              break
+            fi
+            echo "push rejeitado (provavelmente o motor semanal empurrou ao mesmo tempo) — tentativa $tentativa/5, sincronizando e tentando de novo..."
+            git pull --rebase origin main
+            sleep $((tentativa * 5))
+          done

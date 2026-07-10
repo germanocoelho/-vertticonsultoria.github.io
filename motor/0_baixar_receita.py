@@ -25,8 +25,20 @@ IMPORTANTE — sobre bloqueio automático:
 USO
 ---
     python 0_baixar_receita.py --pasta ./dados_receita
-    python 0_baixar_receita.py --pasta ./dados_receita --mes 2026-06   (forçar um mês específico)
+    python 0_baixar_receita.py --pasta ./dados_receita --mes 2026-06-14   (forçar uma pasta/data específica)
     python 0_baixar_receita.py --pasta ./dados_receita --sem-empresas  (pula Empresas*.zip, mais rápido)
+
+NOTA — fonte dos dados (atualizado jul/2026):
+  A Receita Federal migrou o portal original para um repositório Nextcloud
+  em jan/2026, derrubando a URL antiga usada aqui (arquivos.receitafederal.
+  gov.br/dados/cnpj/dados_abertos_cnpj/ passou a dar HTTP 404). O Nextcloud
+  novo exige WebDAV para acesso programático confiável, o que é mais frágil
+  a médio prazo (token de compartilhamento pode expirar/mudar). Por isso,
+  este script usa o espelho público mantido pela Casa dos Dados
+  (dados-abertos-rf-cnpj.casadosdados.com.br), que replica os mesmos
+  arquivos com um índice HTTP padrão (Apache-style), atrás de CDN da
+  Cloudflare — mais estável para automação. Trade-off: esse espelho pode
+  ficar algumas semanas atrás do dado mais recente da Receita.
 """
 import argparse
 import os
@@ -36,7 +48,7 @@ import time
 import urllib.error
 import urllib.request
 
-BASE = "https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/"
+BASE = "https://dados-abertos-rf-cnpj.casadosdados.com.br/arquivos/"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
 
@@ -47,19 +59,19 @@ def http_get(url, timeout=60):
 
 
 def listar_meses_disponiveis():
-    """Lê o índice raiz e devolve as pastas AAAA-MM em ordem decrescente (mais novo primeiro)."""
+    """Lê o índice raiz e devolve as pastas AAAA-MM-DD em ordem decrescente (mais nova primeiro)."""
     try:
         with http_get(BASE) as r:
             html = r.read().decode("utf-8", errors="ignore")
     except urllib.error.HTTPError as exc:
-        sys.exit(f"O portal da Receita recusou o acesso: HTTP {exc.code} ({exc.reason}). "
+        sys.exit(f"O espelho recusou o acesso: HTTP {exc.code} ({exc.reason}). "
                   f"URL: {BASE}")
     except urllib.error.URLError as exc:
-        sys.exit(f"Não consegui conectar ao portal da Receita: {exc.reason}. URL: {BASE}")
-    meses = sorted(set(re.findall(r'href="(\d{4}-\d{2})/"', html)), reverse=True)
+        sys.exit(f"Não consegui conectar ao espelho: {exc.reason}. URL: {BASE}")
+    meses = sorted(set(re.findall(r'href="(\d{4}-\d{2}-\d{2})/"', html)), reverse=True)
     if not meses:
-        sys.exit("Não consegui ler a lista de meses no portal. O site pode ter mudado "
-                 "de layout ou estar bloqueando o acesso agora. Confira manualmente em:\n"
+        sys.exit("Não consegui ler a lista de datas no espelho. O site pode ter mudado "
+                 "de layout ou estar fora do ar. Confira manualmente em:\n"
                  + BASE)
     return meses
 
@@ -70,10 +82,10 @@ def listar_arquivos_do_mes(mes):
         with http_get(url) as r:
             html = r.read().decode("utf-8", errors="ignore")
     except urllib.error.HTTPError as exc:
-        sys.exit(f"O portal da Receita recusou o acesso à pasta do mês: HTTP {exc.code} "
+        sys.exit(f"O espelho recusou o acesso à pasta: HTTP {exc.code} "
                   f"({exc.reason}). URL: {url}")
     except urllib.error.URLError as exc:
-        sys.exit(f"Não consegui conectar à pasta do mês: {exc.reason}. URL: {url}")
+        sys.exit(f"Não consegui conectar à pasta: {exc.reason}. URL: {url}")
     arquivos = sorted(set(re.findall(r'href="([^"]+\.zip)"', html)))
     return url, arquivos
 
@@ -158,7 +170,7 @@ def baixar_com_retomada(url, destino, tentativas=5):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pasta", required=True)
-    ap.add_argument("--mes", default=None, help="AAAA-MM; padrão: o mais recente disponível")
+    ap.add_argument("--mes", default=None, help="AAAA-MM-DD (nome exato da pasta no espelho); padrão: a mais recente disponível")
     ap.add_argument("--sem-empresas", action="store_true",
                     help="pula Empresas*.zip (mais rápido, perde a razão social)")
     ap.add_argument("--pausa", type=float, default=3.0,
@@ -166,7 +178,7 @@ def main():
     args = ap.parse_args()
     os.makedirs(args.pasta, exist_ok=True)
 
-    print("Consultando meses disponíveis no portal da Receita Federal...")
+    print("Consultando datas disponíveis no espelho (Casa dos Dados)...")
     meses = listar_meses_disponiveis()
     mes = args.mes or meses[0]
     if mes not in meses:
