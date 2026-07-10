@@ -1,74 +1,145 @@
-=== resultado do passo pipeline: failure ===
+=== resultado do passo pipeline: success ===
 === maquina/runner ===
 runnervm5mmn9
 Linux runnervm5mmn9 6.17.0-1018-azure #18~24.04.1-Ubuntu SMP Thu May 28 16:39:11 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
 === pwd ===
 /home/runner/work/-vertticonsultoria.github.io/-vertticonsultoria.github.io
 === arquivos na raiz do repo ===
-total 352
-drwxr-xr-x 5 runner runner   4096 Jul 10 10:52 .
-drwxr-xr-x 3 runner runner   4096 Jul 10 10:52 ..
-drwxr-xr-x 7 runner runner   4096 Jul 10 10:52 .git
-drwxr-xr-x 3 runner runner   4096 Jul 10 10:52 .github
--rw-r--r-- 1 runner runner     24 Jul 10 10:52 CNAME
--rw-r--r-- 1 runner runner     30 Jul 10 10:52 README.md
--rw-r--r-- 1 runner runner  17059 Jul 10 10:52 VERTTI_NOTICIAS.zip
--rw-r--r-- 1 runner runner  16940 Jul 10 10:52 captura.html
--rw-r--r-- 1 runner runner   3112 Jul 10 10:52 diagnostico_ultima_execucao.txt
--rw-r--r-- 1 runner runner  83869 Jul 10 10:52 escritorio.html
--rw-r--r-- 1 runner runner 168185 Jul 10 10:52 index.html
--rw-r--r-- 1 runner runner   8751 Jul 10 10:52 marca.html
-drwxr-xr-x 3 runner runner   4096 Jul 10 10:52 motor
--rw-r--r-- 1 runner runner    175 Jul 10 10:52 motor_config.json
--rw-r--r-- 1 runner runner   1152 Jul 10 10:52 motor_status.json
--rw-r--r-- 1 runner runner     77 Jul 10 10:52 robots.txt
--rw-r--r-- 1 runner runner    280 Jul 10 10:52 sitemap.xml
+total 420
+drwxr-xr-x 5 runner runner   4096 Jul 10 11:07 .
+drwxr-xr-x 3 runner runner   4096 Jul 10 10:57 ..
+drwxr-xr-x 7 runner runner   4096 Jul 10 10:57 .git
+drwxr-xr-x 3 runner runner   4096 Jul 10 10:57 .github
+-rw-r--r-- 1 runner runner     24 Jul 10 10:57 CNAME
+-rw-r--r-- 1 runner runner     30 Jul 10 10:57 README.md
+-rw-r--r-- 1 runner runner  17059 Jul 10 10:57 VERTTI_NOTICIAS.zip
+-rw-r--r-- 1 runner runner  16940 Jul 10 10:57 captura.html
+-rw-r--r-- 1 runner runner   3560 Jul 10 10:57 diagnostico_ultima_execucao.txt
+-rw-r--r-- 1 runner runner  83869 Jul 10 10:57 escritorio.html
+-rw-r--r-- 1 runner runner 168185 Jul 10 10:57 index.html
+-rw-r--r-- 1 runner runner   8751 Jul 10 10:57 marca.html
+-rw-r--r-- 1 runner runner  61440 Jul 10 11:06 marcas_ms.sqlite
+drwxr-xr-x 3 runner runner   4096 Jul 10 11:06 motor
+-rw-r--r-- 1 runner runner    175 Jul 10 10:57 motor_config.json
+-rw-r--r-- 1 runner runner   6557 Jul 10 11:07 motor_enviados.json
+-rw-r--r-- 1 runner runner   2184 Jul 10 11:07 motor_status.json
+-rw-r--r-- 1 runner runner     77 Jul 10 10:57 robots.txt
+-rw-r--r-- 1 runner runner    280 Jul 10 10:57 sitemap.xml
 === arquivos em motor/ ===
-total 100
-drwxr-xr-x 3 runner runner  4096 Jul 10 10:52 .
-drwxr-xr-x 5 runner runner  4096 Jul 10 10:52 ..
--rw-r--r-- 1 runner runner  9160 Jul 10 10:52 0_baixar_receita.py
--rw-r--r-- 1 runner runner  8329 Jul 10 10:52 1_destilar_ms.py
--rw-r--r-- 1 runner runner 10780 Jul 10 10:52 2_gerar_lote.py
--rw-r--r-- 1 runner runner  7712 Jul 10 10:52 3_cruzar_inpi_exportar.py
--rw-r--r-- 1 runner runner  9513 Jul 10 10:52 README_MOTOR.md
-drwxr-xr-x 2 runner runner  4096 Jul 10 10:52 dados_receita
--rw-r--r-- 1 runner runner  7807 Jul 10 10:52 jucems_real.py
--rw-r--r-- 1 runner runner 18236 Jul 10 10:52 pipeline_ci.py
--rw-r--r-- 1 runner runner   852 Jul 10 10:52 verificar_ciclo_mensal.py
+total 276900
+drwxr-xr-x 3 runner runner      4096 Jul 10 11:06 .
+drwxr-xr-x 5 runner runner      4096 Jul 10 11:07 ..
+-rw-r--r-- 1 runner runner      9924 Jul 10 10:57 0_baixar_receita.py
+-rw-r--r-- 1 runner runner      8329 Jul 10 10:57 1_destilar_ms.py
+-rw-r--r-- 1 runner runner     10780 Jul 10 10:57 2_gerar_lote.py
+-rw-r--r-- 1 runner runner      7712 Jul 10 10:57 3_cruzar_inpi_exportar.py
+-rw-r--r-- 1 runner runner      9513 Jul 10 10:57 README_MOTOR.md
+-rw-r--r-- 1 runner runner 283394048 Jul 10 11:06 base_ms.sqlite
+-rw-r--r-- 1 runner runner     19146 Jul 10 11:06 conferencia_inpi.csv
+drwxr-xr-x 2 runner runner      4096 Jul 10 10:59 dados_receita
+-rw-r--r-- 1 runner runner      7807 Jul 10 10:57 jucems_real.py
+-rw-r--r-- 1 runner runner     14560 Jul 10 11:06 lote_bruto.csv
+-rw-r--r-- 1 runner runner     18236 Jul 10 10:57 pipeline_ci.py
+-rw-r--r-- 1 runner runner     11430 Jul 10 11:06 prospectos_brevo.csv
+-rw-r--r-- 1 runner runner       852 Jul 10 10:57 verificar_ciclo_mensal.py
 === motor/dados_receita (se existir) ===
-total 8
-drwxr-xr-x 2 runner runner 4096 Jul 10 10:52 .
-drwxr-xr-x 3 runner runner 4096 Jul 10 10:52 ..
+total 6457412
+drwxr-xr-x 2 runner runner       4096 Jul 10 10:59 .
+drwxr-xr-x 3 runner runner       4096 Jul 10 11:06 ..
+-rw-r--r-- 1 runner runner  536306613 Jul 10 10:57 Empresas0.zip
+-rw-r--r-- 1 runner runner   77886655 Jul 10 10:57 Empresas1.zip
+-rw-r--r-- 1 runner runner   79113673 Jul 10 10:57 Empresas2.zip
+-rw-r--r-- 1 runner runner   85111422 Jul 10 10:57 Empresas3.zip
+-rw-r--r-- 1 runner runner   90249714 Jul 10 10:57 Empresas4.zip
+-rw-r--r-- 1 runner runner   97356391 Jul 10 10:57 Empresas5.zip
+-rw-r--r-- 1 runner runner   94260601 Jul 10 10:57 Empresas6.zip
+-rw-r--r-- 1 runner runner   98770171 Jul 10 10:57 Empresas7.zip
+-rw-r--r-- 1 runner runner   98856528 Jul 10 10:57 Empresas8.zip
+-rw-r--r-- 1 runner runner   94424668 Jul 10 10:58 Empresas9.zip
+-rw-r--r-- 1 runner runner 2128818559 Jul 10 10:58 Estabelecimentos0.zip
+-rw-r--r-- 1 runner runner  341333959 Jul 10 10:58 Estabelecimentos1.zip
+-rw-r--r-- 1 runner runner  335550928 Jul 10 10:58 Estabelecimentos2.zip
+-rw-r--r-- 1 runner runner  366824247 Jul 10 10:58 Estabelecimentos3.zip
+-rw-r--r-- 1 runner runner  340652998 Jul 10 10:58 Estabelecimentos4.zip
+-rw-r--r-- 1 runner runner  336095448 Jul 10 10:58 Estabelecimentos5.zip
+-rw-r--r-- 1 runner runner  366882667 Jul 10 10:58 Estabelecimentos6.zip
+-rw-r--r-- 1 runner runner  340039907 Jul 10 10:59 Estabelecimentos7.zip
+-rw-r--r-- 1 runner runner  336134350 Jul 10 10:59 Estabelecimentos8.zip
+-rw-r--r-- 1 runner runner  367586784 Jul 10 10:59 Estabelecimentos9.zip
+-rw-r--r-- 1 runner runner      43443 Jul 10 10:59 Municipios.zip
 === conteudo motor_status.json (se existir) ===
 {
- "atualizado_em": "2026-07-10T10:52:59Z",
+ "atualizado_em": "2026-07-10T11:07:10Z",
  "tipo_ultima_execucao": "mensal",
  "etapas": {
   "download": {
-   "status": "erro",
-   "quando": "2026-07-10T10:52:59Z",
-   "detalhe": "O portal da Receita recusou o acesso: HTTP 404 (Not Found). URL: https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/",
-   "integridade": "ver diagnostico_ultima_execucao.txt"
+   "status": "ok",
+   "quando": "2026-07-10T10:59:15Z",
+   "detalhe": "21 arquivos, 6.6 GB, ref 2026-06",
+   "integridade": ""
+  },
+  "integridade_zips": {
+   "status": "ok",
+   "quando": "2026-07-10T11:00:28Z",
+   "detalhe": "todos os ZIPs íntegros",
+   "integridade": "zipfile.testzip aprovado em 100%"
+  },
+  "destilaria": {
+   "status": "ok",
+   "quando": "2026-07-10T11:06:12Z",
+   "detalhe": "967,972 estabelecimentos MS",
+   "integridade": "faixa de sanidade ok; Campo Grande presente"
+  },
+  "rpi": {
+   "status": "ok",
+   "quando": "2026-07-10T11:06:26Z",
+   "detalhe": "RPIs 2895-2896 processadas, +364 titulares MS (total 364)",
+   "integridade": ""
+  },
+  "jucems": {
+   "status": "aviso",
+   "quando": "2026-07-10T11:06:28Z",
+   "detalhe": "JUCEMS oficial indisponível neste ciclo — usando sinal calculado da própria base (equivalente, sem depender do portal externo)",
+   "integridade": "mitigação automática, não impede o ciclo de continuar"
+  },
+  "filtro_inpi": {
+   "status": "ok",
+   "quando": "2026-07-10T11:06:30Z",
+   "detalhe": "0 removidos por marca existente",
+   "integridade": ""
+  },
+  "lote": {
+   "status": "ok",
+   "quando": "2026-07-10T11:06:30Z",
+   "detalhe": "95 contatos válidos (raios 1,2)",
+   "integridade": "dedupe ok; 0 e-mails inválidos descartados; fila persistente: 2794 aguardando o próximo ciclo"
+  },
+  "dedupe_historico": {
+   "status": "ok",
+   "quando": "2026-07-10T11:06:30Z",
+   "detalhe": "95 inéditos; 0 já contatados em meses anteriores",
+   "integridade": "histórico por hash SHA-256 — nenhum e-mail exposto no repositório"
+  },
+  "brevo": {
+   "status": "ok",
+   "quando": "2026-07-10T11:07:10Z",
+   "detalhe": "95 contatos na lista Captação ativo (#2)",
+   "integridade": "a automação do Brevo dispara a sequência sozinha a partir daqui"
   }
  },
- "alertas": [
-  {
-   "nivel": "erro",
-   "msg": "Download automático falhou: O portal da Receita recusou o acesso: HTTP 404 (Not Found). URL: https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/. Isso roda 100% na nuvem do GitHub — não depende de nenhuma máquina sua. Se for uma instabilidade temporária do portal da Receita, o motor_retry_diario.yml tenta de novo sozinho, uma vez por dia, até o dia 28 ou até dar certo. Nenhuma ação sua é necessária a não ser que o alerta persista por vários dias.",
-   "quando": "2026-07-10T10:52:59Z"
-  }
- ],
+ "alertas": [],
  "metricas": {
-  "enviados_total": 0
+  "enviados_total": 95,
+  "ultimo_lote": 95
  },
  "proximas": {
   "semanal": "toda quarta-feira, 13:00 UTC (~10:00 Campo Grande/MS)",
   "mensal": "todo dia 20, 12:00 UTC (~09:00 Campo Grande/MS)"
- }
+ },
+ "ref": "2026-06"
 }=== espaco em disco ===
 Filesystem      Size  Used Avail Use% Mounted on
-/dev/root       145G   56G   89G  39% /
+/dev/root       145G   63G   82G  44% /
 === python e versao ===
 Python 3.12.3
 /usr/bin/python3
