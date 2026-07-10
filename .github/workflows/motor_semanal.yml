@@ -10,15 +10,31 @@ permissions:
 
 jobs:
   rpi:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, vertti-local]
     timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
 
+      - name: Detectar o comando Python desta máquina
+        id: py
+        run: |
+          if command -v python3 >/dev/null 2>&1; then
+            echo "cmd=python3" >> "$GITHUB_OUTPUT"
+          elif command -v python >/dev/null 2>&1; then
+            echo "cmd=python" >> "$GITHUB_OUTPUT"
+          else
+            echo "Python não encontrado nesta máquina."
+            exit 1
+          fi
+
       - name: Atualizar base RPI/INPI
-        run: python3 motor/pipeline_ci.py semanal
+        run: ${{ steps.py.outputs.cmd }} motor/pipeline_ci.py semanal
 
       - name: Commitar base e status
+        if: always()
         run: |
           git config user.name  "Motor VERTTI"
           git config user.email "motor@vertticonsultoria.com.br"
