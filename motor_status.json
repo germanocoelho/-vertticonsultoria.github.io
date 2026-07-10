@@ -1,60 +1,12 @@
 {
- "atualizado_em": "2026-07-10T11:07:10Z",
- "tipo_ultima_execucao": "mensal",
+ "atualizado_em": "2026-07-10T12:36:06Z",
+ "tipo_ultima_execucao": "semanal",
  "etapas": {
-  "download": {
-   "status": "ok",
-   "quando": "2026-07-10T10:59:15Z",
-   "detalhe": "21 arquivos, 6.6 GB, ref 2026-06",
-   "integridade": ""
-  },
-  "integridade_zips": {
-   "status": "ok",
-   "quando": "2026-07-10T11:00:28Z",
-   "detalhe": "todos os ZIPs íntegros",
-   "integridade": "zipfile.testzip aprovado em 100%"
-  },
-  "destilaria": {
-   "status": "ok",
-   "quando": "2026-07-10T11:06:12Z",
-   "detalhe": "967,972 estabelecimentos MS",
-   "integridade": "faixa de sanidade ok; Campo Grande presente"
-  },
   "rpi": {
-   "status": "ok",
-   "quando": "2026-07-10T11:06:26Z",
-   "detalhe": "RPIs 2895-2896 processadas, +364 titulares MS (total 364)",
-   "integridade": ""
-  },
-  "jucems": {
    "status": "aviso",
-   "quando": "2026-07-10T11:06:28Z",
-   "detalhe": "JUCEMS oficial indisponível neste ciclo — usando sinal calculado da própria base (equivalente, sem depender do portal externo)",
-   "integridade": "mitigação automática, não impede o ciclo de continuar"
-  },
-  "filtro_inpi": {
-   "status": "ok",
-   "quando": "2026-07-10T11:06:30Z",
-   "detalhe": "0 removidos por marca existente",
-   "integridade": ""
-  },
-  "lote": {
-   "status": "ok",
-   "quando": "2026-07-10T11:06:30Z",
-   "detalhe": "95 contatos válidos (raios 1,2)",
-   "integridade": "dedupe ok; 0 e-mails inválidos descartados; fila persistente: 2794 aguardando o próximo ciclo"
-  },
-  "dedupe_historico": {
-   "status": "ok",
-   "quando": "2026-07-10T11:06:30Z",
-   "detalhe": "95 inéditos; 0 já contatados em meses anteriores",
-   "integridade": "histórico por hash SHA-256 — nenhum e-mail exposto no repositório"
-  },
-  "brevo": {
-   "status": "ok",
-   "quando": "2026-07-10T11:07:10Z",
-   "detalhe": "95 contatos na lista Captação ativo (#2)",
-   "integridade": "a automação do Brevo dispara a sequência sozinha a partir daqui"
+   "quando": "2026-07-10T12:36:06Z",
+   "detalhe": "RPIs 2897-2900 indisponíveis (números futuros ou INPI fora do ar)",
+   "integridade": "base anterior preservada — nada foi perdido"
   }
  },
  "alertas": [],
@@ -65,6 +17,5 @@
  "proximas": {
   "semanal": "toda quarta-feira, 13:00 UTC (~10:00 Campo Grande/MS)",
   "mensal": "todo dia 20, 12:00 UTC (~09:00 Campo Grande/MS)"
- },
- "ref": "2026-06"
+ }
 }
