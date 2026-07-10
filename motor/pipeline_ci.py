@@ -216,10 +216,14 @@ def et_jucems_real(st, cfg):
               "coluna localizada por nome, não por posição — tolera mudança de layout")
         return caminho_jucems
     else:
+        # jucems_real.py imprime "AVISO: <motivo real>" em vez de lançar
+        # exceção crua — capturamos essa linha para o status ficar
+        # autoexplicado, em vez de repetir sempre a mesma frase genérica.
+        linhas_aviso = [l for l in r.stdout.strip().splitlines() if l.startswith("AVISO:")]
+        motivo = linhas_aviso[-1][len("AVISO: "):] if linhas_aviso else "motivo não capturado (ver stdout do passo no log do Actions)"
         etapa(st, "jucems", "aviso",
-              "JUCEMS oficial indisponível neste ciclo — usando sinal calculado "
-              "da própria base (equivalente, sem depender do portal externo)",
-              "mitigação automática, não impede o ciclo de continuar")
+              f"JUCEMS oficial indisponível neste ciclo: {motivo}",
+              "mitigação automática (sinal calculado da própria base) — não impede o ciclo de continuar")
         return None
 
 
