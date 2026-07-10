@@ -96,12 +96,15 @@ def rodar(cmd):
 def et_download(st, cfg):
     r = rodar([sys.executable, "0_baixar_receita.py", "--pasta", DADOS])
     print(r.stdout[-2000:])
+    if r.stderr:
+        print("STDERR:", r.stderr[-1000:])
     if r.returncode != 0 or "com falha" in r.stdout and ", 0 com falha" not in r.stdout:
-        etapa(st, "download", "erro",
-              "Servidor da Receita recusou parte dos arquivos",
-              "ver log do Actions")
+        detalhe_real = (r.stdout.strip().splitlines()[-1] if r.stdout.strip()
+                        else (r.stderr.strip().splitlines()[-1] if r.stderr.strip()
+                              else "sem saída do script"))
+        etapa(st, "download", "erro", detalhe_real, "ver diagnostico_ultima_execucao.txt")
         alerta(st, "erro",
-               "Download automático falhou (portal pode bloquear IPs de nuvem). "
+               f"Download automático falhou: {detalhe_real}. "
                "Mitigação: rode rodar_motor.bat na sua máquina este mês; o resto "
                "do pipeline continua funcionando localmente do mesmo jeito.")
         return False
