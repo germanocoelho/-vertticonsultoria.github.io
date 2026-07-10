@@ -953,6 +953,7 @@ function pageContratos(){
           <input id="ct-entrada-${l._i}" type="number" placeholder="Valor de entrada" value="${c.valorEntrada||''}" ${inp} style="width:130px">
           <input id="ct-dataentrada-${l._i}" type="date" value="${c.dataEntrada||hoje}" ${inp}>
           <input id="ct-numparc-${l._i}" type="number" min="1" placeholder="Nº parcelas do saldo" value="${c.numParcelas||1}" ${inp} style="width:170px">
+          <input id="ct-email-${l._i}" type="email" placeholder="E-mail do cliente (para envio)" value="${c.clienteEmail||''}" ${inp} style="min-width:220px">
           <input id="ct-obs-${l._i}" placeholder="Observação (opcional)" ${inp} style="flex:1;min-width:160px">
           <button onclick="vContratoSalvar(${l._i})" ${btn}>Salvar / gerar parcelas</button>
         </div>
@@ -967,8 +968,11 @@ function pageContratos(){
         <tbody>${parcelaRows}</tbody>
       </table>
 
-      <div style="margin-top:12px">
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
         <button onclick="vGerarContratoDoc(${l._i})" ${btng}>📄 Gerar contrato para envio</button>
+        ${c.assinado
+          ? `<span style="font-size:.78rem;color:#1f7a42">✓ Assinado em ${vFmtData(c.assinadoEm)}</span>`
+          : `<button onclick="vMarcarAssinado(${l._i})" ${btng}>✍ Marcar como assinado (recebi de volta)</button>`}
       </div>
     </div>`;
   }).join('') || `<div class="panel">Nenhum lead fechado ainda. Marque um lead como "Fechado" na aba Captação para começar um contrato aqui.</div>`;
@@ -989,6 +993,7 @@ function vContratoSalvar(i){
   const valorEntrada=parseFloat(g('ct-entrada-'+i).value)||0;
   const dataEntrada=g('ct-dataentrada-'+i).value||vHoje();
   const numParcelas=Math.max(1,parseInt(g('ct-numparc-'+i).value)||1);
+  const clienteEmail=g('ct-email-'+i).value.trim();
   const obs=g('ct-obs-'+i).value.trim();
   if(valorTotal<=0){ alert('Informe o valor total do contrato.'); return; }
   if(valorEntrada>valorTotal){ alert('O valor de entrada não pode ser maior que o valor total.'); return; }
@@ -999,6 +1004,7 @@ function vContratoSalvar(i){
   c.historicoValores.push({data:vHoje(),valor:valorTotal,obs});   // rastro de toda vez que um valor foi lançado/renegociado
   c.tipoContrato=tipoContrato; c.valorTotal=valorTotal;
   c.valorEntrada=valorEntrada; c.dataEntrada=dataEntrada; c.numParcelas=numParcelas;
+  c.clienteEmail=clienteEmail;
 
   const saldo=Math.max(0,valorTotal-valorEntrada);
   const valorParcela=Math.floor((saldo/numParcelas)*100)/100;
@@ -1020,6 +1026,20 @@ function vParcelaMarcar(i,pi){
   vsave(db); vRefresh('contratos');
 }
 
+function vMarcarAssinado(i){
+  // Passo manual e honesto: enquanto a assinatura eletrônica de verdade
+  // (Autentique/D4Sign/Clicksign) não está conectada via API, este botão
+  // registra que o contrato voltou assinado. O PDF assinado em si deve
+  // ficar guardado fora deste repositório público (Google Drive, e-mail,
+  // ou a própria plataforma de assinatura) -- nunca no repositório
+  // público do site, por conter dado pessoal do cliente.
+  const db=vdb(); const l=db.leads[i];
+  if(!l||!l.contrato) return;
+  l.contrato.assinado=true;
+  l.contrato.assinadoEm=vHoje();
+  vsave(db); vRefresh('contratos');
+}
+
 /* ---- Documento padrão do contrato: enxuto, com a marca, protetor sem ser abusivo ---- */
 function vGerarContratoDoc(i){
   const db=vdb(); const l=db.leads[i];
@@ -1031,6 +1051,23 @@ function vGerarContratoDoc(i){
   const parcelasHtml=parcelas.length
     ? parcelas.map(p=>`<tr><td>${p.numero}ª parcela</td><td>${money(p.valor)}</td><td>${vFmtData(p.vencimento)}</td></tr>`).join('')
     : `<tr><td colspan="3">${valorEntrada>0?'Saldo único após a entrada.':'Pagamento à vista, sem parcelamento.'}</td></tr>`;
+
+  const assuntoEmail=encodeURIComponent(`VERTTI Consultoria — Contrato de Prestação de Serviços — ${l.empresa}`);
+  const corpoEmail=encodeURIComponent(
+`Olá${l.contato?', '+l.contato:''}!
+
+Segue em anexo o contrato de prestação de serviços da VERTTI Consultoria referente a ${c.tipoContrato||'nossos serviços'}.
+
+Valor total: R$ ${valorTotal.toLocaleString('pt-BR')}
+${valorEntrada>0?'Entrada: R$ '+valorEntrada.toLocaleString('pt-BR')+'\n':''}
+Por favor, confira os dados, assine e nos devolva uma cópia assinada.
+
+Qualquer dúvida, estou à disposição.
+
+Germano Coelho — VERTTI Consultoria`);
+  const mailtoHref=`mailto:${escHtml(c.clienteEmail||'')}?subject=${assuntoEmail}&body=${corpoEmail}`;
+  const textoWa=encodeURIComponent(`Olá${l.contato?', '+l.contato:''}! Segue o contrato de prestação de serviços da VERTTI referente a ${c.tipoContrato||'nossos serviços'} (${money(valorTotal)}). Vou anexar o PDF em seguida. Qualquer dúvida, me chama por aqui.`);
+  const waHref=`https://wa.me/?text=${textoWa}`;
 
   const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <title>Contrato — ${escHtml(l.empresa)}</title>
@@ -1052,9 +1089,14 @@ function vGerarContratoDoc(i){
   .assinaturas div{width:46%;text-align:center;border-top:1px solid #333;padding-top:6px;font-size:.86rem}
   .print-btn{position:fixed;top:16px;right:16px;padding:10px 18px;background:#0E2A36;color:#fff;
     border:none;border-radius:8px;cursor:pointer;font-family:Arial,sans-serif;font-size:.85rem}
-  @media print{ .print-btn{display:none} body{margin:0 auto} }
+  .send-btn{position:fixed;top:16px;background:#fff;color:#0E2A36;border:1px solid #0E2A36;
+    border-radius:8px;cursor:pointer;font-family:Arial,sans-serif;font-size:.82rem;padding:9px 16px;text-decoration:none;display:inline-block}
+  @media print{ .print-btn,.send-btn{display:none} body{margin:0 auto} }
 </style></head><body>
 <button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar como PDF</button>
+<a class="send-btn" style="right:190px" href="${mailtoHref}">✉ Enviar por e-mail</a>
+<a class="send-btn" style="right:16px;top:64px" href="${waHref}" target="_blank">💬 Enviar por WhatsApp</a>
+<p style="text-align:center;color:#999;font-size:.74rem;margin-top:-6px">Passo a passo: 1) clique em Imprimir e escolha "Salvar como PDF" 2) depois clique em E-mail/WhatsApp e anexe o PDF salvo</p>
 
 <div class="head">
   <div class="mark">V</div>
