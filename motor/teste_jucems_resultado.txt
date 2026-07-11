@@ -1,5 +1,9 @@
 Recurso atual da JUCEMS: https://www.jucems.ms.gov.br/wp-content/uploads/2026/07/Empresas_Constituidas.csv
-AVISO: JUCEMS indisponível ou mudou de formato (Não achei coluna de município entre: ['Período', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Total']). O motor usará o sinal calculado da própria base neste ciclo.
-codigo_saida=2
+Sem quebra por município neste ciclo (Não achei coluna de município entre: ['Período', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Total']) — tentando o total estadual...
+
+JUCEMS real (SOMENTE ESTADUAL — a JUCEMS parou de publicar por cidade neste recurso): período 2026, mês JUN: 1266 constituições; acumulado no ano: 8978.
+Salvo em /tmp/jucems_teste.csv com o total estadual — não é usado na pontuação por cidade (nenhum município bate com esse marcador), mas fica registrado no status para acompanhamento.
+codigo_saida=0
 --- CSV gerado? ---
-nao
+sim, 1 linhas
+MS_ESTADUAL_SEM_QUEBRA_POR_MUNICIPIO;1266
