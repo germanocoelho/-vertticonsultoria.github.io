@@ -1,0 +1,24 @@
+name: Teste isolado - JUCEMS
+
+on:
+  workflow_dispatch: {}   # só disparo manual — não faz parte do ciclo automático
+
+jobs:
+  testar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Roda jucems_real.py isolado (sem download, sem Brevo, sem e-mail)
+        working-directory: motor
+        run: |
+          python3 jucems_real.py --saida /tmp/jucems_teste.csv
+          echo "--- código de saída: $? ---"
+          echo "--- primeiras linhas do CSV, se gerado ---"
+          if [ -f /tmp/jucems_teste.csv ]; then
+            head -5 /tmp/jucems_teste.csv
+            wc -l /tmp/jucems_teste.csv
+          else
+            echo "Nenhum CSV gerado."
+          fi
