@@ -6,7 +6,7 @@
 <title>Escritório Digital · VERTTI Consultoria</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --petroleo:#0E2A36; --petroleo-2:#12384a; --petroleo-soft:#16475c;
@@ -203,6 +203,47 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600}
   .two-col{grid-template-columns:1fr}
   .nicho-row .nm{width:90px}
 }
+
+/* ── O FAROL — vigia de prazos (assinatura visual) ──────────── */
+.farol-box{position:relative;border-radius:20px;overflow:hidden;margin-bottom:24px;
+  background:
+    radial-gradient(600px 300px at 15% 0%, rgba(227,199,126,.10), transparent 60%),
+    linear-gradient(175deg, #071722 0%, #0A222E 45%, #061319 100%);
+  box-shadow:0 24px 60px -24px rgba(6,19,25,.55);
+  padding:26px 28px 22px}
+.farol-topo{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.farol-titulo{font-family:'Fraunces',serif;font-weight:600;color:var(--ouro-claro);font-size:1.15rem;display:flex;align-items:center;gap:10px}
+.farol-lampada{width:22px;height:22px;border-radius:50%;flex:none;
+  background:radial-gradient(circle at 35% 30%, #fff6da, var(--ouro-claro) 55%, var(--ouro) 90%);
+  box-shadow:0 0 18px 5px rgba(227,199,126,.55),0 0 3px 1px #fff8e6 inset;animation:farol-respira 3s ease-in-out infinite}
+@keyframes farol-respira{0%,100%{box-shadow:0 0 18px 5px rgba(227,199,126,.55),0 0 3px 1px #fff8e6 inset}
+  50%{box-shadow:0 0 30px 9px rgba(227,199,126,.75),0 0 4px 1px #fff8e6 inset}}
+.farol-sub{font-size:.76rem;color:rgba(246,242,233,.55);margin-top:2px}
+.farol-mar{display:flex;gap:16px;overflow-x:auto;padding:6px 2px 10px;scrollbar-width:thin}
+.farol-mar::-webkit-scrollbar{height:6px}
+.farol-mar::-webkit-scrollbar-thumb{background:rgba(227,199,126,.25);border-radius:6px}
+.boia{flex:none;width:112px;text-align:center;cursor:pointer;transition:transform .15s}
+.boia:hover{transform:translateY(-3px)}
+.boia-luz{width:52px;height:52px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;
+  font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.76rem;color:#071722}
+.boia-luz.f-perigo{background:radial-gradient(circle at 32% 28%,#FFE9C2,#E3B23C 55%,#8a5c12);
+  box-shadow:0 0 24px 6px rgba(227,178,60,.65);animation:farol-pulsa 1.3s infinite}
+.boia-luz.f-atencao{background:radial-gradient(circle at 32% 28%,#EFE6CE,#C9A24B 60%,#7a5f22);box-shadow:0 0 14px 3px rgba(201,162,75,.4)}
+.boia-luz.f-tranquila{background:radial-gradient(circle at 32% 28%,#DCE7EA,#8FAAB4 65%,#4b6169);box-shadow:0 0 8px 1px rgba(143,170,180,.25);color:#071722}
+@keyframes farol-pulsa{50%{box-shadow:0 0 34px 10px rgba(227,178,60,.85)}}
+.boia-dias{font-size:.66rem;font-weight:700;color:var(--marfim)}
+.boia-nome{font-size:.62rem;color:rgba(246,242,233,.55);line-height:1.25;margin-top:2px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.farol-vazio{color:rgba(246,242,233,.45);font-size:.82rem;padding:20px 4px}
+@media (prefers-reduced-motion:reduce){.farol-lampada,.boia-luz.f-perigo{animation:none}}
+
+/* ── KPIs reais ────────────────────────────────────────────── */
+.kpi-real-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px}
+.kpi-real{background:var(--card);border:1px solid var(--linha);border-radius:16px;padding:18px 20px;
+  box-shadow:0 8px 24px -18px rgba(14,42,54,.25)}
+.kpi-real .kr-label{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--cinza)}
+.kpi-real .kr-valor{font-family:'Fraunces',serif;font-weight:600;font-size:1.9rem;color:var(--petroleo);margin-top:4px}
+.kpi-real .kr-nota{font-size:.72rem;color:var(--cinza);margin-top:3px}
 </style>
 </head>
 <body>
@@ -236,7 +277,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600}
 
   <div class="wrap">
     <div class="tabs">
-      <div class="tab active" onclick="showPage('hoje',this)">Hoje</div>
+      <div class="tab active" onclick="showPage('hoje',this)">🔦 O Farol</div>
       <div class="tab" onclick="showPage('leads',this)">Leads</div>
       <div class="tab" onclick="showPage('fechamento',this)">Fechamento</div>
       <div class="tab" onclick="showPage('financeiro',this)">Financeiro</div>
@@ -473,30 +514,70 @@ function renderAll(){
   },100);
 }
 
-/* ===== HOJE ===== */
+/* ===== O FAROL — painel de abertura, com dados reais ===== */
+function diasAte(iso){
+  if(!iso) return null;
+  const hoje=new Date(); hoje.setHours(0,0,0,0);
+  const d=new Date(iso+'T00:00:00');
+  return Math.round((d-hoje)/86400000);
+}
 function pageHoje(){
-  const h=DADOS.hoje;
+  const db=vdb();
+  const leads=db.leads||[];
+
+  // ---- boias: toda parcela em aberto de todo contrato fechado ----
+  const boias=[];
+  leads.forEach((l,i)=>{
+    if(l.status!=='fechado'||!l.contrato||!l.contrato.parcelas)return;
+    l.contrato.parcelas.forEach(p=>{
+      if(p.pago)return;
+      const d=diasAte(p.vencimento);
+      if(d!==null&&d>=-3)boias.push({dias:d,nome:l.empresa+' — '+p.numero+'ª parcela',idx:i});
+    });
+  });
+  boias.sort((a,b)=>a.dias-b.dias);
+  const boiasHtml=boias.slice(0,14).map(b=>{
+    const classe=b.dias<=3?'f-perigo':b.dias<=10?'f-atencao':'f-tranquila';
+    const rotulo=b.dias<0?'atrasada':b.dias===0?'HOJE':b.dias+'d';
+    return `<div class="boia" onclick="showPage('contratos',document.querySelectorAll('.tab')[8])">
+      <div class="boia-luz ${classe}">${rotulo}</div>
+      <div class="boia-dias">${b.dias<0?'vencida há '+(-b.dias)+'d':b.dias===0?'vence hoje':'faltam '+b.dias+'d'}</div>
+      <div class="boia-nome">${b.nome}</div></div>`;
+  }).join('');
+
+  // ---- KPIs reais ----
+  const fechados=leads.filter(l=>l.status==='fechado');
+  const emCaptacao=leads.filter(l=>['novo','conversa','proposta'].includes(l.status)).length;
+  const hoje=new Date(); const mesAtual=hoje.toISOString().slice(0,7);
+  let recebidoMes=0, parcelasVencSemana=0;
+  fechados.forEach(l=>{
+    (l.contrato&&l.contrato.parcelas||[]).forEach(p=>{
+      if(p.pago&&(p.pagoEm||'').startsWith(mesAtual))recebidoMes+=p.valor||0;
+      if(!p.pago){const d=diasAte(p.vencimento);if(d!==null&&d>=0&&d<=7)parcelasVencSemana++;}
+    });
+  });
+
   return `<div class="page" id="page-hoje">
-    <div class="report">
-      <h3>Resumo do dia</h3>
-      <div class="rdate">Relatório automático · atualizado agora</div>
-      <div class="report-grid">
-        <div class="report-stat"><div class="l">Leads novos hoje</div><div class="v">${h.leadsNovos} <small>+${h.deltaLeads} vs ontem</small></div></div>
-        <div class="report-stat"><div class="l">Fechados hoje</div><div class="v">${h.fechadosHoje} <small>${money(h.receitaHoje)}</small></div></div>
-        <div class="report-stat"><div class="l">Aguardando você</div><div class="v">${h.emConversa} <small>em conversa</small></div></div>
+    <div class="farol-box">
+      <div class="farol-topo">
+        <div>
+          <div class="farol-titulo"><span class="farol-lampada"></span>O Farol</div>
+          <div class="farol-sub">Cada boia é uma parcela em aberto — quanto mais próxima, mais forte a luz. Dados reais, direto dos contratos.</div>
+        </div>
       </div>
-      <div class="insight">Hoje entraram <b>${h.leadsNovos} novos leads</b> e <b>${h.propostasEnviadas} propostas</b> estão aguardando retorno. O foco do dia: os <b>${h.emConversa} leads em conversa</b> são os mais próximos do fechamento. Priorize quem já recebeu a busca gratuita.</div>
-      <div class="actions">
-        <button class="btn" onclick="showPage('leads',document.querySelectorAll('.tab')[1])">Ver leads do dia</button>
-        <button class="btn ghost" onclick="showPage('relatorios',document.querySelectorAll('.tab')[5])">Relatórios anteriores</button>
-      </div>
+      <div class="farol-mar">${boiasHtml||'<div class="farol-vazio">Nenhuma parcela em aberto no horizonte — mar tranquilo. 🌊</div>'}</div>
     </div>
 
-    <div class="kpi-grid">
-      <div class="kpi"><div class="label">Leads novos</div><div class="value">${h.leadsNovos}</div><div class="delta up">▲ ${h.deltaLeads} vs ontem</div></div>
-      <div class="kpi amber"><div class="label">Em conversa</div><div class="value">${h.emConversa}</div><div class="delta flat">aguardando ação</div></div>
-      <div class="kpi blue"><div class="label">Propostas ativas</div><div class="value">${h.propostasEnviadas}</div><div class="delta flat">aguardando decisão</div></div>
-      <div class="kpi green"><div class="label">Fechados hoje</div><div class="value">${h.fechadosHoje}</div><div class="delta up">▲ ${money(h.receitaHoje)}</div></div>
+    <div class="kpi-real-grid">
+      <div class="kpi-real"><div class="kr-label">Contratos ativos</div><div class="kr-valor">${fechados.length}</div><div class="kr-nota">clientes fechados</div></div>
+      <div class="kpi-real"><div class="kr-label">Em captação</div><div class="kr-valor">${emCaptacao}</div><div class="kr-nota">novo · conversa · proposta</div></div>
+      <div class="kpi-real"><div class="kr-label">Parcelas essa semana</div><div class="kr-valor">${parcelasVencSemana}</div><div class="kr-nota">vencendo em até 7 dias</div></div>
+      <div class="kpi-real"><div class="kr-label">Recebido este mês</div><div class="kr-valor">${money(recebidoMes)}</div><div class="kr-nota">parcelas já pagas</div></div>
+    </div>
+
+    <div class="actions" style="margin-bottom:24px">
+      <button class="btn" onclick="showPage('captacao',document.querySelectorAll('.tab')[7])">Ver Captação</button>
+      <button class="btn ghost" onclick="showPage('contratos',document.querySelectorAll('.tab')[8])">Ver Contratos</button>
     </div>
 
     <div class="panels">
@@ -508,6 +589,7 @@ function pageHoje(){
             <div class="bar" data-w="${f.pct}" style="width:0;background:${f.cor}">${f.qtd}</div>
             <div class="info"><b>${f.estagio}</b> · ${f.pct}%</div>
           </div>`).join('')}
+        <div class="psub" style="margin-top:8px;font-style:italic">Ilustrativo — em breve calculado a partir da Captação real.</div>
       </div>
       <div class="panel">
         <h3>De onde vêm os leads</h3>
@@ -520,6 +602,7 @@ function pageHoje(){
           <div class="nicho-row" style="margin-top:-6px">
             <div class="track"><div class="fill" data-w="${o.pct}" style="width:0;background:${o.cor}"></div></div>
           </div>`).join('')}
+        <div class="psub" style="margin-top:8px;font-style:italic">Ilustrativo — em breve calculado a partir da Captação real.</div>
       </div>
     </div>
   </div>`;
