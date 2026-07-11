@@ -368,6 +368,24 @@ def et_brevo(st, cfg):
     gravar(ENVIADOS, sorted(hist))
     st["metricas"]["enviados_total"] = len(hist)
     st["metricas"]["ultimo_lote"] = ok
+
+    # Alerta preventivo do teto de automação da Brevo (~2.000 contatos no
+    # Gratuito e no Starter — só o Standard remove esse teto). Avisa em
+    # dois patamares, sem travar o ciclo, para dar tempo de decidir com
+    # calma em vez de descobrir na hora que a automação para de rodar.
+    total = len(hist)
+    if total >= 2000:
+        alerta(st, "erro",
+               f"🚨 {total} contatos em automação na Brevo — o teto de ~2.000 do "
+               f"Gratuito/Starter provavelmente já foi ultrapassado. A automação pode "
+               f"ter parado de disparar para contatos novos. É hora de migrar para o "
+               f"plano Standard (a partir de ~US$18/mês) para remover esse teto.")
+    elif total >= 1700:
+        alerta(st, "aviso",
+               f"📊 {total}/2.000 contatos em automação na Brevo (~{round(total/2000*100)}%). "
+               f"Perto do teto do plano Gratuito/Starter — planeje a migração para o "
+               f"Standard antes de bater o limite, para a automação não parar sozinha.")
+
     if falhas and not ok:
         etapa(st, "brevo", "erro", f"0 enviados, {falhas} falhas",
               "verifique a chave BREVO_API_KEY")
