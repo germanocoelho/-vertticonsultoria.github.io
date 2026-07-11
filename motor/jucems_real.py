@@ -54,6 +54,7 @@ import sys
 import unicodedata
 import urllib.error
 import urllib.request
+from datetime import datetime
 
 CKAN_API = "https://www.dados.ms.gov.br/api/3/action/package_show?id=jucems"
 UA = ("VERTTI-Consultoria-MotorCaptacao/1.0 "
@@ -162,35 +163,114 @@ def parsear_flexivel(texto, debug=False):
     return contagem
 
 
+MESES_PT = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
+
+
+def parsear_estadual_mensal(texto):
+    """Fallback para quando a JUCEMS só publica o total mensal do ESTADO
+    inteiro, sem quebra por município (formato Período/Jan.../Dez/Total —
+    visto pela primeira vez em jul/2026). Devolve o mês mais recente com
+    valor preenchido e o acumulado do ano, na linha do ano corrente."""
+    delim = detectar_delimitador(texto)
+    linhas = list(csv.reader(io.StringIO(texto), delimiter=delim))
+    if not linhas:
+        raise RuntimeError("CSV vazio")
+    cab = [norm(c) for c in linhas[0]]
+
+    col_periodo = next((i for i, c in enumerate(cab) if "PERIODO" in c), None)
+    col_total = next((i for i, c in enumerate(cab) if c == "TOTAL"), None)
+    cols_mes = {m: i for i, c in enumerate(cab) for m in MESES_PT if c == m}
+
+    if col_periodo is None or not cols_mes:
+        raise RuntimeError(f"Formato estadual mensal não reconhecido entre: {linhas[0]}")
+
+    ano_atual = str(datetime.now().year)
+    linha_ano = next((row for row in linhas[1:]
+                       if len(row) > col_periodo and ano_atual in row[col_periodo]),
+                      linhas[-1] if len(linhas) > 1 else None)
+    if linha_ano is None:
+        raise RuntimeError("Nenhuma linha de dados após o cabeçalho")
+
+    mes_rotulo, valor_mes = None, None
+    for m in reversed(MESES_PT):
+        idx = cols_mes.get(m)
+        if idx is not None and idx < len(linha_ano):
+            txt = re.sub(r"[^\d]", "", linha_ano[idx] or "")
+            if txt:
+                mes_rotulo, valor_mes = m, int(txt)
+                break
+
+    valor_ano = None
+    if col_total is not None and col_total < len(linha_ano):
+        txt = re.sub(r"[^\d]", "", linha_ano[col_total] or "")
+        if txt:
+            valor_ano = int(txt)
+
+    if mes_rotulo is None and valor_ano is None:
+        raise RuntimeError("Nenhum valor mensal/anual encontrado na linha do ano corrente")
+
+    periodo_txt = linha_ano[col_periodo] if col_periodo < len(linha_ano) else ano_atual
+    return {"periodo": periodo_txt, "mes": mes_rotulo, "valor_mes": valor_mes, "valor_ano": valor_ano}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--saida", default="jucems_atual.csv")
     ap.add_argument("--debug", action="store_true")
     args = ap.parse_args()
 
+    contagem = None
+    estadual = None
+
     try:
         url = achar_recurso_atual()
         print(f"Recurso atual da JUCEMS: {url}")
         texto = baixar_csv(url)
-        contagem = parsear_flexivel(texto, debug=args.debug)
     except (urllib.error.URLError, urllib.error.HTTPError) as exc:
         print(f"AVISO: falha de rede ao buscar a JUCEMS ({exc}). "
               f"O motor usará o sinal calculado da própria base neste ciclo.")
-        sys.exit(2)  # código não-fatal: o chamador decide o fallback
+        sys.exit(2)
     except Exception as exc:
-        print(f"AVISO: JUCEMS indisponível ou mudou de formato ({exc}). "
+        print(f"AVISO: JUCEMS indisponível ({exc}). "
               f"O motor usará o sinal calculado da própria base neste ciclo.")
         sys.exit(2)
 
-    with open(args.saida, "w", newline="", encoding="utf-8") as f:
-        w = csv.writer(f, delimiter=";")
-        for mun, qtd in sorted(contagem.items(), key=lambda x: -x[1]):
-            w.writerow([mun, qtd])
+    try:
+        contagem = parsear_flexivel(texto, debug=args.debug)
+    except Exception as exc_mun:
+        print(f"Sem quebra por município neste ciclo ({exc_mun}) — tentando o total estadual...")
+        try:
+            estadual = parsear_estadual_mensal(texto)
+        except Exception as exc_uf:
+            print(f"AVISO: JUCEMS indisponível ou mudou de formato por completo ({exc_uf}). "
+                  f"O motor usará o sinal calculado da própria base neste ciclo.")
+            sys.exit(2)
 
-    print(f"\nJUCEMS real: {len(contagem)} municípios, "
-          f"{sum(contagem.values()):,} constituições no total.")
-    print(f"Salvo em {args.saida} — use com:")
-    print(f"  python 2_gerar_lote.py --jucems {args.saida} ...")
+    if contagem:
+        with open(args.saida, "w", newline="", encoding="utf-8") as f:
+            w = csv.writer(f, delimiter=";")
+            for mun, qtd in sorted(contagem.items(), key=lambda x: -x[1]):
+                w.writerow([mun, qtd])
+        print(f"\nJUCEMS real (POR MUNICÍPIO): {len(contagem)} municípios, "
+              f"{sum(contagem.values()):,} constituições no total.")
+        print(f"Salvo em {args.saida} — use com:")
+        print(f"  python 2_gerar_lote.py --jucems {args.saida} ...")
+    else:
+        # Sem quebra por cidade neste ciclo — grava o número estadual mesmo
+        # assim (marcador que nenhum município real jamais vai bater, então
+        # 2_gerar_lote.py o ignora com segurança na pontuação por cidade),
+        # para o dado real não se perder e ficar visível no status.
+        valor_exibir = estadual["valor_mes"] if estadual["valor_mes"] is not None else estadual["valor_ano"]
+        with open(args.saida, "w", newline="", encoding="utf-8") as f:
+            w = csv.writer(f, delimiter=";")
+            w.writerow(["MS_ESTADUAL_SEM_QUEBRA_POR_MUNICIPIO", valor_exibir])
+        print(f"\nJUCEMS real (SOMENTE ESTADUAL — a JUCEMS parou de publicar por "
+              f"cidade neste recurso): período {estadual['periodo']}, "
+              f"mês {estadual['mes'] or '?'}: {estadual['valor_mes']} constituições; "
+              f"acumulado no ano: {estadual['valor_ano']}.")
+        print(f"Salvo em {args.saida} com o total estadual — não é usado na pontuação "
+              f"por cidade (nenhum município bate com esse marcador), mas fica "
+              f"registrado no status para acompanhamento.")
 
 
 if __name__ == "__main__":

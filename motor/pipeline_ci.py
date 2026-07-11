@@ -212,9 +212,16 @@ def et_jucems_real(st, cfg):
     r = rodar([sys.executable, "jucems_real.py", "--saida", caminho_jucems])
     print(r.stdout[-800:])
     if r.returncode == 0 and os.path.exists(os.path.join(RAIZ, "jucems_atual.csv")):
-        etapa(st, "jucems", "ok",
-              "dado oficial da JUCEMS obtido via API do CKAN (dados.ms.gov.br)",
-              "coluna localizada por nome, não por posição — tolera mudança de layout")
+        if "SOMENTE ESTADUAL" in r.stdout:
+            linha = next((l for l in r.stdout.splitlines() if l.startswith("JUCEMS real (SOMENTE ESTADUAL")), "")
+            etapa(st, "jucems", "ok",
+                  f"dado oficial da JUCEMS obtido, mas só em nível estadual (a JUCEMS parou "
+                  f"de publicar por município neste recurso): {linha[len('JUCEMS real (SOMENTE ESTADUAL — a JUCEMS parou de publicar por cidade neste recurso): '):].strip() or linha}",
+                  "não usado na pontuação por cidade (sem granularidade), mas registrado para acompanhamento")
+        else:
+            etapa(st, "jucems", "ok",
+                  "dado oficial da JUCEMS obtido via API do CKAN (dados.ms.gov.br), por município",
+                  "coluna localizada por nome, não por posição — tolera mudança de layout")
         return caminho_jucems
     else:
         # jucems_real.py imprime "AVISO: <motivo real>" em vez de lançar
