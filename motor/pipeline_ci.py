@@ -239,7 +239,7 @@ def et_lote(st, cfg, caminho_jucems=None):
     raios = str(cfg.get("raios", "1,2"))
     cmd = [sys.executable, "2_gerar_lote.py", "--db", BASE_DB,
            "--meses", str(cfg.get("meses", 3)),
-           "--lote", str(cfg.get("lote", 100)),
+           "--lote", str(cfg.get("lote", 0)),   # 0 = só atualiza a fila; o envio real agora é diário (4_disparo_diario.py)
            "--raios", raios,
            "--saida", os.path.join(RAIZ, "lote_bruto.csv")]
     if caminho_jucems:
@@ -447,8 +447,12 @@ def main():
     caminho_jucems = et_jucems_real(st, cfg)
     if not et_lote(st, cfg, caminho_jucems):
         gravar(STATUS, st); sys.exit(1)
-    et_dedupe_historico(st)
-    et_brevo(st, cfg)
+    etapa(st, "brevo", "ok",
+          "envio direto desligado neste ciclo mensal — a fila foi atualizada "
+          "(novos candidatos entraram, antigos expiraram) e o envio de verdade "
+          "acontece todo dia, com aquecimento gradual, pelo motor_retry/"
+          "4_disparo_diario.py",
+          "ver etapa 'disparo_diario' no status de cada dia para o volume real enviado")
     et_funil(st, fila_restante=st.get("_fila_restante"))
     st.pop("_lote", None)
     st.pop("_fila_restante", None)
