@@ -1,0 +1,37 @@
+name: Motor VERTTI - Limite diário de e-mail (Brevo)
+
+on:
+  schedule:
+    - cron: '0 19 * * *'   # todo dia, 19:00 UTC (~15:00 Campo Grande/MS) — dá folga antes do reset à meia-noite UTC
+  workflow_dispatch: {}     # botão "Rodar agora" no ADM, se quiser conferir na hora
+
+permissions:
+  contents: write
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Consulta o limite diário real na Brevo
+        env:
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          ALERTA_EMAIL_DESTINO: ${{ secrets.ALERTA_EMAIL_DESTINO }}
+        run: python3 motor/monitor_limite_diario.py
+
+      - name: Commitar status
+        if: always()
+        run: |
+          git config user.name  "Motor VERTTI"
+          git config user.email "motor@vertticonsultoria.com.br"
+          git add motor_status.json || true
+          git diff --cached --quiet || git commit -m "Monitor de limite diario Brevo [skip ci]"
+          for tentativa in 1 2 3 4 5; do
+            if git push; then
+              break
+            fi
+            git pull --rebase origin main
+            sleep $((tentativa * 5))
+          done
