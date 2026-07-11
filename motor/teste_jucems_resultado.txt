@@ -1,0 +1,5 @@
+Recurso atual da JUCEMS: https://www.jucems.ms.gov.br/wp-content/uploads/2026/07/Empresas_Constituidas.csv
+AVISO: JUCEMS indisponível ou mudou de formato (Não achei coluna de município entre: ['Período', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Total']). O motor usará o sinal calculado da própria base neste ciclo.
+codigo_saida=2
+--- CSV gerado? ---
+nao
