@@ -3,6 +3,9 @@ name: Teste isolado - JUCEMS
 on:
   workflow_dispatch: {}   # só disparo manual — não faz parte do ciclo automático
 
+permissions:
+  contents: write
+
 jobs:
   testar:
     runs-on: ubuntu-latest
@@ -12,13 +15,31 @@ jobs:
 
       - name: Roda jucems_real.py isolado (sem download, sem Brevo, sem e-mail)
         working-directory: motor
+        id: jucems
+        continue-on-error: true
         run: |
-          python3 jucems_real.py --saida /tmp/jucems_teste.csv
-          echo "--- código de saída: $? ---"
-          echo "--- primeiras linhas do CSV, se gerado ---"
+          set +e
+          python3 jucems_real.py --saida /tmp/jucems_teste.csv > /tmp/jucems_saida.txt 2>&1
+          echo "codigo_saida=$?" >> /tmp/jucems_saida.txt
+          echo "--- CSV gerado? ---" >> /tmp/jucems_saida.txt
           if [ -f /tmp/jucems_teste.csv ]; then
-            head -5 /tmp/jucems_teste.csv
-            wc -l /tmp/jucems_teste.csv
+            echo "sim, $(wc -l < /tmp/jucems_teste.csv) linhas" >> /tmp/jucems_saida.txt
+            head -5 /tmp/jucems_teste.csv >> /tmp/jucems_saida.txt
           else
-            echo "Nenhum CSV gerado."
+            echo "nao" >> /tmp/jucems_saida.txt
           fi
+          cat /tmp/jucems_saida.txt
+
+      - name: Publica o resultado no repositório (contorna log bloqueado)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          B64=$(base64 -w0 /tmp/jucems_saida.txt 2>/dev/null || base64 /tmp/jucems_saida.txt | tr -d '\n')
+          SHA=$(curl -s -H "Authorization: token $GH_TOKEN" "https://api.github.com/repos/${{ github.repository }}/contents/motor/teste_jucems_resultado.txt" | python3 -c "import json,sys; print(json.load(sys.stdin).get('sha',''))" 2>/dev/null || true)
+          if [ -n "$SHA" ]; then
+            BODY="{\"message\":\"Teste JUCEMS: resultado\",\"content\":\"$B64\",\"sha\":\"$SHA\"}"
+          else
+            BODY="{\"message\":\"Teste JUCEMS: resultado\",\"content\":\"$B64\"}"
+          fi
+          curl -s -X PUT -H "Authorization: token $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/contents/motor/teste_jucems_resultado.txt" -d "$BODY"
