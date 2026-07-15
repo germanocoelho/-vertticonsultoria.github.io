@@ -1,18 +1,12 @@
 {
- "atualizado_em": "2026-07-10T12:36:06Z",
+ "atualizado_em": "2026-07-15T14:53:24Z",
  "tipo_ultima_execucao": "semanal",
  "etapas": {
   "rpi": {
-   "status": "aviso",
-   "quando": "2026-07-10T12:36:06Z",
-   "detalhe": "RPIs 2897-2900 indisponíveis (números futuros ou INPI fora do ar)",
-   "integridade": "base anterior preservada — nada foi perdido"
-  },
-  "disparo_diario": {
-   "status": "aviso",
-   "quando": "2026-07-15T14:41:29Z",
-   "detalhe": "0 contatos enviados hoje, distribuídos entre 0 remetente(s) ativo(s): ",
-   "integridade": "sem falhas"
+   "status": "ok",
+   "quando": "2026-07-15T14:53:24Z",
+   "detalhe": "RPIs 2897-2897 processadas, +246 titulares MS (total 610)",
+   "integridade": ""
   }
  },
  "alertas": [],
