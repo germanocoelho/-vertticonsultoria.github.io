@@ -55,6 +55,12 @@
    "quando": "2026-07-23T00:10:06Z",
    "detalhe": "2 ciclo(s) no histórico — abertura/clique real fica em Brevo: Automations > Workflows > Activity (não duplicado aqui para não arriscar guardar dado pessoal nem depender de campo em depreciação)",
    "integridade": ""
+  },
+  "disparo_diario": {
+   "status": "aviso",
+   "quando": "2026-07-23T15:00:50Z",
+   "detalhe": "0 contatos enviados hoje, distribuídos entre 0 remetente(s) ativo(s): ",
+   "integridade": "sem falhas"
   }
  },
  "alertas": [
