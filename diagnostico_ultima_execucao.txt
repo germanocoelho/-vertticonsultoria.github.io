@@ -1,134 +1,134 @@
 === resultado do passo pipeline: success ===
 === maquina/runner ===
-runnervm3jd5f
-Linux runnervm3jd5f 6.17.0-1020-azure #20~24.04.1-Ubuntu SMP Fri Jun 19 20:09:14 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+runnervmvrwv9
+Linux runnervmvrwv9 6.17.0-1020-azure #20~24.04.1-Ubuntu SMP Fri Jun 19 20:09:14 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
 === pwd ===
 /home/runner/work/-vertticonsultoria.github.io/-vertticonsultoria.github.io
 === arquivos na raiz do repo ===
-total 472
-drwxr-xr-x 5 runner runner   4096 Jul 20 14:36 .
-drwxr-xr-x 3 runner runner   4096 Jul 20 14:25 ..
-drwxr-xr-x 7 runner runner   4096 Jul 20 14:25 .git
-drwxr-xr-x 3 runner runner   4096 Jul 20 14:25 .github
--rw-r--r-- 1 runner runner     24 Jul 20 14:25 CNAME
--rw-r--r-- 1 runner runner     30 Jul 20 14:25 README.md
--rw-r--r-- 1 runner runner  17059 Jul 20 14:25 VERTTI_NOTICIAS.zip
--rw-r--r-- 1 runner runner  16940 Jul 20 14:25 captura.html
--rw-r--r-- 1 runner runner   6506 Jul 20 14:25 diagnostico_ultima_execucao.txt
--rw-r--r-- 1 runner runner 104714 Jul 20 14:25 escritorio.html
--rw-r--r-- 1 runner runner    177 Jul 20 14:36 funil_historico.json
--rw-r--r-- 1 runner runner 168185 Jul 20 14:25 index.html
--rw-r--r-- 1 runner runner   8751 Jul 20 14:25 marca.html
--rw-r--r-- 1 runner runner  86016 Jul 20 14:25 marcas_ms.sqlite
-drwxr-xr-x 3 runner runner   4096 Jul 20 14:36 motor
--rw-r--r-- 1 runner runner    360 Jul 20 14:25 motor_config.json
--rw-r--r-- 1 runner runner   6557 Jul 20 14:25 motor_enviados.json
--rw-r--r-- 1 runner runner   2921 Jul 20 14:36 motor_status.json
--rw-r--r-- 1 runner runner     77 Jul 20 14:25 robots.txt
--rw-r--r-- 1 runner runner    280 Jul 20 14:25 sitemap.xml
+total 492
+drwxr-xr-x 5 runner runner   4096 Jul 23 00:01 .
+drwxr-xr-x 3 runner runner   4096 Jul 23 00:01 ..
+drwxr-xr-x 7 runner runner   4096 Jul 23 00:01 .git
+drwxr-xr-x 3 runner runner   4096 Jul 23 00:01 .github
+-rw-r--r-- 1 runner runner     24 Jul 23 00:01 CNAME
+-rw-r--r-- 1 runner runner     30 Jul 23 00:01 README.md
+-rw-r--r-- 1 runner runner  17059 Jul 23 00:01 VERTTI_NOTICIAS.zip
+-rw-r--r-- 1 runner runner  16940 Jul 23 00:01 captura.html
+-rw-r--r-- 1 runner runner   7600 Jul 23 00:01 diagnostico_ultima_execucao.txt
+-rw-r--r-- 1 runner runner 104714 Jul 23 00:01 escritorio.html
+-rw-r--r-- 1 runner runner    352 Jul 23 00:10 funil_historico.json
+-rw-r--r-- 1 runner runner 168185 Jul 23 00:01 index.html
+-rw-r--r-- 1 runner runner   8751 Jul 23 00:01 marca.html
+-rw-r--r-- 1 runner runner 106496 Jul 23 00:01 marcas_ms.sqlite
+drwxr-xr-x 3 runner runner   4096 Jul 23 00:10 motor
+-rw-r--r-- 1 runner runner    360 Jul 23 00:01 motor_config.json
+-rw-r--r-- 1 runner runner   6557 Jul 23 00:01 motor_enviados.json
+-rw-r--r-- 1 runner runner   2921 Jul 23 00:10 motor_status.json
+-rw-r--r-- 1 runner runner     77 Jul 23 00:01 robots.txt
+-rw-r--r-- 1 runner runner    280 Jul 23 00:01 sitemap.xml
 === arquivos em motor/ ===
-total 276732
-drwxr-xr-x 3 runner runner      4096 Jul 20 14:36 .
-drwxr-xr-x 5 runner runner      4096 Jul 20 14:36 ..
--rw-r--r-- 1 runner runner      9924 Jul 20 14:25 0_baixar_receita.py
--rw-r--r-- 1 runner runner      8329 Jul 20 14:25 1_destilar_ms.py
--rw-r--r-- 1 runner runner     10780 Jul 20 14:25 2_gerar_lote.py
--rw-r--r-- 1 runner runner      7712 Jul 20 14:25 3_cruzar_inpi_exportar.py
--rw-r--r-- 1 runner runner      6525 Jul 20 14:25 4_disparo_diario.py
--rw-r--r-- 1 runner runner      9513 Jul 20 14:25 README_MOTOR.md
--rw-r--r-- 1 runner runner 283226112 Jul 20 14:36 base_ms.sqlite
--rw-r--r-- 1 runner runner        37 Jul 20 14:36 conferencia_inpi.csv
-drwxr-xr-x 2 runner runner      4096 Jul 20 14:28 dados_receita
--rw-r--r-- 1 runner runner        43 Jul 20 14:36 jucems_atual.csv
--rw-r--r-- 1 runner runner     11669 Jul 20 14:25 jucems_real.py
--rw-r--r-- 1 runner runner        93 Jul 20 14:36 lote_bruto.csv
--rw-r--r-- 1 runner runner      5480 Jul 20 14:25 monitor_limite_diario.py
--rw-r--r-- 1 runner runner     22159 Jul 20 14:25 pipeline_ci.py
--rw-r--r-- 1 runner runner        63 Jul 20 14:36 prospectos_brevo.csv
--rw-r--r-- 1 runner runner       768 Jul 20 14:25 teste_jucems_resultado.txt
--rw-r--r-- 1 runner runner      1643 Jul 20 14:25 verificar_ciclo_mensal.py
+total 278916
+drwxr-xr-x 3 runner runner      4096 Jul 23 00:10 .
+drwxr-xr-x 5 runner runner      4096 Jul 23 00:01 ..
+-rw-r--r-- 1 runner runner      9924 Jul 23 00:01 0_baixar_receita.py
+-rw-r--r-- 1 runner runner      8329 Jul 23 00:01 1_destilar_ms.py
+-rw-r--r-- 1 runner runner     10780 Jul 23 00:01 2_gerar_lote.py
+-rw-r--r-- 1 runner runner      7712 Jul 23 00:01 3_cruzar_inpi_exportar.py
+-rw-r--r-- 1 runner runner      6525 Jul 23 00:01 4_disparo_diario.py
+-rw-r--r-- 1 runner runner      9513 Jul 23 00:01 README_MOTOR.md
+-rw-r--r-- 1 runner runner 285462528 Jul 23 00:10 base_ms.sqlite
+-rw-r--r-- 1 runner runner        37 Jul 23 00:10 conferencia_inpi.csv
+drwxr-xr-x 2 runner runner      4096 Jul 23 00:03 dados_receita
+-rw-r--r-- 1 runner runner        43 Jul 23 00:10 jucems_atual.csv
+-rw-r--r-- 1 runner runner     11669 Jul 23 00:01 jucems_real.py
+-rw-r--r-- 1 runner runner        93 Jul 23 00:10 lote_bruto.csv
+-rw-r--r-- 1 runner runner      5480 Jul 23 00:01 monitor_limite_diario.py
+-rw-r--r-- 1 runner runner     22159 Jul 23 00:01 pipeline_ci.py
+-rw-r--r-- 1 runner runner        63 Jul 23 00:10 prospectos_brevo.csv
+-rw-r--r-- 1 runner runner       768 Jul 23 00:01 teste_jucems_resultado.txt
+-rw-r--r-- 1 runner runner      1643 Jul 23 00:01 verificar_ciclo_mensal.py
 === motor/dados_receita (se existir) ===
-total 6457412
-drwxr-xr-x 2 runner runner       4096 Jul 20 14:28 .
-drwxr-xr-x 3 runner runner       4096 Jul 20 14:36 ..
--rw-r--r-- 1 runner runner  536306613 Jul 20 14:25 Empresas0.zip
--rw-r--r-- 1 runner runner   77886655 Jul 20 14:25 Empresas1.zip
--rw-r--r-- 1 runner runner   79113673 Jul 20 14:25 Empresas2.zip
--rw-r--r-- 1 runner runner   85111422 Jul 20 14:25 Empresas3.zip
--rw-r--r-- 1 runner runner   90249714 Jul 20 14:25 Empresas4.zip
--rw-r--r-- 1 runner runner   97356391 Jul 20 14:25 Empresas5.zip
--rw-r--r-- 1 runner runner   94260601 Jul 20 14:25 Empresas6.zip
--rw-r--r-- 1 runner runner   98770171 Jul 20 14:25 Empresas7.zip
--rw-r--r-- 1 runner runner   98856528 Jul 20 14:25 Empresas8.zip
--rw-r--r-- 1 runner runner   94424668 Jul 20 14:25 Empresas9.zip
--rw-r--r-- 1 runner runner 2128818559 Jul 20 14:28 Estabelecimentos0.zip
--rw-r--r-- 1 runner runner  341333959 Jul 20 14:28 Estabelecimentos1.zip
--rw-r--r-- 1 runner runner  335550928 Jul 20 14:28 Estabelecimentos2.zip
--rw-r--r-- 1 runner runner  366824247 Jul 20 14:28 Estabelecimentos3.zip
--rw-r--r-- 1 runner runner  340652998 Jul 20 14:28 Estabelecimentos4.zip
--rw-r--r-- 1 runner runner  336095448 Jul 20 14:28 Estabelecimentos5.zip
--rw-r--r-- 1 runner runner  366882667 Jul 20 14:28 Estabelecimentos6.zip
--rw-r--r-- 1 runner runner  340039907 Jul 20 14:28 Estabelecimentos7.zip
--rw-r--r-- 1 runner runner  336134350 Jul 20 14:28 Estabelecimentos8.zip
--rw-r--r-- 1 runner runner  367586784 Jul 20 14:28 Estabelecimentos9.zip
--rw-r--r-- 1 runner runner      43443 Jul 20 14:28 Municipios.zip
+total 6503188
+drwxr-xr-x 2 runner runner       4096 Jul 23 00:03 .
+drwxr-xr-x 3 runner runner       4096 Jul 23 00:10 ..
+-rw-r--r-- 1 runner runner  544290225 Jul 23 00:01 Empresas0.zip
+-rw-r--r-- 1 runner runner   77888891 Jul 23 00:01 Empresas1.zip
+-rw-r--r-- 1 runner runner   79116294 Jul 23 00:01 Empresas2.zip
+-rw-r--r-- 1 runner runner   85108747 Jul 23 00:01 Empresas3.zip
+-rw-r--r-- 1 runner runner   90243240 Jul 23 00:01 Empresas4.zip
+-rw-r--r-- 1 runner runner   97345876 Jul 23 00:02 Empresas5.zip
+-rw-r--r-- 1 runner runner   94246070 Jul 23 00:02 Empresas6.zip
+-rw-r--r-- 1 runner runner   98748860 Jul 23 00:02 Empresas7.zip
+-rw-r--r-- 1 runner runner   98830257 Jul 23 00:02 Empresas8.zip
+-rw-r--r-- 1 runner runner   94399229 Jul 23 00:02 Empresas9.zip
+-rw-r--r-- 1 runner runner 2164567397 Jul 23 00:02 Estabelecimentos0.zip
+-rw-r--r-- 1 runner runner  341578424 Jul 23 00:02 Estabelecimentos1.zip
+-rw-r--r-- 1 runner runner  336376100 Jul 23 00:03 Estabelecimentos2.zip
+-rw-r--r-- 1 runner runner  367052398 Jul 23 00:03 Estabelecimentos3.zip
+-rw-r--r-- 1 runner runner  340421684 Jul 23 00:03 Estabelecimentos4.zip
+-rw-r--r-- 1 runner runner  336378631 Jul 23 00:03 Estabelecimentos5.zip
+-rw-r--r-- 1 runner runner  368109911 Jul 23 00:03 Estabelecimentos6.zip
+-rw-r--r-- 1 runner runner  340694903 Jul 23 00:03 Estabelecimentos7.zip
+-rw-r--r-- 1 runner runner  334764377 Jul 23 00:03 Estabelecimentos8.zip
+-rw-r--r-- 1 runner runner  368970563 Jul 23 00:03 Estabelecimentos9.zip
+-rw-r--r-- 1 runner runner      43443 Jul 23 00:03 Municipios.zip
 === conteudo motor_status.json (se existir) ===
 {
- "atualizado_em": "2026-07-20T14:36:04Z",
+ "atualizado_em": "2026-07-23T00:10:06Z",
  "tipo_ultima_execucao": "mensal",
  "etapas": {
   "download": {
    "status": "ok",
-   "quando": "2026-07-20T14:28:57Z",
-   "detalhe": "21 arquivos, 6.6 GB, ref 2026-06",
+   "quando": "2026-07-23T00:03:32Z",
+   "detalhe": "21 arquivos, 6.7 GB, ref 2026-07",
    "integridade": ""
   },
   "integridade_zips": {
    "status": "ok",
-   "quando": "2026-07-20T14:30:10Z",
+   "quando": "2026-07-23T00:04:39Z",
    "detalhe": "todos os ZIPs íntegros",
    "integridade": "zipfile.testzip aprovado em 100%"
   },
   "destilaria": {
    "status": "ok",
-   "quando": "2026-07-20T14:35:55Z",
-   "detalhe": "967,972 estabelecimentos MS",
+   "quando": "2026-07-23T00:09:56Z",
+   "detalhe": "974,177 estabelecimentos MS",
    "integridade": "faixa de sanidade ok; Campo Grande presente"
   },
   "rpi": {
    "status": "aviso",
-   "quando": "2026-07-20T14:36:00Z",
-   "detalhe": "RPIs 2898-2901 indisponíveis (números futuros ou INPI fora do ar)",
+   "quando": "2026-07-23T00:10:02Z",
+   "detalhe": "RPIs 2899-2902 indisponíveis (números futuros ou INPI fora do ar)",
    "integridade": "base anterior preservada — nada foi perdido"
   },
   "jucems": {
    "status": "ok",
-   "quando": "2026-07-20T14:36:03Z",
+   "quando": "2026-07-23T00:10:05Z",
    "detalhe": "dado oficial da JUCEMS obtido, mas só em nível estadual (a JUCEMS parou de publicar por município neste recurso): período 2026, mês JUN: 1266 constituições; acumulado no ano: 8978.",
    "integridade": "não usado na pontuação por cidade (sem granularidade), mas registrado para acompanhamento"
   },
   "filtro_inpi": {
    "status": "ok",
-   "quando": "2026-07-20T14:36:04Z",
+   "quando": "2026-07-23T00:10:06Z",
    "detalhe": "0 removidos por marca existente",
    "integridade": ""
   },
   "lote": {
    "status": "ok",
-   "quando": "2026-07-20T14:36:04Z",
+   "quando": "2026-07-23T00:10:06Z",
    "detalhe": "0 contatos válidos (raios 1,2)",
-   "integridade": "dedupe ok; 0 e-mails inválidos descartados; fila persistente: 2378 aguardando o próximo ciclo"
+   "integridade": "dedupe ok; 0 e-mails inválidos descartados; fila persistente: 3461 aguardando o próximo ciclo"
   },
   "brevo": {
    "status": "ok",
-   "quando": "2026-07-20T14:36:04Z",
+   "quando": "2026-07-23T00:10:06Z",
    "detalhe": "envio direto desligado neste ciclo mensal — a fila foi atualizada (novos candidatos entraram, antigos expiraram) e o envio de verdade acontece todo dia, com aquecimento gradual, pelo motor_retry/4_disparo_diario.py",
    "integridade": "ver etapa 'disparo_diario' no status de cada dia para o volume real enviado"
   },
   "funil": {
    "status": "ok",
-   "quando": "2026-07-20T14:36:04Z",
-   "detalhe": "1 ciclo(s) no histórico — abertura/clique real fica em Brevo: Automations > Workflows > Activity (não duplicado aqui para não arriscar guardar dado pessoal nem depender de campo em depreciação)",
+   "quando": "2026-07-23T00:10:06Z",
+   "detalhe": "2 ciclo(s) no histórico — abertura/clique real fica em Brevo: Automations > Workflows > Activity (não duplicado aqui para não arriscar guardar dado pessoal nem depender de campo em depreciação)",
    "integridade": ""
   }
  },
@@ -136,7 +136,7 @@ drwxr-xr-x 3 runner runner       4096 Jul 20 14:36 ..
   {
    "nivel": "aviso",
    "msg": "Lote veio com só 0/100 contatos nos raios 1,2 — estoque de empresas novas qualificadas está diminuindo nesta região. Ligue 'raios_auto_expandir' na configuração, ou amplie os raios manualmente, se quiser manter o volume.",
-   "quando": "2026-07-20T14:36:04Z"
+   "quando": "2026-07-23T00:10:06Z"
   }
  ],
  "metricas": {
@@ -148,10 +148,10 @@ drwxr-xr-x 3 runner runner       4096 Jul 20 14:36 ..
   "semanal": "toda quarta-feira, 13:00 UTC (~10:00 Campo Grande/MS)",
   "mensal": "todo dia 20, 12:00 UTC (~09:00 Campo Grande/MS)"
  },
- "ref": "2026-06"
+ "ref": "2026-07"
 }=== espaco em disco ===
 Filesystem      Size  Used Avail Use% Mounted on
-/dev/root       145G   63G   82G  44% /
+/dev/root       145G   64G   81G  45% /
 === python e versao ===
 Python 3.12.3
 /usr/bin/python3
