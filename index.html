@@ -427,6 +427,71 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
   .trust-inner{justify-content:center;text-align:center}
   .sobre-stats{grid-template-columns:1fr 1fr}
 }
+
+/* ===================================================================
+   EFEITOS TRAZIDOS DO SITE DO ICET (aplicados à identidade da VERTTI)
+   =================================================================== */
+
+/* -- 1. Título do hero com brilho (shimmer) sobre o gradiente dourado -- */
+.hero h1 em{
+  background:linear-gradient(135deg,var(--ouro-claro) 0%,var(--ouro) 45%,#fff6e0 60%,var(--ouro-claro) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  background-size:300%;animation:shimmer 6s ease infinite;
+}
+@keyframes shimmer{0%{background-position:0%}100%{background-position:300%}}
+
+/* -- 2. Logo (nav) e selo do hero com pulso de brilho (glow) -- */
+.logo-mark{animation:logo-pulse 4s ease-in-out infinite}
+.seal{animation:float 6s ease-in-out infinite, logo-pulse 4s ease-in-out infinite}
+@keyframes logo-pulse{
+  0%,100%{box-shadow:0 6px 18px -6px rgba(201,162,75,.55),0 0 0 rgba(201,162,75,0)}
+  50%{box-shadow:0 6px 18px -6px rgba(201,162,75,.55),0 0 26px 6px rgba(201,162,75,.45)}
+}
+
+/* -- 3. Botões: brilho radial ao passar o mouse + leve expansão do texto -- */
+.btn{position:relative;overflow:hidden;
+  transition:transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease,
+             background .3s ease, border-color .3s ease, letter-spacing .3s ease;
+}
+.btn::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;opacity:0;
+  background:radial-gradient(circle, rgba(255,255,255,.35), transparent 70%);
+  transform:scale(.4);transition:opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1);
+  pointer-events:none;
+}
+.btn:hover::after{opacity:1;transform:scale(1.4)}
+.btn:hover{letter-spacing:.03em}
+
+/* -- 4. Estatísticas do hero: linha de "escaneamento" no topo + brilho pulsante no número -- */
+.hstat{position:relative;overflow:hidden;padding-top:6px}
+.hstat::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--ouro),transparent);
+  animation:scan 3s ease infinite;
+}
+@keyframes scan{0%{opacity:0;transform:translateX(-100%)}50%{opacity:1}100%{opacity:0;transform:translateX(100%)}}
+.hstat .num{animation:count-glow 1.4s ease-out, stat-pulse 4s ease infinite 1.4s}
+@keyframes count-glow{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes stat-pulse{0%,100%{text-shadow:0 0 14px rgba(201,162,75,.15)}50%{text-shadow:0 0 26px rgba(201,162,75,.45)}}
+
+/* -- versão discreta do brilho pulsante para os números sobre fundo claro -- */
+.sstat .n{animation:stat-pulse-claro 4s ease infinite}
+@keyframes stat-pulse-claro{0%,100%{text-shadow:0 0 0 rgba(201,162,75,0)}50%{text-shadow:0 0 12px rgba(201,162,75,.30)}}
+
+/* -- 5. Indicador de rolagem no hero (seta pulsante), como no ICET -- */
+.hero-scroll-cue{
+  position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.35rem;
+  opacity:.55;color:rgba(255,255,255,.85);z-index:3;
+  animation:hero-bounce 2.5s ease infinite;pointer-events:none;
+}
+.hero-scroll-cue span{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;font-family:'Inter',sans-serif}
+.hero-scroll-cue svg{width:16px;height:16px}
+@keyframes hero-bounce{
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(8px)}
+}
+@media(max-width:640px){.hero-scroll-cue{display:none}}
 </style>
 </head>
 <body>
@@ -496,6 +561,8 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
       </div>
     </div>
   </div>
+
+  <div class="hero-scroll-cue" aria-hidden="true"><span>Role</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
 </section>
 
 <!-- FAIXA DE CONFIANÇA -->
