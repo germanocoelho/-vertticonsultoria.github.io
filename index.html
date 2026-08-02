@@ -637,8 +637,10 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
   filter:drop-shadow(0 0 18px rgba(201,162,75,.85));
 }
 
-.ts-caso-link{ display:inline-flex; align-items:center; gap:.4rem; background:rgba(255,255,255,.06); border:1px solid rgba(201,162,75,.3); color:#fff; padding:.5rem 1rem; border-radius:100px; font-size:.82rem; font-weight:600; transition:transform .25s ease, background .25s ease, border-color .25s ease; }
-.ts-caso-link:hover{ transform:translateY(-2px); background:rgba(201,162,75,.16); border-color:var(--ouro); color:var(--ouro-claro); }
+.ts-caso-card{ display:flex; flex-direction:column; gap:.2rem; background:rgba(255,255,255,.06); border:1px solid rgba(201,162,75,.3); color:#fff; padding:.7rem 1.1rem; border-radius:12px; text-decoration:none; transition:transform .25s ease, background .25s ease, border-color .25s ease; min-width:190px; }
+.ts-caso-card:hover{ transform:translateY(-3px); background:rgba(201,162,75,.16); border-color:var(--ouro); }
+.ts-caso-card .sigla{ font-family:'Fraunces',serif; font-weight:700; color:var(--ouro-claro); font-size:1rem; display:flex; align-items:center; gap:.3rem; }
+.ts-caso-card .nome{ font-size:.74rem; color:rgba(255,255,255,.72); line-height:1.4; }
 
 @media (hover:none){
   .ts-holofote::before{display:none}
@@ -1050,12 +1052,29 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
 
     <p class="ts-reveal" style="color:rgba(255,255,255,.85);font-size:.98rem;line-height:1.75;max-width:820px;margin-top:1rem" data-i18n="ts.p3">A comprovação prática dessa metodologia são os portais institucionais do <strong>Conselho Municipal dos Direitos e Defesa dos Povos Indígenas de Campo Grande (CMDDI)</strong>, da <strong>COOPIMS</strong>, da <strong>UNIPBRAS</strong> e da <strong>FOCAMS</strong>, todos concebidos e implantados pela VERTTI em parceria com o Instituto Cacique Enir Terena (ICET) — hoje referências em comunicação institucional indígena, replicáveis para outros conselhos, associações e cooperativas.</p>
 
-    <div style="display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.4rem">
-      <a class="ts-reveal ts-caso-link" href="https://www.cmddicg.com.br" target="_blank" rel="noopener">CMDDI ↗</a>
-      <a class="ts-reveal ts-caso-link" href="https://www.coopims.com.br" target="_blank" rel="noopener">COOPIMS ↗</a>
-      <a class="ts-reveal ts-caso-link" href="https://institutocaciqueenirterena.github.io" target="_blank" rel="noopener">ICET ↗</a>
-      <a class="ts-reveal ts-caso-link" href="https://www.unipbras.com.br" target="_blank" rel="noopener">UNIPBRAS ↗</a>
-      <a class="ts-reveal ts-caso-link" href="https://www.focams.com.br" target="_blank" rel="noopener">FOCAMS ↗</a>
+    <p class="ts-reveal" style="color:#fff;font-size:1rem;line-height:1.8;max-width:820px;margin-top:1.2rem;padding:1rem 1.2rem;background:rgba(201,162,75,.08);border-left:3px solid var(--ouro);border-radius:4px" data-i18n="ts.p4">O foco da consultoria está na <strong>governança institucional</strong> e na <strong>propriedade intelectual</strong> dessas organizações — e, olhando para frente, no desenvolvimento de futuros produtos nas áreas de <strong>biotecnologia</strong> e <strong>cultura</strong> a partir da valorização e proteção jurídica dos conhecimentos tradicionais.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.4rem">
+      <a class="ts-reveal ts-caso-card" href="https://www.cmddicg.com.br" target="_blank" rel="noopener">
+        <span class="sigla">CMDDI ↗</span>
+        <span class="nome" data-i18n="ts.cmddi.nome">Conselho Municipal dos Direitos e Defesa dos Povos Indígenas de Campo Grande</span>
+      </a>
+      <a class="ts-reveal ts-caso-card" href="https://www.coopims.com.br" target="_blank" rel="noopener">
+        <span class="sigla">COOPIMS ↗</span>
+        <span class="nome" data-i18n="ts.coopims.nome">Cooperativa Estadual Indígena de Mato Grosso do Sul</span>
+      </a>
+      <a class="ts-reveal ts-caso-card" href="https://institutocaciqueenirterena.github.io" target="_blank" rel="noopener">
+        <span class="sigla">ICET ↗</span>
+        <span class="nome" data-i18n="ts.icet.nome">Instituto Cacique Enir Terena</span>
+      </a>
+      <a class="ts-reveal ts-caso-card" href="https://www.unipbras.com.br" target="_blank" rel="noopener">
+        <span class="sigla">UNIPBRAS ↗</span>
+        <span class="nome" data-i18n="ts.unipbras.nome">União Nacional dos Produtores e Agricultores Indígenas do Brasil</span>
+      </a>
+      <a class="ts-reveal ts-caso-card" href="https://www.focams.com.br" target="_blank" rel="noopener">
+        <span class="sigla">FOCAMS ↗</span>
+        <span class="nome" data-i18n="ts.focams.nome">Fórum de Caciques de Mato Grosso do Sul</span>
+      </a>
     </div>
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:2rem">
@@ -1490,6 +1509,18 @@ function enviarWhats(){
 // Dicionário i18n VERTTI - PT, EN, ES, FR
 // Terminologia oficial OMPI/WIPO em cada idioma
 const I18N = {
+  "ts.cmddi.nome": {pt:"Conselho Municipal dos Direitos e Defesa dos Povos Indígenas de Campo Grande", en:"Municipal Council for the Rights and Defense of Indigenous Peoples of Campo Grande", es:"Consejo Municipal de los Derechos y Defensa de los Pueblos Indígenas de Campo Grande", fr:"Conseil Municipal des Droits et de la Défense des Peuples Indigènes de Campo Grande"},
+  "ts.coopims.nome": {pt:"Cooperativa Estadual Indígena de Mato Grosso do Sul", en:"State Indigenous Cooperative of Mato Grosso do Sul", es:"Cooperativa Estatal Indígena de Mato Grosso do Sul", fr:"Coopérative Indigène de l'État du Mato Grosso do Sul"},
+  "ts.icet.nome": {pt:"Instituto Cacique Enir Terena", en:"Cacique Enir Terena Institute", es:"Instituto Cacique Enir Terena", fr:"Institut Cacique Enir Terena"},
+  "ts.unipbras.nome": {pt:"União Nacional dos Produtores e Agricultores Indígenas do Brasil", en:"National Union of Indigenous Producers and Farmers of Brazil", es:"Unión Nacional de los Productores y Agricultores Indígenas de Brasil", fr:"Union Nationale des Producteurs et Agriculteurs Autochtones du Brésil"},
+  "ts.focams.nome": {pt:"Fórum de Caciques de Mato Grosso do Sul", en:"Forum of Chiefs of Mato Grosso do Sul", es:"Foro de Caciques de Mato Grosso do Sul", fr:"Forum des Chefs du Mato Grosso do Sul"},
+  "ts.p4": {
+    pt:"O foco da consultoria está na <strong>governança institucional</strong> e na <strong>propriedade intelectual</strong> dessas organizações — e, olhando para frente, no desenvolvimento de futuros produtos nas áreas de <strong>biotecnologia</strong> e <strong>cultura</strong> a partir da valorização e proteção jurídica dos conhecimentos tradicionais.",
+    en:"The consultancy's focus is on the <strong>institutional governance</strong> and <strong>intellectual property</strong> of these organizations — and, looking ahead, on the development of future products in the fields of <strong>biotechnology</strong> and <strong>culture</strong>, built on the valorization and legal protection of traditional knowledge.",
+    es:"El foco de la consultoría está en la <strong>gobernanza institucional</strong> y en la <strong>propiedad intelectual</strong> de estas organizaciones — y, mirando hacia el futuro, en el desarrollo de futuros productos en las áreas de <strong>biotecnología</strong> y <strong>cultura</strong> a partir de la valorización y protección jurídica de los conocimientos tradicionales.",
+    fr:"L'accent du conseil est mis sur la <strong>gouvernance institutionnelle</strong> et la <strong>propriété intellectuelle</strong> de ces organisations — et, à terme, sur le développement de futurs produits dans les domaines de la <strong>biotechnologie</strong> et de la <strong>culture</strong>, à partir de la valorisation et de la protection juridique des savoirs traditionnels."
+  },
+
   "ts.eyebrow": {pt:"Tecnologia Social", en:"Social Technology", es:"Tecnología Social", fr:"Technologie Sociale"},
   "ts.titulo": {pt:"Tecnologia Social para ONGs e Instituições Indígenas", en:"Social Technology for NGOs and Indigenous Institutions", es:"Tecnología Social para ONG e Instituciones Indígenas", fr:"Technologie Sociale pour ONG et Institutions Indigènes"},
   "ts.p1": {
