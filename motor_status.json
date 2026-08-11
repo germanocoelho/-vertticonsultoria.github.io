@@ -55,6 +55,12 @@
    "quando": "2026-08-11T00:47:25Z",
    "detalhe": "3 ciclo(s) no histórico — abertura/clique real fica em Brevo: Automations > Workflows > Activity (não duplicado aqui para não arriscar guardar dado pessoal nem depender de campo em depreciação)",
    "integridade": ""
+  },
+  "disparo_diario": {
+   "status": "ok",
+   "quando": "2026-08-11T01:49:23Z",
+   "detalhe": "99 contatos enviados hoje, distribuídos entre 1 remetente(s) ativo(s): principal=99",
+   "integridade": "sem falhas"
   }
  },
  "alertas": [
@@ -65,9 +71,9 @@
   }
  ],
  "metricas": {
-  "enviados_total": 95,
+  "enviados_total": 194,
   "ultimo_lote": 95,
-  "ultimo_disparo_diario": 0
+  "ultimo_disparo_diario": 99
  },
  "proximas": {
   "semanal": "toda quarta-feira, 13:00 UTC (~10:00 Campo Grande/MS)",
