@@ -237,10 +237,12 @@ def et_jucems_real(st, cfg):
 
 def et_lote(st, cfg, caminho_jucems=None):
     raios = str(cfg.get("raios", "1,2"))
+    fila_leve = os.path.join(os.path.dirname(RAIZ), "motor_fila_leve.csv")
     cmd = [sys.executable, "2_gerar_lote.py", "--db", BASE_DB,
            "--meses", str(cfg.get("meses", 3)),
            "--lote", str(cfg.get("lote", 0)),   # 0 = só atualiza a fila; o envio real agora é diário (4_disparo_diario.py)
            "--raios", raios,
+           "--fila-leve", fila_leve,
            "--saida", os.path.join(RAIZ, "lote_bruto.csv")]
     if caminho_jucems:
         cmd += ["--jucems", caminho_jucems]

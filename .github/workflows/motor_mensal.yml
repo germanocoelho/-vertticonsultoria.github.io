@@ -73,7 +73,7 @@ jobs:
         run: |
           git config user.name  "Motor VERTTI"
           git config user.email "motor@vertticonsultoria.com.br"
-          git add motor_status.json motor_enviados.json marcas_ms.sqlite funil_historico.json || true
+          git add motor_status.json motor_enviados.json motor_fila_leve.csv marcas_ms.sqlite funil_historico.json || true
           git diff --cached --quiet || git commit -m "Motor mensal: ciclo executado [skip ci]"
           for tentativa in 1 2 3 4 5; do
             if git push; then

@@ -118,6 +118,8 @@ def main():
             continue
         saida_csv = os.path.join(RAIZ, f"lote_diario_{rem['nome']}.csv")
         cmd = [sys.executable, os.path.join(RAIZ, "2_gerar_lote.py"),
+               "--db", os.path.join(REPO_RAIZ, "base_ms.sqlite"),
+               "--fila-leve", os.path.join(REPO_RAIZ, "motor_fila_leve.csv"),
                "--lote", str(n_hoje), "--raios", cfg.get("raios", "1,2"),
                "--meses", str(cfg.get("meses", 3)), "--saida", saida_csv]
         r = subprocess.run(cmd, cwd=REPO_RAIZ, capture_output=True, text=True)

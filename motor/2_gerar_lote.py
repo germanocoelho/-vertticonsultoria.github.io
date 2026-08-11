@@ -99,11 +99,21 @@ def main():
                     help="desiste de um candidato se ficou este tempo na fila sem "
                          "ser selecionado (padrão: 15 meses)")
     ap.add_argument("--saida", default="lote_bruto.csv")
+    ap.add_argument("--fila-leve", default="motor_fila_leve.csv",
+                    help="arquivo leve (poucas linhas) com a fila pendente, "
+                         "o unico pedaco da fila persistente pequeno o bastante "
+                         "para ser commitado no git a cada execucao -- o banco "
+                         "completo (base_ms.sqlite, centenas de MB com todas as "
+                         "974 mil empresas de MS) nunca vai para o repositorio")
     args = ap.parse_args()
 
     raios_ativos = [int(x) for x in args.raios.split(",")]
     con = sqlite3.connect(args.db)
-    mun = {cod: nome for cod, nome in con.execute("SELECT cod, nome FROM municipios")}
+    tem_municipios = con.execute(
+        "SELECT name FROM sqlite_master WHERE name='municipios'").fetchone()
+    mun = {}
+    if tem_municipios:
+        mun = {cod: nome for cod, nome in con.execute("SELECT cod, nome FROM municipios")}
 
     from datetime import date, timedelta
     hoje = date.today()
@@ -126,6 +136,34 @@ def main():
         municipio_cod TEXT, bairro TEXT, ddd TEXT, telefone TEXT, email TEXT,
         raio INTEGER, data_inicio TEXT, primeiro_visto TEXT, selecionado TEXT)""")
 
+    # ---- importa a fila leve persistida (motor_fila_leve.csv), se existir --
+    # é o unico jeito da fila sobreviver de uma execucao do GitHub Actions
+    # para a proxima: o banco base_ms.sqlite inteiro (250+ MB) nunca é
+    # commitado (nem caberia -- GitHub recusa arquivo acima de 100 MB), entao
+    # cada execucao começa com um banco novo e vazio. Sem este import, a fila
+    # "persistente" reiniciava do zero todo santo dia.
+    import os as _os
+    importados = 0
+    if _os.path.exists(args.fila_leve):
+        with open(args.fila_leve, encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                cur = con.execute(
+                    """INSERT OR IGNORE INTO fila_candidatos
+                       (cnpj, cnpj_basico, nome_fantasia, cnae, municipio_cod, bairro,
+                        ddd, telefone, email, raio, data_inicio, primeiro_visto, selecionado)
+                       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,NULL)""",
+                    (row["cnpj"], row["cnpj_basico"], row["nome_fantasia"], row["cnae"],
+                     row["municipio_cod"], row["bairro"], row["ddd"], row["telefone"],
+                     row["email"], int(row["raio"]), row["data_inicio"], row["primeiro_visto"]))
+                importados += cur.rowcount
+        con.commit()
+        print(f"Fila leve importada de '{args.fila_leve}': {importados} candidatos pendentes recuperados.")
+    else:
+        print(f"Nenhuma fila leve encontrada em '{args.fila_leve}' (primeira execução, ou arquivo ainda não commitado).")
+
+    tem_estab = con.execute(
+        "SELECT name FROM sqlite_master WHERE name='estab_ms'").fetchone()
+
     # ---- sinal de prioridade por município -------------------------------
     momento = {}
     if args.jucems:
@@ -134,38 +172,47 @@ def main():
                 if len(row) >= 2 and row[1].strip().isdigit():
                     momento[norm(row[0])] = int(row[1])
         print(f"Sinal JUCEMS oficial carregado: {len(momento)} municípios.")
-    else:
+    elif tem_estab:
         for cod, n in con.execute(
                 "SELECT municipio_cod, COUNT(*) FROM estab_ms "
                 "WHERE data_inicio >= ? AND situacao='02' GROUP BY municipio_cod",
                 (corte,)):
             momento[mun.get(cod, cod)] = n
         print("Sinal de momento calculado da própria base (equivalente JUCEMS).")
+    else:
+        print("Execução sem base completa (modo diário): sem sinal de momento novo, "
+              "usando apenas a ordem de chegada dentro da fila já persistida.")
 
     # ---- passo 1: todo mundo elegível na janela recente ENTRA na fila -----
-    q = """SELECT e.cnpj, e.cnpj_basico, e.nome_fantasia, e.cnae, e.data_inicio,
-                  e.municipio_cod, e.bairro, e.ddd, e.telefone, e.email
-           FROM estab_ms e
-           WHERE e.situacao='02' AND e.matriz='1' AND e.data_inicio >= ?
-                 AND e.email <> ''"""
+    # só roda quando a base completa (estab_ms) está presente -- ou seja, só
+    # no ciclo mensal, logo após 0_baixar_receita.py + 1_destilar_ms.py. Na
+    # execução diária isso não existe (só 250 MB de download já inviabiliza
+    # rodar isso todo dia), então o disparo diário trabalha exclusivamente
+    # com quem já está na fila leve persistida.
     novos = 0
-    for row in con.execute(q, (corte,)):
-        cnpj, basico, fantasia, cnae, ini, mcod, bairro, ddd, tel, email = row
-        if not any(cnae.startswith(p) for p in CNAES_PRIORITARIOS):
-            continue
-        if not email_ok(email):
-            continue
-        nome_mun = mun.get(mcod, "?")
-        r = raio_do(nome_mun)
-        cur = con.execute(
-            """INSERT OR IGNORE INTO fila_candidatos
-               (cnpj, cnpj_basico, nome_fantasia, cnae, municipio_cod, bairro,
-                ddd, telefone, email, raio, data_inicio, primeiro_visto, selecionado)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,NULL)""",
-            (cnpj, basico, fantasia, cnae, mcod, bairro, ddd, tel, email, r, ini,
-             hoje.isoformat()))
-        novos += cur.rowcount
-    con.commit()
+    if tem_estab:
+        q = """SELECT e.cnpj, e.cnpj_basico, e.nome_fantasia, e.cnae, e.data_inicio,
+                      e.municipio_cod, e.bairro, e.ddd, e.telefone, e.email
+               FROM estab_ms e
+               WHERE e.situacao='02' AND e.matriz='1' AND e.data_inicio >= ?
+                     AND e.email <> ''"""
+        for row in con.execute(q, (corte,)):
+            cnpj, basico, fantasia, cnae, ini, mcod, bairro, ddd, tel, email = row
+            if not any(cnae.startswith(p) for p in CNAES_PRIORITARIOS):
+                continue
+            if not email_ok(email):
+                continue
+            nome_mun = mun.get(mcod, "?")
+            r = raio_do(nome_mun)
+            cur = con.execute(
+                """INSERT OR IGNORE INTO fila_candidatos
+                   (cnpj, cnpj_basico, nome_fantasia, cnae, municipio_cod, bairro,
+                    ddd, telefone, email, raio, data_inicio, primeiro_visto, selecionado)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,NULL)""",
+                (cnpj, basico, fantasia, cnae, mcod, bairro, ddd, tel, email, r, ini,
+                 hoje.isoformat()))
+            novos += cur.rowcount
+        con.commit()
     print(f"Fila persistente: {novos} candidatos novos entraram nesta execução.")
 
     # ---- passo 2: expira quem ficou tempo demais na fila sem ser chamado --
@@ -212,6 +259,20 @@ def main():
     print(f"Fila de espera após este lote: {fila_restante} candidatos pendentes "
           f"(entram no próximo lote automaticamente, sem precisar reaparecer na "
           f"janela de {args.meses} meses).")
+
+    # ---- exporta a fila leve (só pendentes) de volta para o arquivo que o
+    # workflow vai commitar -- isso é o que faz a fila sobreviver até a
+    # próxima execução, em vez de reiniciar do zero todo dia.
+    pendentes_export = con.execute(
+        """SELECT cnpj, cnpj_basico, nome_fantasia, cnae, municipio_cod, bairro,
+                  ddd, telefone, email, raio, data_inicio, primeiro_visto
+           FROM fila_candidatos WHERE selecionado IS NULL""").fetchall()
+    with open(args.fila_leve, "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["cnpj", "cnpj_basico", "nome_fantasia", "cnae", "municipio_cod",
+                    "bairro", "ddd", "telefone", "email", "raio", "data_inicio", "primeiro_visto"])
+        w.writerows(pendentes_export)
+    print(f"Fila leve exportada para '{args.fila_leve}': {len(pendentes_export)} candidatos pendentes salvos para a próxima execução.")
 
     razoes = {}
     if tem_empresas:
