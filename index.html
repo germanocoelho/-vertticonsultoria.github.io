@@ -652,6 +652,22 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
   #tecnologia-social-vertti .ts-reveal.on.ts-holofote{ transform:none !important; }
   #tecnologia-social-vertti .ts-holofote::after{ display:none; }
 }
+
+/* ===== ACRESCIMO: no celular (hover:none) o brilho dourado dos cards ficava totalmente
+   desligado pelo bloco acima (feito para efeito de cursor, que não existe no toque).
+   Aqui reativamos uma versão estática do brilho, sempre visível, para o efeito também
+   "funcionar" em quem usa celular — sem depender de mouse. */
+@media (hover:none){
+  #tecnologia-social-vertti .ts-holofote::after{
+    display:block !important; opacity:.55 !important; background-position:100% 100% !important;
+  }
+  #tecnologia-social-vertti .ts-holofote{
+    border-color:rgba(201,162,75,.4) !important;
+  }
+  .tilt{
+    box-shadow:0 4px 18px rgba(0,0,0,.12);
+  }
+}
 @media (prefers-reduced-motion: reduce){
   #tecnologia-social-vertti .ts-reveal{opacity:1 !important; transform:none !important; transition:none !important}
   #tecnologia-social-vertti::before, #tecnologia-social-vertti::after, .ts-marca-dagua{ animation:none !important; opacity:.06; }
@@ -1499,6 +1515,13 @@ document.querySelectorAll('.reveal,.reveal-l,.reveal-r,.reveal-scale').forEach((
   // stagger leve para grupos
   io.observe(el);
 });
+// rede de seguranca: garante que nada fique invisivel/parado para sempre, mesmo se o
+// IntersectionObserver nao disparar em algum navegador/celular especifico
+setTimeout(function(){
+  document.querySelectorAll('.reveal:not(.in),.reveal-l:not(.in),.reveal-r:not(.in),.reveal-scale:not(.in)').forEach(function(el){
+    el.classList.add('in');
+  });
+}, 3500);
 
 // ===== COUNT-UP =====
 function animateCount(el){
