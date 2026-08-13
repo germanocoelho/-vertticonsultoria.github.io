@@ -663,11 +663,11 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
 .vintro{position:relative; min-height:100vh; overflow:hidden; display:flex; align-items:center; justify-content:center; background:radial-gradient(ellipse at 50% 40%, var(--petroleo-2) 0%, var(--petroleo) 60%, #050f15 100%)}
 #vi-particulas{position:absolute; inset:0; z-index:1; opacity:0; animation:viApareceParticulas 3s ease 1.2s forwards}
 @keyframes viApareceParticulas{ to{opacity:1} }
-.vi-anel{position:absolute; border-radius:50%; border:1px solid rgba(201,162,75,.18); opacity:0; animation:viAnelSurge 2.4s cubic-bezier(.16,1,.3,1) forwards}
-.vi-anel1{width:340px; height:340px; animation-delay:.15s}
-.vi-anel2{width:480px; height:480px; animation-delay:.3s}
-.vi-anel3{width:640px; height:640px; animation-delay:.45s}
-@keyframes viAnelSurge{ 0%{opacity:0; transform:scale(.4)} 55%{opacity:1} 100%{opacity:.55; transform:scale(1)} }
+.vi-anel{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(.4); border-radius:50%; border:1px solid rgba(201,162,75,.18); opacity:0; animation:viAnelSurge 2.4s cubic-bezier(.16,1,.3,1) forwards}
+.vi-anel1{width:min(340px, 82vw); height:min(340px, 82vw); animation-delay:.15s}
+.vi-anel2{width:min(480px, 92vw); height:min(480px, 92vw); animation-delay:.3s}
+.vi-anel3{width:min(640px, 96vw); height:min(640px, 96vw); animation-delay:.45s}
+@keyframes viAnelSurge{ 0%{opacity:0; transform:translate(-50%,-50%) scale(.4)} 55%{opacity:1} 100%{opacity:.55; transform:translate(-50%,-50%) scale(1)} }
 .vi-palco{position:relative; z-index:3; text-align:center}
 .vi-moldura{position:relative; padding:56px 72px; opacity:0; transform:scale(.86) translateY(18px); animation:viMoldEntra 1.3s cubic-bezier(.16,1,.3,1) .5s forwards}
 @keyframes viMoldEntra{ to{opacity:1; transform:scale(1) translateY(0)} }
