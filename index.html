@@ -54,7 +54,7 @@ a{color:inherit;text-decoration:none}
 
 /* ===== NAV ===== */
 header.nav{position:fixed;top:0;left:0;right:0;z-index:100;transition:.3s;padding:18px 0}
-header.nav.scrolled{background:rgba(14,42,54,.92);backdrop-filter:blur(14px);padding:11px 0;box-shadow:0 8px 30px -12px rgba(0,0,0,.4)}
+header.nav.scrolled{background:rgba(14,42,54,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);padding:11px 0;box-shadow:0 8px 30px -12px rgba(0,0,0,.4)}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:20px}
 .logo{display:flex;align-items:center;gap:12px;color:var(--branco)}
 .logo-plate{background:#fff;padding:6px 14px;border-radius:10px;display:inline-flex;align-items:center;box-shadow:0 6px 18px -8px rgba(0,0,0,.45);transition:transform .25s ease}
@@ -76,7 +76,7 @@ header.nav.scrolled{background:rgba(14,42,54,.92);backdrop-filter:blur(14px);pad
 .hero{position:relative;background:radial-gradient(120% 90% at 80% -10%,var(--petroleo-soft) 0%,var(--petroleo) 45%,#091e27 100%);color:var(--branco);padding:170px 0 90px;overflow:hidden}
 .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center}
 .hero-badges{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:26px}
-.hbadge{font-size:.72rem;font-weight:600;letter-spacing:.03em;padding:7px 14px;border-radius:100px;background:rgba(201,162,75,.12);border:1px solid var(--linha);color:var(--ouro-claro);backdrop-filter:blur(4px)}
+.hbadge{font-size:.72rem;font-weight:600;letter-spacing:.03em;padding:7px 14px;border-radius:100px;background:rgba(201,162,75,.12);border:1px solid var(--linha);color:var(--ouro-claro);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 .hero h1{font-size:clamp(2.4rem,4.6vw,3.85rem);font-weight:600;margin-bottom:22px}
 .hero h1 em{font-style:normal;color:var(--ouro);position:relative}
 .hero p.lead{font-size:1.12rem;color:rgba(255,255,255,.82);max-width:560px;margin-bottom:34px;line-height:1.65}
@@ -676,7 +676,7 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
   #tecnologia-social-vertti .ts-holofote{ transition:none !important; }
 }
 
-.vintro{position:relative; min-height:100vh; overflow:hidden; display:flex; align-items:center; justify-content:center; background:radial-gradient(ellipse at 50% 40%, var(--petroleo-2) 0%, var(--petroleo) 60%, #050f15 100%)}
+.vintro{position:relative; min-height:100vh; min-height:100dvh; overflow:hidden; display:flex; align-items:center; justify-content:center; background:radial-gradient(ellipse at 50% 40%, var(--petroleo-2) 0%, var(--petroleo) 60%, #050f15 100%)}
 #vi-particulas{position:absolute; inset:0; z-index:1; opacity:0; animation:viApareceParticulas 3s ease 1.2s forwards}
 @keyframes viApareceParticulas{ to{opacity:1} }
 .vi-anel{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(.4); border-radius:50%; border:1px solid rgba(201,162,75,.18); opacity:0; animation:viAnelSurge 2.4s cubic-bezier(.16,1,.3,1) forwards}
