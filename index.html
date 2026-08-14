@@ -747,11 +747,54 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
 .vt-friso{ width:100%; max-width:520px; margin:0 auto; padding:8px 24px; color:var(--ouro); opacity:.5; }
 .vt-friso svg{ display:block; width:100%; height:22px; }
 
-.agente, .proc, #consulta, #sobre{ position:relative; }
+.agente, .proc, #consulta, #sobre, #depoimentos{ position:relative; }
 
 @media (prefers-reduced-motion: reduce){
   .vt-marca-dagua, .vt-orn{ animation:none; }
 }
+
+/* ===== ACRESCIMO: seção de Depoimentos (opiniões de clientes) ===== */
+.dep-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:22px; margin-top:36px; }
+.dep-card{
+  position:relative; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1);
+  border-radius:18px; padding:26px 24px 22px; transition:.3s; overflow:hidden;
+}
+.dep-card::before{
+  content:""; position:absolute; inset:0; border-radius:18px; padding:1px;
+  background:linear-gradient(135deg, rgba(201,162,75,.35), transparent 60%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; opacity:.7;
+}
+.dep-card:hover{ background:rgba(255,255,255,.07); transform:translateY(-4px); }
+.dep-quote{ font-size:1.8rem; color:var(--ouro); line-height:1; margin-bottom:6px; font-family:var(--serif,serif); }
+.dep-texto{ font-size:.98rem; color:rgba(255,255,255,.86); line-height:1.65; margin-bottom:18px; }
+.dep-quem{ display:flex; align-items:center; gap:12px; }
+.dep-logo{ width:44px; height:44px; border-radius:10px; object-fit:contain; background:#fff; padding:4px; flex:none; }
+.dep-avatar{ width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,var(--ouro),var(--ouro-claro,var(--ouro))); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--petroleo); flex:none; }
+.dep-nome{ font-weight:600; font-size:.95rem; }
+.dep-empresa{ font-size:.82rem; color:rgba(255,255,255,.6); }
+.dep-vazio{ text-align:center; opacity:.7; padding:30px; grid-column:1/-1; }
+.dep-cta{ text-align:center; margin-top:38px; }
+
+.dep-modal{ position:fixed; inset:0; z-index:9999; display:none; align-items:center; justify-content:center; padding:20px; }
+.dep-modal.aberto{ display:flex; }
+.dep-modal-fundo{ position:absolute; inset:0; background:rgba(6,16,20,.75); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+.dep-modal-caixa{
+  position:relative; background:var(--petroleo-2,#12384a); border:1px solid rgba(201,162,75,.3);
+  border-radius:20px; padding:32px 28px; max-width:460px; width:100%; box-shadow:0 30px 80px -20px rgba(0,0,0,.6);
+  animation:depModalIn .35s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes depModalIn{ from{opacity:0; transform:translateY(24px) scale(.97)} to{opacity:1; transform:none} }
+.dep-modal-fechar{ position:absolute; top:12px; right:14px; background:none; border:none; color:rgba(255,255,255,.7); font-size:1.6rem; cursor:pointer; line-height:1; }
+.dep-modal-fechar:hover{ color:var(--ouro); }
+.dep-modal-p{ font-size:.9rem; color:rgba(255,255,255,.72); margin:8px 0 20px; }
+#dep-form label{ display:block; font-size:.8rem; color:rgba(255,255,255,.7); margin:14px 0 6px; }
+#dep-form input, #dep-form textarea{
+  width:100%; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.15); border-radius:10px;
+  padding:10px 12px; color:#fff; font:inherit; resize:vertical;
+}
+#dep-form input:focus, #dep-form textarea:focus{ outline:none; border-color:var(--ouro); }
+#dep-form button[type=submit]{ margin-top:20px; width:100%; justify-content:center; }
 </style>
 </head>
 <body>
@@ -1046,6 +1089,18 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
         <h3 data-i18n="serv.6t">Gestão de portfólio e consultoria</h3>
         <p data-i18n="serv.6d">Mapeamento e inventário de ativos intelectuais, monitoramento de vencimentos e renovações, vigilância de terceiros, além de palestras e treinamentos em PI com base em produção científica premiada.</p>
         <span class="serv-tag" data-i18n="serv.6tag">Visão estratégica</span>
+      </div>
+      <div class="serv-card reveal tilt">
+        <div class="serv-ic">🔒</div>
+        <h3 data-i18n="serv.7t">Proteção de domínio e endereço na internet</h3>
+        <p data-i18n="serv.7d">Registro, monitoramento e defesa do seu domínio (endereço na internet), evitando que terceiros usem indevidamente seu nome ou marca online. Renovação preventiva, verificação de domínios similares e orientação em disputas.</p>
+        <span class="serv-tag" data-i18n="serv.7tag">Presença digital segura</span>
+      </div>
+      <div class="serv-card reveal tilt">
+        <div class="serv-ic">🖥️</div>
+        <h3 data-i18n="serv.8t">Criação de página na internet</h3>
+        <p data-i18n="serv.8d">Criação de site institucional, seja apenas para presença profissional online, seja com funcionalidades completas (formulários, catálogo de serviços, integração com WhatsApp e redes sociais). Alinhado à proteção da sua marca desde o primeiro dia.</p>
+        <span class="serv-tag" data-i18n="serv.8tag">Sua marca também online</span>
       </div>
     </div>
   </div>
@@ -1409,6 +1464,47 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
         <p data-i18n="news.4p">Germano integra comitiva de Mato Grosso do Sul que apresenta pesquisas em Brasília, reforçando o protagonismo do estado no cenário nacional de propriedade intelectual e inovação.</p>
         <span class="news-more" data-i18n="news.more">Ler notícia completa</span>
       </a>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section id="depoimentos">
+  <svg class="vt-marca-dagua" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
+  <svg class="vt-orn vt-orn-tl" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
+  <svg class="vt-orn vt-orn-br" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow" data-i18n="dep.eyebrow">Depoimentos</span>
+      <h2 data-i18n="dep.title">O que dizem <em>nossos clientes</em></h2>
+      <p data-i18n="dep.sub">Empresas, associações e pessoas que confiaram à VERTTI a proteção do que construíram.</p>
+    </div>
+    <div id="dep-grid" class="dep-grid">
+      <div class="dep-vazio reveal" id="dep-vazio" style="display:none">
+        <p data-i18n="dep.vazio">Em breve, as primeiras opiniões dos nossos clientes aparecerão aqui.</p>
+      </div>
+    </div>
+    <div class="dep-cta reveal">
+      <button type="button" class="btn btn-ghost" id="dep-abrir-form" data-i18n="dep.cta">Deixar minha opinião</button>
+    </div>
+  </div>
+
+  <!-- Modal de depoimento -->
+  <div id="dep-modal" class="dep-modal" aria-hidden="true">
+    <div class="dep-modal-fundo" id="dep-modal-fundo"></div>
+    <div class="dep-modal-caixa">
+      <button type="button" class="dep-modal-fechar" id="dep-modal-fechar" aria-label="Fechar">&times;</button>
+      <h3 data-i18n="dep.form.title">Sua opinião é muito importante</h3>
+      <p class="dep-modal-p" data-i18n="dep.form.sub">Conte como foi sua experiência com a VERTTI. Se quiser, envie também a logo da sua empresa junto com a mensagem no WhatsApp.</p>
+      <form id="dep-form">
+        <label data-i18n="dep.form.nome">Seu nome</label>
+        <input type="text" id="dep-nome" required>
+        <label data-i18n="dep.form.empresa">Empresa / organização (opcional)</label>
+        <input type="text" id="dep-empresa">
+        <label data-i18n="dep.form.texto">Sua opinião</label>
+        <textarea id="dep-texto" rows="4" required></textarea>
+        <button type="submit" class="btn btn-wa" data-i18n="dep.form.enviar">Enviar pelo WhatsApp</button>
+      </form>
     </div>
   </div>
 </section>
@@ -1875,6 +1971,22 @@ const I18N = {
     fr:"Cartographie et inventaire des actifs intellectuels, suivi des échéances et renouvellements, surveillance des tiers, ainsi que conférences et formations en PI fondées sur une production scientifique primée."
   },
   "serv.6tag": {pt:"Visão estratégica", en:"Strategic vision", es:"Visión estratégica", fr:"Vision stratégique"},
+  "serv.7t": {pt:"Proteção de domínio e endereço na internet", en:"Domain and web address protection", es:"Protección de dominio y dirección en internet", fr:"Protection du domaine et de l'adresse internet"},
+  "serv.7d": {
+    pt:"Registro, monitoramento e defesa do seu domínio (endereço na internet), evitando que terceiros usem indevidamente seu nome ou marca online. Renovação preventiva, verificação de domínios similares e orientação em disputas.",
+    en:"Registration, monitoring and defense of your domain (web address), preventing third parties from improperly using your name or brand online. Preventive renewal, similar-domain checks and dispute guidance.",
+    es:"Registro, monitoreo y defensa de su dominio (dirección en internet), evitando que terceros usen indebidamente su nombre o marca en línea. Renovación preventiva, verificación de dominios similares y orientación en disputas.",
+    fr:"Enregistrement, surveillance et défense de votre domaine (adresse internet), empêchant des tiers d'utiliser indûment votre nom ou votre marque en ligne. Renouvellement préventif, vérification de domaines similaires et accompagnement en cas de litige."
+  },
+  "serv.7tag": {pt:"Presença digital segura", en:"Secure digital presence", es:"Presencia digital segura", fr:"Présence numérique sécurisée"},
+  "serv.8t": {pt:"Criação de página na internet", en:"Website creation", es:"Creación de página en internet", fr:"Création de site internet"},
+  "serv.8d": {
+    pt:"Criação de site institucional, seja apenas para presença profissional online, seja com funcionalidades completas (formulários, catálogo de serviços, integração com WhatsApp e redes sociais). Alinhado à proteção da sua marca desde o primeiro dia.",
+    en:"Creation of an institutional website, whether just for a professional online presence or with full functionality (forms, service catalog, WhatsApp and social media integration). Aligned with protecting your brand from day one.",
+    es:"Creación de sitio institucional, ya sea solo para presencia profesional en línea o con funcionalidades completas (formularios, catálogo de servicios, integración con WhatsApp y redes sociales). Alineado con la protección de su marca desde el primer día.",
+    fr:"Création d'un site institutionnel, que ce soit uniquement pour une présence professionnelle en ligne ou avec des fonctionnalités complètes (formulaires, catalogue de services, intégration WhatsApp et réseaux sociaux). Aligné sur la protection de votre marque dès le premier jour."
+  },
+  "serv.8tag": {pt:"Sua marca também online", en:"Your brand online too", es:"Su marca también en línea", fr:"Votre marque aussi en ligne"},
 
   // ===== PROCESSO =====
   "proc.eyebrow": {pt:"Como funciona", en:"How it works", es:"Cómo funciona", fr:"Comment ça marche"},
@@ -2069,6 +2181,34 @@ const I18N = {
     fr:"Germano fait partie d'une délégation du Mato Grosso do Sul présentant des recherches à Brasília, renforçant le rôle de premier plan de l'état dans le paysage national de la propriété intellectuelle et de l'innovation."
   },
   "news.more": {pt:"Ler notícia completa", en:"Read full article", es:"Leer noticia completa", fr:"Lire l'article complet"},
+
+  // ===== DEPOIMENTOS =====
+  "dep.eyebrow": {pt:"Depoimentos", en:"Testimonials", es:"Testimonios", fr:"Témoignages"},
+  "dep.title": {pt:"O que dizem <em>nossos clientes</em>", en:"What our <em>clients say</em>", es:"Lo que dicen <em>nuestros clientes</em>", fr:"Ce que disent <em>nos clients</em>"},
+  "dep.sub": {
+    pt:"Empresas, associações e pessoas que confiaram à VERTTI a proteção do que construíram.",
+    en:"Companies, associations and people who trusted VERTTI to protect what they built.",
+    es:"Empresas, asociaciones y personas que confiaron a VERTTI la protección de lo que construyeron.",
+    fr:"Entreprises, associations et personnes qui ont confié à VERTTI la protection de ce qu'elles ont construit."
+  },
+  "dep.vazio": {
+    pt:"Em breve, as primeiras opiniões dos nossos clientes aparecerão aqui.",
+    en:"Soon, our clients' first testimonials will appear here.",
+    es:"Pronto, las primeras opiniones de nuestros clientes aparecerán aquí.",
+    fr:"Bientôt, les premiers témoignages de nos clients apparaîtront ici."
+  },
+  "dep.cta": {pt:"Deixar minha opinião", en:"Leave my review", es:"Dejar mi opinión", fr:"Laisser mon avis"},
+  "dep.form.title": {pt:"Sua opinião é muito importante", en:"Your opinion matters a lot", es:"Su opinión es muy importante", fr:"Votre avis compte beaucoup"},
+  "dep.form.sub": {
+    pt:"Conte como foi sua experiência com a VERTTI. Se quiser, envie também a logo da sua empresa junto com a mensagem no WhatsApp.",
+    en:"Tell us about your experience with VERTTI. If you like, also send your company's logo along with the WhatsApp message.",
+    es:"Cuéntenos cómo fue su experiencia con VERTTI. Si lo desea, envíe también el logo de su empresa junto con el mensaje en WhatsApp.",
+    fr:"Racontez-nous votre expérience avec VERTTI. Si vous le souhaitez, envoyez aussi le logo de votre entreprise avec le message WhatsApp."
+  },
+  "dep.form.nome": {pt:"Seu nome", en:"Your name", es:"Su nombre", fr:"Votre nom"},
+  "dep.form.empresa": {pt:"Empresa / organização (opcional)", en:"Company / organization (optional)", es:"Empresa / organización (opcional)", fr:"Entreprise / organisation (facultatif)"},
+  "dep.form.texto": {pt:"Sua opinião", en:"Your review", es:"Su opinión", fr:"Votre avis"},
+  "dep.form.enviar": {pt:"Enviar pelo WhatsApp", en:"Send via WhatsApp", es:"Enviar por WhatsApp", fr:"Envoyer via WhatsApp"},
 
   // ===== VALORES =====
   "precos.eyebrow": {pt:"Investimento", en:"Investment", es:"Inversión", fr:"Investissement"},
@@ -2344,6 +2484,95 @@ document.querySelectorAll('#langSwitch button').forEach(b=>{
   } catch(e){ if (window.console) console.error('vertti-intro', e); }
 })();
 
+</script>
+<script>
+(function(){
+  try{
+    var grid = document.getElementById('dep-grid');
+    var vazio = document.getElementById('dep-vazio');
+    function iniciais(nome){
+      return (nome||'').trim().split(/\s+/).slice(0,2).map(function(p){return p[0]||'';}).join('').toUpperCase();
+    }
+    function escapeHtml(s){
+      return String(s||'').replace(/[&<>"']/g, function(c){
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+      });
+    }
+    function renderizar(lista){
+      var aprovados = (lista||[]).filter(function(d){ return d && d.aprovado; });
+      aprovados.sort(function(a,b){ return (a.ordem||0) - (b.ordem||0); });
+      if (!aprovados.length){ if (vazio) vazio.style.display = ''; return; }
+      var html = aprovados.map(function(d){
+        var quemFoto = d.logo
+          ? '<img class="dep-logo" src="'+d.logo+'" alt="">'
+          : '<div class="dep-avatar">'+escapeHtml(iniciais(d.nome))+'</div>';
+        return '' +
+          '<div class="dep-card reveal tilt">' +
+            '<div class="dep-quote">&ldquo;</div>' +
+            '<p class="dep-texto">'+escapeHtml(d.texto)+'</p>' +
+            '<div class="dep-quem">' + quemFoto +
+              '<div><div class="dep-nome">'+escapeHtml(d.nome)+'</div>' +
+              (d.empresa ? '<div class="dep-empresa">'+escapeHtml(d.empresa)+'</div>' : '') +
+              '</div>' +
+            '</div>' +
+          '</div>';
+      }).join('');
+      grid.insertAdjacentHTML('beforeend', html);
+      if ('IntersectionObserver' in window){
+        var io = new IntersectionObserver(function(es){
+          es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+        }, {threshold:.12});
+        grid.querySelectorAll('.dep-card.reveal').forEach(function(el){ io.observe(el); });
+      } else {
+        grid.querySelectorAll('.dep-card.reveal').forEach(function(el){ el.classList.add('in'); });
+      }
+      if (window.THREE || true){
+        grid.querySelectorAll('.dep-card.tilt').forEach(function(card){
+          if (matchMedia('(hover:hover) and (pointer:fine)').matches){
+            card.addEventListener('mousemove', function(e){
+              var r = card.getBoundingClientRect();
+              var cx = ((e.clientX - r.left)/r.width - .5) * 10;
+              var cy = ((e.clientY - r.top)/r.height - .5) * -10;
+              card.style.transform = 'translateY(-4px) rotateX('+cy+'deg) rotateY('+cx+'deg)';
+            });
+            card.addEventListener('mouseleave', function(){ card.style.transform = ''; });
+          }
+        });
+      }
+    }
+    fetch('vertti-depoimentos.json', {cache:'no-store'})
+      .then(function(r){ return r.ok ? r.json() : {depoimentos:[]}; })
+      .then(function(data){ renderizar(data.depoimentos || []); })
+      .catch(function(){ if (vazio) vazio.style.display = ''; });
+
+    var modal = document.getElementById('dep-modal');
+    var abrir = document.getElementById('dep-abrir-form');
+    var fechar = document.getElementById('dep-modal-fechar');
+    var fundo = document.getElementById('dep-modal-fundo');
+    function abrirModal(){ modal.classList.add('aberto'); modal.setAttribute('aria-hidden','false'); }
+    function fecharModal(){ modal.classList.remove('aberto'); modal.setAttribute('aria-hidden','true'); }
+    if (abrir) abrir.addEventListener('click', abrirModal);
+    if (fechar) fechar.addEventListener('click', fecharModal);
+    if (fundo) fundo.addEventListener('click', fecharModal);
+
+    var form = document.getElementById('dep-form');
+    if (form){
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        var nome = document.getElementById('dep-nome').value.trim();
+        var empresa = document.getElementById('dep-empresa').value.trim();
+        var texto = document.getElementById('dep-texto').value.trim();
+        var msg = 'Olá! Quero deixar minha opinião sobre a VERTTI.\n\nNome: ' + nome +
+          (empresa ? '\nEmpresa: ' + empresa : '') +
+          '\nOpinião: ' + texto +
+          '\n\n(Se quiser, posso enviar a logo da empresa aqui mesmo pelo WhatsApp.)';
+        window.open('https://wa.me/5567981644664?text=' + encodeURIComponent(msg), '_blank');
+        fecharModal();
+        form.reset();
+      });
+    }
+  }catch(e){ if (window.console) console.error('vertti-depoimentos', e); }
+})();
 </script>
 </body>
 
