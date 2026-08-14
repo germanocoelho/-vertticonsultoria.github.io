@@ -722,9 +722,57 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
   .vi-logo-wrap{transition:transform .1s linear}
 }
 
+/* ===== ACRESCIMO: reaproveita o grafismo ja existente (flor + espirais da secao Terena)
+   como marca d'agua giratoria, ornamentos de canto e friso, em secoes que ainda nao
+   tinham nenhum efeito visual. Nao altera nenhuma regra ou elemento existente. */
+.vt-marca-dagua{
+  position:absolute; z-index:0; top:50%; left:50%; width:560px; height:560px; max-width:100%; max-height:100%;
+  transform:translate(-50%,-50%); color:var(--ouro); opacity:.06; pointer-events:none;
+  animation:vtGrafismoGirar 100s linear infinite;
+}
+@keyframes vtGrafismoGirar{ from{transform:translate(-50%,-50%) rotate(0)} to{transform:translate(-50%,-50%) rotate(360deg)} }
+
+.vt-orn{
+  position:absolute; z-index:0; width:64px; height:64px; max-width:64px; max-height:64px; color:var(--ouro-claro); opacity:.6; pointer-events:none;
+  filter:drop-shadow(0 0 6px rgba(201,162,75,.3));
+  animation:vtOrnPulso 5s ease-in-out infinite;
+}
+@media (max-width:640px){ .vt-orn{width:38px !important; height:38px !important} }
+.vt-orn-tl{top:14px; left:14px;}
+.vt-orn-tr{top:14px; right:14px; transform:rotate(90deg);}
+.vt-orn-br{bottom:14px; right:14px; transform:rotate(180deg);}
+.vt-orn-bl{bottom:14px; left:14px; transform:rotate(270deg);}
+@keyframes vtOrnPulso{ 0%,100%{opacity:.45} 50%{opacity:.7} }
+
+.vt-friso{ width:100%; max-width:520px; margin:0 auto; padding:8px 24px; color:var(--ouro); opacity:.5; }
+.vt-friso svg{ display:block; width:100%; height:22px; }
+
+.agente, .proc, #consulta, #sobre{ position:relative; }
+
+@media (prefers-reduced-motion: reduce){
+  .vt-marca-dagua, .vt-orn{ animation:none; }
+}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="vt-grafismo" viewBox="0 0 200 200">
+    <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M100 60 C112 72 112 88 100 100 C88 88 88 72 100 60 Z"/>
+      <path d="M140 100 C128 112 112 112 100 100 C112 88 128 88 140 100 Z"/>
+      <path d="M100 140 C88 128 88 112 100 100 C112 112 112 128 100 140 Z"/>
+      <path d="M60 100 C72 88 88 88 100 100 C88 112 72 112 60 100 Z"/>
+      <circle cx="100" cy="100" r="7" fill="currentColor" stroke="none"/>
+      <circle cx="100" cy="100" r="13"/>
+      <path d="M52 100 C40 100 40 84 52 84 C60 84 60 94 53 94" stroke-width="2.4"/>
+      <path d="M148 100 C160 100 160 84 148 84 C140 84 140 94 147 94" stroke-width="2.4"/>
+      <circle cx="58" cy="58" r="3.5" fill="currentColor" stroke="none"/>
+      <circle cx="142" cy="58" r="3.5" fill="currentColor" stroke="none"/>
+      <circle cx="70" cy="135" r="3" fill="currentColor" stroke="none" opacity=".7"/>
+      <circle cx="130" cy="135" r="3" fill="currentColor" stroke="none" opacity=".7"/>
+    </g>
+  </symbol>
+</svg>
 <!-- INTRO ANIMADA DA MARCA -->
 <section class="vintro" id="vintro" aria-label="Apresentação da marca VERTTI">
   <canvas id="vi-particulas"></canvas>
@@ -899,6 +947,9 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
 
 <!-- AGENTE -->
 <section class="agente" id="agente">
+  <svg class="vt-marca-dagua" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
+  <svg class="vt-orn vt-orn-tl" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
+  <svg class="vt-orn vt-orn-br" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
   <div class="wrap agente-grid">
     <div>
       <div class="sec-head" style="margin-bottom:30px">
@@ -1002,6 +1053,9 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
 
 <!-- PROCESSO -->
 <section class="proc">
+  <svg class="vt-marca-dagua" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
+  <svg class="vt-orn vt-orn-tl" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
+  <svg class="vt-orn vt-orn-br" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
   <div class="wrap">
     <div class="sec-head center">
       <span class="eyebrow" data-i18n="proc.eyebrow">Como funciona</span>
@@ -1069,6 +1123,9 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
 
 <!-- CONSULTA / FORM -->
 <section class="consulta" id="consulta">
+  <svg class="vt-marca-dagua" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
+  <svg class="vt-orn vt-orn-tl" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
+  <svg class="vt-orn vt-orn-br" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
   <div class="wrap form-shell">
     <div class="form-side">
       <span class="eyebrow" data-i18n="form.eyebrow">Consulta gratuita</span>
@@ -1198,6 +1255,9 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
 </section>
 
 <section id="sobre">
+  <svg class="vt-marca-dagua" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
+  <svg class="vt-orn vt-orn-tl" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
+  <svg class="vt-orn vt-orn-br" viewBox="0 0 200 200" aria-hidden="true"><use href="#vt-grafismo"/></svg>
   <div class="wrap sobre-grid">
     <aside class="sobre-portrait">
       <div class="portrait-banner"><svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg"><defs>  <linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1">    <stop offset="0%" stop-color="#12384a"/><stop offset="100%" stop-color="#0a2330"/>  </linearGradient>  <linearGradient id="book" x1="0" y1="0" x2="0" y2="1">    <stop offset="0%" stop-color="#C9A24B" stop-opacity=".9"/><stop offset="100%" stop-color="#a07d2e"/>  </linearGradient></defs><rect width="600" height="400" fill="url(#bg2)"/><!-- luz suave --><ellipse cx="300" cy="100" rx="320" ry="180" fill="#C9A24B" opacity=".06"/><rect x="60" y="-2" width="20" height="72" fill="#1a4a5e" opacity="1" rx="1"/><rect x="82" y="-2" width="22" height="72" fill="#1a4a5e" opacity="1" rx="1"/><rect x="106" y="2" width="20" height="68" fill="url(#book)" opacity="1" rx="1"/><rect x="130" y="-2" width="14" height="72" fill="#1a4a5e" opacity="1" rx="1"/><rect x="148" y="15" width="14" height="55" fill="url(#book)" opacity="1" rx="1"/><rect x="164" y="15" width="16" height="55" fill="#11526b" opacity="1" rx="1"/><rect x="183" y="8" width="22" height="62" fill="#11526b" opacity="1" rx="1"/><rect x="208" y="15" width="14" height="55" fill="#11526b" opacity="1" rx="1"/><rect x="225" y="15" width="22" height="55" fill="#11526b" opacity="1" rx="1"/><rect x="249" y="2" width="22" height="68" fill="url(#book)" opacity="1" rx="1"/><rect x="275" y="-2" width="14" height="72" fill="url(#book)" opacity="1" rx="1"/><rect x="292" y="15" width="20" height="55" fill="#16475c" opacity="1" rx="1"/><rect x="314" y="15" width="16" height="55" fill="#0f3a4c" opacity="1" rx="1"/><rect x="333" y="8" width="14" height="62" fill="#11526b" opacity="1" rx="1"/><rect x="350" y="2" width="14" height="68" fill="#0f3a4c" opacity="1" rx="1"/><rect x="366" y="8" width="16" height="62" fill="#16475c" opacity="1" rx="1"/><rect x="384" y="-2" width="20" height="72" fill="url(#book)" opacity="1" rx="1"/><rect x="408" y="-2" width="16" height="72" fill="#1a4a5e" opacity="1" rx="1"/><rect x="427" y="15" width="20" height="55" fill="#1a4a5e" opacity="1" rx="1"/><rect x="449" y="2" width="18" height="68" fill="#16475c" opacity="1" rx="1"/><rect x="469" y="-2" width="16" height="72" fill="#16475c" opacity="1" rx="1"/><rect x="487" y="8" width="16" height="62" fill="#16475c" opacity="1" rx="1"/><rect x="507" y="2" width="18" height="68" fill="#16475c" opacity="1" rx="1"/><rect x="527" y="8" width="16" height="62" fill="url(#book)" opacity="1" rx="1"/><rect x="50" y="70" width="500" height="5" fill="#C9A24B" opacity=".25"/><rect x="60" y="88" width="18" height="72" fill="url(#book)" opacity="1" rx="1"/><rect x="82" y="98" width="20" height="62" fill="#1a4a5e" opacity="1" rx="1"/><rect x="106" y="92" width="16" height="68" fill="#1a4a5e" opacity="1" rx="1"/><rect x="126" y="98" width="16" height="62" fill="#1a4a5e" opacity="1" rx="1"/><rect x="146" y="88" width="20" height="72" fill="#0f3a4c" opacity="1" rx="1"/><rect x="168" y="105" width="14" height="55" fill="url(#book)" opacity="1" rx="1"/><rect x="185" y="88" width="16" height="72" fill="#0f3a4c" opacity="1" rx="1"/><rect x="204" y="98" width="22" height="62" fill="#16475c" opacity="1" rx="1"/><rect x="228" y="88" width="16" height="72" fill="#16475c" opacity="1" rx="1"/><rect x="247" y="98" width="16" height="62" fill="#16475c" opacity="1" rx="1"/><rect x="266" y="88" width="20" height="72" fill="#16475c" opacity="1" rx="1"/><rect x="288" y="92" width="18" height="68" fill="#1a4a5e" opacity="1" rx="1"/><rect x="308" y="98" width="18" height="62" fill="#11526b" opacity="1" rx="1"/><rect x="330" y="98" width="22" height="62" fill="#16475c" opacity="1" rx="1"/><rect x="355" y="92" width="18" height="68" fill="#16475c" opacity="1" rx="1"/><rect x="377" y="88" width="14" height="72" fill="url(#book)" opacity="1" rx="1"/><rect x="394" y="98" width="18" height="62" fill="#16475c" opacity="1" rx="1"/><rect x="415" y="92" width="22" height="68" fill="#1a4a5e" opacity="1" rx="1"/><rect x="440" y="105" width="18" height="55" fill="#16475c" opacity="1" rx="1"/><rect x="461" y="88" width="14" height="72" fill="#0f3a4c" opacity="1" rx="1"/><rect x="478" y="105" width="22" height="55" fill="#16475c" opacity="1" rx="1"/><rect x="502" y="92" width="14" height="68" fill="#11526b" opacity="1" rx="1"/><rect x="519" y="88" width="22" height="72" fill="#16475c" opacity="1" rx="1"/><rect x="50" y="160" width="500" height="5" fill="#C9A24B" opacity=".25"/><rect x="60" y="195" width="22" height="55" fill="#16475c" opacity="1" rx="1"/><rect x="85" y="188" width="14" height="62" fill="#16475c" opacity="1" rx="1"/><rect x="102" y="178" width="22" height="72" fill="#16475c" opacity="1" rx="1"/><rect x="127" y="188" width="18" height="62" fill="#1a4a5e" opacity="1" rx="1"/><rect x="149" y="182" width="16" height="68" fill="#0f3a4c" opacity="1" rx="1"/><rect x="168" y="182" width="16" height="68" fill="#11526b" opacity="1" rx="1"/><rect x="186" y="188" width="20" height="62" fill="#0f3a4c" opacity="1" rx="1"/><rect x="208" y="182" width="22" height="68" fill="url(#book)" opacity="1" rx="1"/><rect x="232" y="182" width="20" height="68" fill="#16475c" opacity="1" rx="1"/><rect x="256" y="182" width="14" height="68" fill="#16475c" opacity="1" rx="1"/><rect x="273" y="182" width="20" height="68" fill="#0f3a4c" opacity="1" rx="1"/><rect x="296" y="178" width="22" height="72" fill="#0f3a4c" opacity="1" rx="1"/><rect x="321" y="195" width="14" height="55" fill="#16475c" opacity="1" rx="1"/><rect x="339" y="182" width="18" height="68" fill="#16475c" opacity="1" rx="1"/><rect x="361" y="178" width="16" height="72" fill="#16475c" opacity="1" rx="1"/><rect x="380" y="188" width="16" height="62" fill="#16475c" opacity="1" rx="1"/><rect x="399" y="182" width="14" height="68" fill="#1a4a5e" opacity="1" rx="1"/><rect x="415" y="182" width="20" height="68" fill="url(#book)" opacity="1" rx="1"/><rect x="437" y="195" width="20" height="55" fill="url(#book)" opacity="1" rx="1"/><rect x="460" y="188" width="18" height="62" fill="#1a4a5e" opacity="1" rx="1"/><rect x="480" y="178" width="20" height="72" fill="url(#book)" opacity="1" rx="1"/><rect x="503" y="195" width="16" height="55" fill="#11526b" opacity="1" rx="1"/><rect x="522" y="188" width="18" height="62" fill="url(#book)" opacity="1" rx="1"/><rect x="50" y="250" width="500" height="5" fill="#C9A24B" opacity=".25"/><rect x="60" y="278" width="14" height="62" fill="#0f3a4c" opacity="1" rx="1"/><rect x="76" y="272" width="18" height="68" fill="#16475c" opacity="1" rx="1"/><rect x="97" y="285" width="22" height="55" fill="url(#book)" opacity="1" rx="1"/><rect x="122" y="268" width="22" height="72" fill="#0f3a4c" opacity="1" rx="1"/><rect x="146" y="285" width="16" height="55" fill="#16475c" opacity="1" rx="1"/><rect x="164" y="272" width="22" height="68" fill="#1a4a5e" opacity="1" rx="1"/><rect x="189" y="268" width="16" height="72" fill="#0f3a4c" opacity="1" rx="1"/><rect x="209" y="278" width="14" height="62" fill="#11526b" opacity="1" rx="1"/><rect x="227" y="278" width="22" height="62" fill="#11526b" opacity="1" rx="1"/><rect x="252" y="278" width="20" height="62" fill="#1a4a5e" opacity="1" rx="1"/><rect x="276" y="272" width="22" height="68" fill="#1a4a5e" opacity="1" rx="1"/><rect x="301" y="285" width="22" height="55" fill="#0f3a4c" opacity="1" rx="1"/><rect x="325" y="285" width="22" height="55" fill="#0f3a4c" opacity="1" rx="1"/><rect x="351" y="285" width="22" height="55" fill="#1a4a5e" opacity="1" rx="1"/><rect x="375" y="268" width="22" height="72" fill="#0f3a4c" opacity="1" rx="1"/><rect x="400" y="268" width="16" height="72" fill="#11526b" opacity="1" rx="1"/><rect x="419" y="272" width="20" height="68" fill="url(#book)" opacity="1" rx="1"/><rect x="442" y="285" width="22" height="55" fill="#1a4a5e" opacity="1" rx="1"/><rect x="468" y="285" width="14" height="55" fill="url(#book)" opacity="1" rx="1"/><rect x="484" y="272" width="14" height="68" fill="#11526b" opacity="1" rx="1"/><rect x="500" y="268" width="22" height="72" fill="url(#book)" opacity="1" rx="1"/><rect x="526" y="285" width="22" height="55" fill="#11526b" opacity="1" rx="1"/><rect x="50" y="340" width="500" height="5" fill="#C9A24B" opacity=".25"/></svg></div>
