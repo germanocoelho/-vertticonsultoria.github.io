@@ -727,13 +727,40 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
 </style>
 </head>
 <body>
-<div id="diag-reduzir-movimento" style="display:none; position:fixed; top:0; left:0; right:0; z-index:99999; background:#C9973F; color:#0E2A36; font:600 14px/1.4 system-ui,sans-serif; text-align:center; padding:10px 16px;">
-  ⚠️ Este aparelho está com "Reduzir Movimento" ativado no sistema — por isso as animações do site aparecem instantâneas/sem efeito. (Aviso temporário de diagnóstico)
-</div>
+<div id="diag-painel" style="display:none; position:fixed; top:0; left:0; right:0; z-index:99999; background:#0E2A36; color:#F3EEE4; font:12px/1.5 ui-monospace,monospace; padding:10px 12px; max-height:45vh; overflow:auto; white-space:pre-wrap;"></div>
 <script>
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches){
-    document.getElementById('diag-reduzir-movimento').style.display = 'block';
+(function(){
+  try{
+    var linhas = [];
+    linhas.push('UA: ' + navigator.userAgent);
+    linhas.push('Tela: ' + window.innerWidth + 'x' + window.innerHeight + '  DPR:' + (window.devicePixelRatio||1));
+    linhas.push('hover:hover = ' + matchMedia('(hover:hover)').matches);
+    linhas.push('pointer:fine = ' + matchMedia('(pointer:fine)').matches);
+    linhas.push('prefers-reduced-motion:reduce = ' + matchMedia('(prefers-reduced-motion: reduce)').matches);
+    linhas.push('THREE carregado = ' + (typeof window.THREE !== 'undefined'));
+    var conn = navigator.connection || navigator.webkitConnection || navigator.mozConnection;
+    linhas.push('Tipo de conexao = ' + (conn ? (conn.effectiveType + (conn.saveData ? ' (economia de dados ATIVA)' : '')) : 'indisponivel'));
+    var amostra = document.querySelector('.reveal, .reveal-l, .reveal-r, .reveal-scale');
+    if (amostra){
+      var cs = getComputedStyle(amostra);
+      linhas.push('Amostra .reveal -> opacity:' + cs.opacity + ' transition-duration:' + cs.transitionDuration + ' animation-duration:' + cs.animationDuration);
+    } else {
+      linhas.push('Nenhum elemento .reveal encontrado no DOM');
+    }
+    var painel = document.getElementById('diag-painel');
+    function atualizar(){
+      var total = document.querySelectorAll('.reveal,.reveal-l,.reveal-r,.reveal-scale').length;
+      var revelados = document.querySelectorAll('.reveal.in,.reveal-l.in,.reveal-r.in,.reveal-scale.in').length;
+      var extra = 'Reveal: ' + revelados + '/' + total + ' com classe .in (checado 2s apos carregar)';
+      painel.textContent = linhas.concat([extra]).join('\n');
+      painel.style.display = 'block';
+    }
+    setTimeout(atualizar, 2000);
+  }catch(e){
+    var painel = document.getElementById('diag-painel');
+    if (painel){ painel.textContent = 'ERRO no proprio diagnostico: ' + (e && e.message); painel.style.display='block'; }
   }
+})();
 </script>
 <!-- INTRO ANIMADA DA MARCA -->
 <section class="vintro" id="vintro" aria-label="Apresentação da marca VERTTI">
