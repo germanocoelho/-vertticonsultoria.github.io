@@ -289,6 +289,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600}
       <div class="tab" onclick="showPage('motorauto',this);vMotorLoad()">Motor Auto</div>
       <div class="tab" onclick="showPage('motor',this)">Relatório Motor</div>
       <div class="tab" onclick="showPage('relatorios',this)">Relatórios</div>
+      <div class="tab" onclick="showPage('depoimentos',this);vDepLoad()">💬 Depoimentos</div>
     </div>
 
     <div id="pages"></div>
@@ -506,7 +507,7 @@ function money(v){ return 'R$ '+v.toLocaleString('pt-BR'); }
 
 function renderAll(){
   const c=document.getElementById('pages');
-  c.innerHTML = pageHoje()+pageLeads()+pageFechamento()+pageFinanceiro()+pageSegmentacao()+pageNichos()+pageAcoes()+pageReposicionamento()+pageCaptacao()+pageContratos()+pageMotorAuto()+pageMotor()+pageRelatorios();
+  c.innerHTML = pageHoje()+pageLeads()+pageFechamento()+pageFinanceiro()+pageSegmentacao()+pageNichos()+pageAcoes()+pageReposicionamento()+pageCaptacao()+pageContratos()+pageMotorAuto()+pageMotor()+pageRelatorios()+pageDepoimentos();
   // animar barras do funil
   setTimeout(()=>{
     document.querySelectorAll('[data-w]').forEach(b=>{ b.style.width=b.dataset.w+'%'; });
@@ -1276,6 +1277,101 @@ async function vGitLoad(){
 }
 function vCopy(txt,btn){ navigator.clipboard.writeText(txt).then(()=>{ btn.textContent='Copiado ✓';
   setTimeout(()=>btn.textContent='Copiar',1500); }); }
+
+/* ===== DEPOIMENTOS (opiniões de clientes) ===== */
+let V_DEP=[]; // {id,nome,empresa,texto,logo,aprovado,ordem}
+function vDepUid(){ return 'd'+Date.now()+Math.random().toString(36).slice(2,7); }
+function vDepAdd(){
+  V_DEP.push({id:vDepUid(), nome:'', empresa:'', texto:'', logo:'', aprovado:false, ordem:V_DEP.length+1});
+  vRefresh('depoimentos');
+}
+function vDepDel(id){
+  if(!confirm('Remover este depoimento?'))return;
+  V_DEP=V_DEP.filter(d=>d.id!==id);
+  vRefresh('depoimentos');
+}
+function vDepCampo(id,campo,valor){
+  const d=V_DEP.find(x=>x.id===id); if(d) d[campo]=valor;
+}
+function vDepAprovado(id,checked){
+  const d=V_DEP.find(x=>x.id===id); if(d) d.aprovado=checked;
+}
+function vDepLogo(id,input){
+  const f=input.files&&input.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=function(){
+    const d=V_DEP.find(x=>x.id===id); if(d){ d.logo=r.result; vRefresh('depoimentos'); }
+  };
+  r.readAsDataURL(f);
+}
+async function vDepLoad(){
+  try{
+    const r=await fetch('https://raw.githubusercontent.com/'+V_REPO+'/main/vertti-depoimentos.json?t='+Date.now());
+    if(r.ok){ const j=await r.json(); V_DEP=(j.depoimentos||[]).map(d=>Object.assign({id:vDepUid()},d)); }
+  }catch(e){}
+  vRefresh('depoimentos');
+}
+async function vDepSave(){
+  let tok=localStorage.getItem('vertti_gh_token');
+  if(!tok){ tok=prompt('Cole o token do GitHub (fica salvo só neste navegador):')||'';
+    if(!tok)return; localStorage.setItem('vertti_gh_token',tok.trim()); tok=tok.trim(); }
+  const api='https://api.github.com/repos/'+V_REPO+'/contents/vertti-depoimentos.json';
+  const hd={'Authorization':'token '+tok,'Accept':'application/vnd.github+json'};
+  let sha=null;
+  try{ const r=await fetch(api,{headers:hd}); if(r.ok){ sha=(await r.json()).sha; } }catch(e){}
+  const payload={depoimentos:V_DEP.map(({id,...rest})=>rest)};
+  const body={message:'Depoimentos atualizados '+vHoje(),
+    content:btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,1))))};
+  if(sha) body.sha=sha;
+  try{
+    const r=await fetch(api,{method:'PUT',headers:hd,body:JSON.stringify(body)});
+    if(r.ok){ alert('Depoimentos salvos no site (vertti-depoimentos.json). Só os aprovados aparecem para o público.'); }
+    else{ const j=await r.json(); alert('Falha ao salvar: '+(j.message||r.status)+'. Verifique o token.');
+      if(r.status===401){ localStorage.removeItem('vertti_gh_token'); } }
+  }catch(e){ alert('Erro de rede ao salvar.'); }
+}
+function pageDepoimentos(){
+  const inp='style="padding:9px 12px;border:1px solid var(--linha);border-radius:8px;font-family:inherit;font-size:.85rem;background:#fff;width:100%"';
+  const btn='style="padding:9px 16px;border:none;border-radius:8px;background:var(--petroleo);color:#fff;font-weight:600;cursor:pointer;font-size:.85rem"';
+  const btng='style="padding:7px 13px;border:1px solid var(--linha);border-radius:8px;background:#fff;cursor:pointer;font-size:.78rem"';
+  const cards=V_DEP.map(d=>`
+    <div style="border:1px solid var(--linha);border-radius:12px;padding:16px;margin-bottom:14px;background:#fff">
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start">
+        <div style="flex:2;min-width:220px">
+          <label style="font-size:.75rem;color:var(--cinza);display:block;margin-bottom:4px">Nome</label>
+          <input ${inp} value="${escHtml(d.nome)}" oninput="vDepCampo('${d.id}','nome',this.value)">
+        </div>
+        <div style="flex:2;min-width:220px">
+          <label style="font-size:.75rem;color:var(--cinza);display:block;margin-bottom:4px">Empresa / organização</label>
+          <input ${inp} value="${escHtml(d.empresa)}" oninput="vDepCampo('${d.id}','empresa',this.value)">
+        </div>
+        <div style="flex:1;min-width:140px">
+          <label style="font-size:.75rem;color:var(--cinza);display:block;margin-bottom:4px">Logo (opcional)</label>
+          ${d.logo?`<img src="${d.logo}" style="height:36px;max-width:100px;object-fit:contain;background:#f4f4f4;border-radius:6px;padding:3px;margin-bottom:6px;display:block">`:''}
+          <input type="file" accept="image/*" onchange="vDepLogo('${d.id}',this)" style="font-size:.75rem">
+        </div>
+      </div>
+      <label style="font-size:.75rem;color:var(--cinza);display:block;margin:10px 0 4px">Texto do depoimento</label>
+      <textarea ${inp} rows="3" oninput="vDepCampo('${d.id}','texto',this.value)">${escHtml(d.texto)}</textarea>
+      <div style="display:flex;align-items:center;gap:16px;margin-top:12px;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:6px;font-size:.85rem;cursor:pointer">
+          <input type="checkbox" ${d.aprovado?'checked':''} onchange="vDepAprovado('${d.id}',this.checked)">
+          ${d.aprovado?'✅ Aprovado (visível no site)':'⏳ Pendente (não aparece no site ainda)'}
+        </label>
+        <button onclick="vDepDel('${d.id}')" ${btng}>✕ Remover</button>
+      </div>
+    </div>`).join('') || '<p style="color:var(--cinza)">Nenhum depoimento cadastrado ainda. Clique em "Adicionar depoimento" para incluir o primeiro — as opiniões que chegarem por WhatsApp você digita aqui.</p>';
+  return `<div class="page" id="page-depoimentos">
+    <h2>💬 Depoimentos de clientes</h2>
+    <p style="color:var(--cinza);margin-bottom:18px">Cadastre aqui as opiniões recebidas (WhatsApp, e-mail etc). Só aparecem no site depois de marcadas como <b>Aprovado</b> e salvas. A pessoa que enviou a opinião não vê nem sabe sobre essa etapa de aprovação.</p>
+    <div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <button onclick="vDepAdd()" ${btn}>+ Adicionar depoimento</button>
+      <button onclick="vDepLoad()" ${btng}>🔄 Recarregar do site</button>
+      <button onclick="vDepSave()" ${btn}>☁ Salvar no site</button>
+    </div>
+    ${cards}
+  </div>`;
+}
 
 /* ===== PÁGINA CAPTAÇÃO ===== */
 function pageCaptacao(){
