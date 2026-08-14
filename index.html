@@ -727,6 +727,14 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
 </style>
 </head>
 <body>
+<div id="diag-reduzir-movimento" style="display:none; position:fixed; top:0; left:0; right:0; z-index:99999; background:#C9973F; color:#0E2A36; font:600 14px/1.4 system-ui,sans-serif; text-align:center; padding:10px 16px;">
+  ⚠️ Este aparelho está com "Reduzir Movimento" ativado no sistema — por isso as animações do site aparecem instantâneas/sem efeito. (Aviso temporário de diagnóstico)
+</div>
+<script>
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches){
+    document.getElementById('diag-reduzir-movimento').style.display = 'block';
+  }
+</script>
 <!-- INTRO ANIMADA DA MARCA -->
 <section class="vintro" id="vintro" aria-label="Apresentação da marca VERTTI">
   <canvas id="vi-particulas"></canvas>
