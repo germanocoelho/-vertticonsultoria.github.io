@@ -1392,6 +1392,7 @@ function vMarcaUid(){ return 'm'+Date.now()+Math.random().toString(36).slice(2,7
 function vMarcaAdd(){
   V_MARCAS.push({id:vMarcaUid(), empresa:'', cnpjCpf:'', responsavel:'', email:'', whatsapp:'',
     marca:'', classes:'', segmento:'', dataProtocolo:'', numeroProtocolo:'', status:'protocolado',
+    comContrato:true,
     logo:'', logoNomeArquivo:'', documentoProtocolo:'', documentoNomeArquivo:'',
     pagamento:{valor:0, forma:'PIX', conta:'PIX VERTTI', data:vHoje(), notaFiscal:false, numeroNota:''},
     reciboEnviado:false, reciboData:'', publicarVitrine:false, ordemVitrine:V_MARCAS.length+1});
@@ -1469,6 +1470,26 @@ async function vMarcasSalvar(){
     alert('Falha ao salvar (token pode ter mudado ou expirado): '+e.message+'. Na proxima vez que clicar em Salvar, vai pedir o token novamente.');
   }
 }
+function vMarcaBaixarDocumento(id){
+  const m=V_MARCAS.find(x=>x.id===id); if(!m||!m.documentoProtocolo){ alert('Nenhum documento carregado para esta marca.'); return; }
+  const a=document.createElement('a');
+  a.href=m.documentoProtocolo;
+  a.download=m.documentoNomeArquivo||('protocolo-'+(m.marca||'marca')+'.pdf');
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function vMarcaEnviarDocumento(id, via){
+  const m=V_MARCAS.find(x=>x.id===id); if(!m){ return; }
+  if(!m.documentoProtocolo){ alert('Carregue o documento de protocolo primeiro.'); return; }
+  vMarcaBaixarDocumento(id);
+  const texto='Olá'+(m.responsavel?', '+m.responsavel:'')+'! Segue o comprovante de protocolo do INPI referente à marca "'+(m.marca||'')+'" (nº '+(m.numeroProtocolo||'a confirmar')+'). Vou anexar o arquivo aqui em seguida.';
+  if(via==='whats'){
+    const fone=(m.whatsapp||'').replace(/\D/g,'');
+    window.open('https://wa.me/'+fone+'?text='+encodeURIComponent(texto), '_blank');
+  } else {
+    const assunto=encodeURIComponent('VERTTI Consultoria — Comprovante de protocolo — '+(m.marca||m.empresa));
+    window.location.href='mailto:'+encodeURIComponent(m.email||'')+'?subject='+assunto+'&body='+encodeURIComponent(texto+'\n\nGermano Coelho — VERTTI Consultoria');
+  }
+}
 function vMarcaGerarRecibo(id){
   const m=V_MARCAS.find(x=>x.id===id); if(!m){ alert('Marca nao encontrada.'); return; }
   const p=m.pagamento||{};
@@ -1531,7 +1552,10 @@ function pageMarcas(){
     const p=m.pagamento||{};
     return `
     <div style="border:1px solid var(--linha);border-radius:12px;padding:18px;margin-bottom:16px;background:#fff">
-      <div style="font-weight:700;margin-bottom:10px;color:var(--petroleo)">${escHtml(m.marca||'(nova marca)')} ${m.status?'· <span style="font-weight:400;color:var(--cinza)">'+escHtml(m.status)+'</span>':''}</div>
+      <div style="font-weight:700;margin-bottom:10px;color:var(--petroleo);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span>${escHtml(m.marca||'(nova marca)')} ${m.status?'· <span style="font-weight:400;color:var(--cinza)">'+escHtml(m.status)+'</span>':''}</span>
+        <span style="font-size:.68rem;font-weight:600;padding:2px 9px;border-radius:100px;${m.comContrato?'background:#e8f0e8;color:#2c5c2c':'background:#f0e8d8;color:#8a6d2a'}">${m.comContrato?'📄 Com contrato':'🧾 Sem contrato'}</span>
+      </div>
       <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px">
         <div style="flex:2;min-width:200px"><label style="font-size:.72rem;color:var(--cinza)">Nome da marca</label><input ${inp} value="${escHtml(m.marca)}" oninput="vMarcaCampo('${m.id}','marca',this.value)"></div>
         <div style="flex:1;min-width:140px"><label style="font-size:.72rem;color:var(--cinza)">Nº protocolo INPI</label><input ${inp} value="${escHtml(m.numeroProtocolo)}" oninput="vMarcaCampo('${m.id}','numeroProtocolo',this.value)"></div>
@@ -1577,6 +1601,18 @@ function pageMarcas(){
           <label style="font-size:.72rem;color:var(--cinza);display:block">Documento de protocolo (PDF/imagem)</label>
           ${m.documentoNomeArquivo?`<div style="font-size:.75rem;color:var(--cinza);margin:4px 0">📎 ${escHtml(m.documentoNomeArquivo)}</div>`:''}
           <input type="file" accept="application/pdf,image/*" onchange="vMarcaArquivo('${m.id}','documentoProtocolo','documentoNomeArquivo',this)" style="font-size:.72rem">
+          ${m.documentoProtocolo?`<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+            <button type="button" onclick="vMarcaBaixarDocumento('${m.id}')" ${btng}>⬇ Baixar</button>
+            <button type="button" onclick="vMarcaEnviarDocumento('${m.id}','email')" ${btng}>✉ E-mail</button>
+            <button type="button" onclick="vMarcaEnviarDocumento('${m.id}','whats')" ${btng}>💬 WhatsApp</button>
+          </div>`:''}
+        </div>
+        <div style="flex:1;min-width:170px">
+          <label style="font-size:.72rem;color:var(--cinza);display:block;margin-bottom:4px">Tipo de atendimento</label>
+          <select ${inp} onchange="vMarcaCampo('${m.id}','comContrato', this.value==='com')">
+            <option value="com" ${m.comContrato?'selected':''}>Com contrato</option>
+            <option value="sem" ${!m.comContrato?'selected':''}>Sem contrato (apenas recibo/NF)</option>
+          </select>
         </div>
         <div style="flex:1;min-width:160px;display:flex;align-items:flex-end">
           <label style="display:flex;align-items:center;gap:6px;font-size:.82rem;cursor:pointer">
