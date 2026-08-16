@@ -1381,6 +1381,13 @@ function pageDepoimentos(){
 
 /* ===== MARCAS REGISTRADAS (CRM completo: empresa, pagamento, documentos, recibo) ===== */
 let V_MARCAS=[];
+let V_CONFIG={logoVertti:'', assinaturaGermano:''};
+function vConfigArquivo(campo,input){
+  const f=input.files&&input.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=function(){ V_CONFIG[campo]=r.result; vRefresh('marcas'); };
+  r.readAsDataURL(f);
+}
 function vMarcaUid(){ return 'm'+Date.now()+Math.random().toString(36).slice(2,7); }
 function vMarcaAdd(){
   V_MARCAS.push({id:vMarcaUid(), empresa:'', cnpjCpf:'', responsavel:'', email:'', whatsapp:'',
@@ -1420,6 +1427,7 @@ async function vMarcasLoad(){
       const j=await r.json();
       const conteudo=JSON.parse(decodeURIComponent(escape(atob(j.content))));
       V_MARCAS=(conteudo.marcas||[]).map(m=>Object.assign({id:vMarcaUid()},m));
+      V_CONFIG=Object.assign({logoVertti:'',assinaturaGermano:''}, conteudo.config||{});
     }
   }catch(e){ alert('Erro ao carregar marcas do repositorio privado.'); }
   vRefresh('marcas');
@@ -1429,7 +1437,7 @@ async function vMarcasSalvarPrivado(tok){
   const hd={'Authorization':'token '+tok,'Accept':'application/vnd.github+json'};
   let sha=null;
   try{ const r=await fetch(api,{headers:hd}); if(r.ok){ sha=(await r.json()).sha; } }catch(e){}
-  const payload={marcas:V_MARCAS.map(({id,...rest})=>rest), config:{}};
+  const payload={marcas:V_MARCAS.map(({id,...rest})=>rest), config:V_CONFIG};
   const body={message:'Marcas registradas atualizadas '+vHoje(),
     content:btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,1))))};
   if(sha) body.sha=sha;
@@ -1490,7 +1498,7 @@ function vMarcaGerarRecibo(id){
 <a class="send-btn" style="right:190px" href="${mailtoHref}">✉ Enviar por e-mail</a>
 <a class="send-btn" style="right:16px;top:64px" href="${waHref}" target="_blank">💬 Enviar por WhatsApp</a>
 <p style="text-align:center;color:#999;font-size:.74rem;margin-top:-6px">Passo a passo: 1) Imprimir → Salvar como PDF  2) clicar em E-mail/WhatsApp e anexar o PDF salvo</p>
-<div class="head">VERTTI Consultoria</div>
+<div class="head">${V_CONFIG.logoVertti?`<img src="${V_CONFIG.logoVertti}" style="height:44px;width:auto">`:''}<span>VERTTI Consultoria</span></div>
 <h1>RECIBO</h1>
 <div class="sub">Campo Grande/MS — ${vFmtData(vHoje())}</div>
 <table>
@@ -1505,7 +1513,7 @@ function vMarcaGerarRecibo(id){
 </table>
 <p>Declaro, para os devidos fins, ter recebido o valor acima referente ao serviço descrito.</p>
 <div class="assinatura">
-  ${m.logo?'':''}
+  ${V_CONFIG.assinaturaGermano?`<img src="${V_CONFIG.assinaturaGermano}" alt="assinatura">`:''}
   <div class="linha">Germano Coelho Ramos Rocha da Silva<br>Agente da Propriedade Industrial — INPI nº 588</div>
 </div>
 </body></html>`;
@@ -1587,6 +1595,19 @@ function pageMarcas(){
   return `<div class="page" id="page-marcas">
     <h2>🏷️ Marcas registradas — controle gerencial</h2>
     <p style="color:var(--cinza);margin-bottom:18px">Dados completos (pagamento, documentos, contato) ficam em um repositório GitHub <b>privado</b>, separado do site público. Só a logomarca dos itens marcados "mostrar na vitrine" aparece publicamente.</p>
+    <div style="background:#faf8f4;border-radius:12px;padding:14px 16px;margin-bottom:18px;display:flex;gap:24px;flex-wrap:wrap;align-items:flex-end">
+      <div>
+        <label style="font-size:.75rem;color:var(--cinza);display:block;margin-bottom:4px">Logo da VERTTI (aparece em todos os recibos)</label>
+        ${V_CONFIG.logoVertti?`<img src="${V_CONFIG.logoVertti}" style="height:34px;max-width:110px;object-fit:contain;background:#fff;border-radius:6px;padding:3px;margin-bottom:6px;display:block">`:''}
+        <input type="file" accept="image/*" onchange="vConfigArquivo('logoVertti',this)" style="font-size:.75rem">
+      </div>
+      <div>
+        <label style="font-size:.75rem;color:var(--cinza);display:block;margin-bottom:4px">Sua assinatura (foto/scan em fundo transparente ou branco)</label>
+        ${V_CONFIG.assinaturaGermano?`<img src="${V_CONFIG.assinaturaGermano}" style="height:34px;max-width:140px;object-fit:contain;background:#fff;border-radius:6px;padding:3px;margin-bottom:6px;display:block">`:''}
+        <input type="file" accept="image/*" onchange="vConfigArquivo('assinaturaGermano',this)" style="font-size:.75rem">
+      </div>
+      <div style="font-size:.72rem;color:var(--cinza);max-width:260px">Faça upload uma vez aqui e clique em "Salvar tudo" abaixo — a partir daí, toda marca gera recibo já com sua logo e assinatura.</div>
+    </div>
     <div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap">
       <button onclick="vMarcaAdd()" ${btn}>+ Adicionar marca</button>
       <button onclick="vMarcasLoad()" ${btng}>🔄 Recarregar dados privados</button>
