@@ -290,6 +290,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600}
       <div class="tab" onclick="showPage('motor',this)">Relatório Motor</div>
       <div class="tab" onclick="showPage('relatorios',this)">Relatórios</div>
       <div class="tab" onclick="showPage('depoimentos',this);vDepLoad()">💬 Depoimentos</div>
+      <div class="tab" onclick="showPage('marcas',this);vMarcasLoad()">🏷️ Marcas Registradas</div>
     </div>
 
     <div id="pages"></div>
@@ -507,7 +508,7 @@ function money(v){ return 'R$ '+v.toLocaleString('pt-BR'); }
 
 function renderAll(){
   const c=document.getElementById('pages');
-  c.innerHTML = pageHoje()+pageLeads()+pageFechamento()+pageFinanceiro()+pageSegmentacao()+pageNichos()+pageAcoes()+pageReposicionamento()+pageCaptacao()+pageContratos()+pageMotorAuto()+pageMotor()+pageRelatorios()+pageDepoimentos();
+  c.innerHTML = pageHoje()+pageLeads()+pageFechamento()+pageFinanceiro()+pageSegmentacao()+pageNichos()+pageAcoes()+pageReposicionamento()+pageCaptacao()+pageContratos()+pageMotorAuto()+pageMotor()+pageRelatorios()+pageDepoimentos()+pageMarcas();
   // animar barras do funil
   setTimeout(()=>{
     document.querySelectorAll('[data-w]').forEach(b=>{ b.style.width=b.dataset.w+'%'; });
@@ -923,6 +924,7 @@ function pageFinanceiro(){
    localStorage: vertti_db_v1 · sync opcional: dados.json no GitHub
    ================================================================ */
 const V_REPO='germanocoelho/-vertticonsultoria.github.io';
+const V_REPO_PRIVADO='germanocoelho/vertticonsultoria-dados-privados';
 const V_CANAIS={email:'E-mail (motor)',ads:'Google Ads',perfil:'Perfil Google',site:'Site',indica:'Indicação',outro:'Outro'};
 const V_STATUS={novo:'Novo',conversa:'Em conversa',proposta:'Proposta',fechado:'Fechado',perdido:'Perdido'};
 const V_LINKS=[
@@ -1368,6 +1370,222 @@ function pageDepoimentos(){
       <button onclick="vDepAdd()" ${btn}>+ Adicionar depoimento</button>
       <button onclick="vDepLoad()" ${btng}>🔄 Recarregar do site</button>
       <button onclick="vDepSave()" ${btn}>☁ Salvar no site</button>
+    </div>
+    ${cards}
+  </div>`;
+}
+
+/* ===== MARCAS REGISTRADAS (CRM completo: empresa, pagamento, documentos, recibo) ===== */
+let V_MARCAS=[];
+function vMarcaUid(){ return 'm'+Date.now()+Math.random().toString(36).slice(2,7); }
+function vMarcaAdd(){
+  V_MARCAS.push({id:vMarcaUid(), empresa:'', cnpjCpf:'', responsavel:'', email:'', whatsapp:'',
+    marca:'', classes:'', segmento:'', dataProtocolo:'', numeroProtocolo:'', status:'protocolado',
+    logo:'', logoNomeArquivo:'', documentoProtocolo:'', documentoNomeArquivo:'',
+    pagamento:{valor:0, forma:'PIX', conta:'PIX VERTTI', data:vHoje(), notaFiscal:false, numeroNota:''},
+    reciboEnviado:false, reciboData:'', publicarVitrine:false, ordemVitrine:V_MARCAS.length+1});
+  vRefresh('marcas');
+}
+function vMarcaDel(id){
+  if(!confirm('Remover este cadastro de marca? Isso NAO afeta o registro no INPI, so o controle interno.'))return;
+  V_MARCAS=V_MARCAS.filter(m=>m.id!==id);
+  vRefresh('marcas');
+}
+function vMarcaCampo(id,campo,valor){
+  const m=V_MARCAS.find(x=>x.id===id); if(!m)return;
+  if(campo.startsWith('pagamento.')){ m.pagamento[campo.split('.')[1]] = valor; }
+  else m[campo]=valor;
+}
+function vMarcaArquivo(id,campo,nomeCampo,input){
+  const f=input.files&&input.files[0]; if(!f)return;
+  if(f.size>3*1024*1024){ alert('Arquivo grande (>3MB). Prefira um arquivo menor ou compacte a imagem/PDF.'); }
+  const r=new FileReader();
+  r.onload=function(){
+    const m=V_MARCAS.find(x=>x.id===id); if(m){ m[campo]=r.result; m[nomeCampo]=f.name; vRefresh('marcas'); }
+  };
+  r.readAsDataURL(f);
+}
+async function vMarcasLoad(){
+  let tok=localStorage.getItem('vertti_gh_token');
+  if(!tok){ tok=prompt('Cole o token do GitHub para acessar os dados privados de marcas:')||'';
+    if(!tok){ vRefresh('marcas'); return; } localStorage.setItem('vertti_gh_token',tok.trim()); tok=tok.trim(); }
+  try{
+    const r=await fetch('https://api.github.com/repos/'+V_REPO_PRIVADO+'/contents/marcas.json',
+      {headers:{'Authorization':'token '+tok,'Accept':'application/vnd.github+json'}});
+    if(r.ok){
+      const j=await r.json();
+      const conteudo=JSON.parse(decodeURIComponent(escape(atob(j.content))));
+      V_MARCAS=(conteudo.marcas||[]).map(m=>Object.assign({id:vMarcaUid()},m));
+    }
+  }catch(e){ alert('Erro ao carregar marcas do repositorio privado.'); }
+  vRefresh('marcas');
+}
+async function vMarcasSalvarPrivado(tok){
+  const api='https://api.github.com/repos/'+V_REPO_PRIVADO+'/contents/marcas.json';
+  const hd={'Authorization':'token '+tok,'Accept':'application/vnd.github+json'};
+  let sha=null;
+  try{ const r=await fetch(api,{headers:hd}); if(r.ok){ sha=(await r.json()).sha; } }catch(e){}
+  const payload={marcas:V_MARCAS.map(({id,...rest})=>rest), config:{}};
+  const body={message:'Marcas registradas atualizadas '+vHoje(),
+    content:btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,1))))};
+  if(sha) body.sha=sha;
+  const r=await fetch(api,{method:'PUT',headers:hd,body:JSON.stringify(body)});
+  if(!r.ok){ const j=await r.json(); throw new Error(j.message||r.status); }
+}
+async function vMarcasSalvarVitrine(tok){
+  const api='https://api.github.com/repos/'+V_REPO+'/contents/vertti-marcas-vitrine.json';
+  const hd={'Authorization':'token '+tok,'Accept':'application/vnd.github+json'};
+  let sha=null;
+  try{ const r=await fetch(api,{headers:hd}); if(r.ok){ sha=(await r.json()).sha; } }catch(e){}
+  const vitrine=V_MARCAS.filter(m=>m.publicarVitrine&&m.logo).map(m=>({logo:m.logo, nome:m.empresa||m.marca, ordem:m.ordemVitrine||0}));
+  const body={message:'Vitrine de marcas atualizada '+vHoje(),
+    content:btoa(unescape(encodeURIComponent(JSON.stringify({marcas:vitrine},null,1))))};
+  if(sha) body.sha=sha;
+  const r=await fetch(api,{method:'PUT',headers:hd,body:JSON.stringify(body)});
+  if(!r.ok){ const j=await r.json(); throw new Error(j.message||r.status); }
+}
+async function vMarcasSalvar(){
+  let tok=localStorage.getItem('vertti_gh_token');
+  if(!tok){ tok=prompt('Cole o token do GitHub (fica salvo so neste navegador):')||'';
+    if(!tok)return; localStorage.setItem('vertti_gh_token',tok.trim()); tok=tok.trim(); }
+  try{
+    await vMarcasSalvarPrivado(tok);
+    await vMarcasSalvarVitrine(tok);
+    alert('Salvo! Dados completos no repositorio privado. Vitrine publica (so logo+nome dos itens marcados "mostrar na vitrine") atualizada no site.');
+  }catch(e){
+    alert('Falha ao salvar: '+e.message+'. Verifique o token.');
+  }
+}
+function vMarcaGerarRecibo(id){
+  const m=V_MARCAS.find(x=>x.id===id); if(!m){ alert('Marca nao encontrada.'); return; }
+  const p=m.pagamento||{};
+  const assuntoEmail=encodeURIComponent('VERTTI Consultoria — Recibo — '+(m.empresa||m.marca));
+  const corpoEmail=encodeURIComponent(`Olá${m.responsavel?', '+m.responsavel:''}!\n\nSegue em anexo o recibo referente ao registro da marca "${m.marca}".\n\nValor: R$ ${(p.valor||0).toLocaleString('pt-BR')}\n\nQualquer dúvida, estou à disposição.\n\nGermano Coelho — VERTTI Consultoria`);
+  const mailtoHref='mailto:'+encodeURIComponent(m.email||'')+'?subject='+assuntoEmail+'&body='+corpoEmail;
+  const textoWa=encodeURIComponent(`Olá${m.responsavel?', '+m.responsavel:''}! Segue o recibo do registro da marca "${m.marca}" (R$ ${(p.valor||0).toLocaleString('pt-BR')}). Vou anexar o PDF em seguida.`);
+  const foneWa=(m.whatsapp||'').replace(/\D/g,'');
+  const waHref='https://wa.me/'+foneWa+'?text='+textoWa;
+  const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Recibo — ${escHtml(m.empresa||m.marca)}</title>
+<style>
+  body{font-family:'Georgia','Times New Roman',serif;max-width:680px;margin:36px auto;padding:0 22px;line-height:1.6;color:#222;font-size:.98rem}
+  .head{display:flex;align-items:center;gap:14px;border-bottom:2px solid #C9A24B;padding-bottom:14px;margin-bottom:22px}
+  h1{font-size:1.3rem;text-align:center;margin:6px 0 2px}
+  .sub{text-align:center;color:#888;font-size:.8rem;margin-bottom:26px}
+  table{width:100%;border-collapse:collapse;margin:14px 0}
+  td,th{border:1px solid #ddd;padding:8px 10px;text-align:left;font-size:.9rem}
+  .assinatura{margin-top:60px;text-align:center}
+  .assinatura img{max-height:70px;display:block;margin:0 auto 4px}
+  .assinatura .linha{border-top:1px solid #333;width:280px;margin:0 auto;padding-top:6px}
+  .print-btn{position:fixed;top:16px;right:16px;padding:10px 18px;background:#0E2A36;color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:Arial,sans-serif;font-size:.85rem}
+  .send-btn{position:fixed;top:16px;background:#fff;color:#0E2A36;border:1px solid #0E2A36;border-radius:8px;cursor:pointer;font-family:Arial,sans-serif;font-size:.82rem;padding:9px 16px;text-decoration:none;display:inline-block}
+  @media print{ .print-btn,.send-btn{display:none} body{margin:0 auto} }
+</style></head><body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar como PDF</button>
+<a class="send-btn" style="right:190px" href="${mailtoHref}">✉ Enviar por e-mail</a>
+<a class="send-btn" style="right:16px;top:64px" href="${waHref}" target="_blank">💬 Enviar por WhatsApp</a>
+<p style="text-align:center;color:#999;font-size:.74rem;margin-top:-6px">Passo a passo: 1) Imprimir → Salvar como PDF  2) clicar em E-mail/WhatsApp e anexar o PDF salvo</p>
+<div class="head">VERTTI Consultoria</div>
+<h1>RECIBO</h1>
+<div class="sub">Campo Grande/MS — ${vFmtData(vHoje())}</div>
+<table>
+  <tr><th>Cliente / titular</th><td>${escHtml(m.empresa||'—')}${m.cnpjCpf?' — '+escHtml(m.cnpjCpf):''}</td></tr>
+  <tr><th>Marca</th><td>${escHtml(m.marca||'—')}${m.classes?' (classe '+escHtml(m.classes)+')':''}</td></tr>
+  <tr><th>Nº de protocolo INPI</th><td>${escHtml(m.numeroProtocolo||'—')}</td></tr>
+  <tr><th>Serviço</th><td>Registro e proteção de marca junto ao INPI</td></tr>
+  <tr><th>Valor recebido</th><td><b>R$ ${(p.valor||0).toLocaleString('pt-BR')}</b></td></tr>
+  <tr><th>Forma de pagamento</th><td>${escHtml(p.forma||'—')}${p.conta?' — '+escHtml(p.conta):''}</td></tr>
+  <tr><th>Data do pagamento</th><td>${vFmtData(p.data)}</td></tr>
+  ${p.notaFiscal?'<tr><th>Nota fiscal</th><td>'+escHtml(p.numeroNota||'emitida')+'</td></tr>':''}
+</table>
+<p>Declaro, para os devidos fins, ter recebido o valor acima referente ao serviço descrito.</p>
+<div class="assinatura">
+  ${m.logo?'':''}
+  <div class="linha">Germano Coelho Ramos Rocha da Silva<br>Agente da Propriedade Industrial — INPI nº 588</div>
+</div>
+</body></html>`;
+  const win=window.open('','_blank');
+  if(!win){ alert('O navegador bloqueou a nova janela. Permita pop-ups para gerar o recibo.'); return; }
+  win.document.write(html); win.document.close();
+  m.reciboEnviado=true; m.reciboData=vHoje();
+  vRefresh('marcas');
+}
+function pageMarcas(){
+  const inp='style="padding:9px 12px;border:1px solid var(--linha);border-radius:8px;font-family:inherit;font-size:.85rem;background:#fff;width:100%"';
+  const btn='style="padding:9px 16px;border:none;border-radius:8px;background:var(--petroleo);color:#fff;font-weight:600;cursor:pointer;font-size:.85rem"';
+  const btng='style="padding:7px 13px;border:1px solid var(--linha);border-radius:8px;background:#fff;cursor:pointer;font-size:.78rem"';
+  const cards=V_MARCAS.map(m=>{
+    const p=m.pagamento||{};
+    return `
+    <div style="border:1px solid var(--linha);border-radius:12px;padding:18px;margin-bottom:16px;background:#fff">
+      <div style="font-weight:700;margin-bottom:10px;color:var(--petroleo)">${escHtml(m.marca||'(nova marca)')} ${m.status?'· <span style="font-weight:400;color:var(--cinza)">'+escHtml(m.status)+'</span>':''}</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px">
+        <div style="flex:2;min-width:200px"><label style="font-size:.72rem;color:var(--cinza)">Nome da marca</label><input ${inp} value="${escHtml(m.marca)}" oninput="vMarcaCampo('${m.id}','marca',this.value)"></div>
+        <div style="flex:1;min-width:140px"><label style="font-size:.72rem;color:var(--cinza)">Nº protocolo INPI</label><input ${inp} value="${escHtml(m.numeroProtocolo)}" oninput="vMarcaCampo('${m.id}','numeroProtocolo',this.value)"></div>
+        <div style="flex:1;min-width:130px"><label style="font-size:.72rem;color:var(--cinza)">Data protocolo</label><input type="date" ${inp} value="${escHtml(m.dataProtocolo)}" oninput="vMarcaCampo('${m.id}','dataProtocolo',this.value)"></div>
+        <div style="flex:1;min-width:130px"><label style="font-size:.72rem;color:var(--cinza)">Classe(s)</label><input ${inp} value="${escHtml(m.classes)}" oninput="vMarcaCampo('${m.id}','classes',this.value)"></div>
+        <div style="flex:1;min-width:150px"><label style="font-size:.72rem;color:var(--cinza)">Status</label>
+          <select ${inp} onchange="vMarcaCampo('${m.id}','status',this.value)">
+            ${['protocolado','exigencia','deferido','registrado','indeferido'].map(s=>`<option value="${s}" ${m.status===s?'selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px">
+        <div style="flex:2;min-width:200px"><label style="font-size:.72rem;color:var(--cinza)">Empresa/titular</label><input ${inp} value="${escHtml(m.empresa)}" oninput="vMarcaCampo('${m.id}','empresa',this.value)"></div>
+        <div style="flex:1;min-width:150px"><label style="font-size:.72rem;color:var(--cinza)">CNPJ/CPF</label><input ${inp} value="${escHtml(m.cnpjCpf)}" oninput="vMarcaCampo('${m.id}','cnpjCpf',this.value)"></div>
+        <div style="flex:1;min-width:150px"><label style="font-size:.72rem;color:var(--cinza)">Responsável</label><input ${inp} value="${escHtml(m.responsavel)}" oninput="vMarcaCampo('${m.id}','responsavel',this.value)"></div>
+        <div style="flex:1;min-width:170px"><label style="font-size:.72rem;color:var(--cinza)">E-mail</label><input ${inp} value="${escHtml(m.email)}" oninput="vMarcaCampo('${m.id}','email',this.value)"></div>
+        <div style="flex:1;min-width:150px"><label style="font-size:.72rem;color:var(--cinza)">WhatsApp (55DDNÚMERO)</label><input ${inp} value="${escHtml(m.whatsapp)}" oninput="vMarcaCampo('${m.id}','whatsapp',this.value)"></div>
+      </div>
+      <div style="background:#faf8f4;border-radius:10px;padding:12px;margin-bottom:10px">
+        <b style="font-size:.82rem">Pagamento</b>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px">
+          <div style="flex:1;min-width:110px"><label style="font-size:.72rem;color:var(--cinza)">Valor (R$)</label><input type="number" ${inp} value="${p.valor||0}" oninput="vMarcaCampo('${m.id}','pagamento.valor',parseFloat(this.value)||0)"></div>
+          <div style="flex:1;min-width:130px"><label style="font-size:.72rem;color:var(--cinza)">Forma</label>
+            <select ${inp} onchange="vMarcaCampo('${m.id}','pagamento.forma',this.value)">
+              ${['PIX','Boleto','Cartao','Transferencia','Dinheiro'].map(f=>`<option ${p.forma===f?'selected':''}>${f}</option>`).join('')}
+            </select>
+          </div>
+          <div style="flex:1;min-width:150px"><label style="font-size:.72rem;color:var(--cinza)">Conta recebedora</label><input ${inp} value="${escHtml(p.conta)}" oninput="vMarcaCampo('${m.id}','pagamento.conta',this.value)"></div>
+          <div style="flex:1;min-width:130px"><label style="font-size:.72rem;color:var(--cinza)">Data pagamento</label><input type="date" ${inp} value="${p.data||''}" oninput="vMarcaCampo('${m.id}','pagamento.data',this.value)"></div>
+          <div style="flex:1;min-width:160px;display:flex;align-items:flex-end;gap:8px">
+            <label style="display:flex;align-items:center;gap:6px;font-size:.82rem"><input type="checkbox" ${p.notaFiscal?'checked':''} onchange="vMarcaCampo('${m.id}','pagamento.notaFiscal',this.checked)"> Nota emitida</label>
+          </div>
+          <div style="flex:1;min-width:130px"><label style="font-size:.72rem;color:var(--cinza)">Nº da nota</label><input ${inp} value="${escHtml(p.numeroNota)}" oninput="vMarcaCampo('${m.id}','pagamento.numeroNota',this.value)"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px">
+        <div style="flex:1;min-width:180px">
+          <label style="font-size:.72rem;color:var(--cinza);display:block">Logomarca</label>
+          ${m.logo?`<img src="${m.logo}" style="height:34px;max-width:110px;object-fit:contain;background:#f4f4f4;border-radius:6px;padding:3px;margin:4px 0;display:block">`:''}
+          <input type="file" accept="image/*" onchange="vMarcaArquivo('${m.id}','logo','logoNomeArquivo',this)" style="font-size:.72rem">
+        </div>
+        <div style="flex:1;min-width:180px">
+          <label style="font-size:.72rem;color:var(--cinza);display:block">Documento de protocolo (PDF/imagem)</label>
+          ${m.documentoNomeArquivo?`<div style="font-size:.75rem;color:var(--cinza);margin:4px 0">📎 ${escHtml(m.documentoNomeArquivo)}</div>`:''}
+          <input type="file" accept="application/pdf,image/*" onchange="vMarcaArquivo('${m.id}','documentoProtocolo','documentoNomeArquivo',this)" style="font-size:.72rem">
+        </div>
+        <div style="flex:1;min-width:160px;display:flex;align-items:flex-end">
+          <label style="display:flex;align-items:center;gap:6px;font-size:.82rem;cursor:pointer">
+            <input type="checkbox" ${m.publicarVitrine?'checked':''} onchange="vMarcaCampo('${m.id}','publicarVitrine',this.checked)">
+            Mostrar logo na vitrine pública do site
+          </label>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-top:1px solid var(--linha);padding-top:10px">
+        <button onclick="vMarcaGerarRecibo('${m.id}')" ${btn}>🧾 Gerar recibo (com logo/assinatura)</button>
+        <span style="font-size:.76rem;color:var(--cinza)">${m.reciboEnviado?'Último recibo gerado: '+vFmtData(m.reciboData):'Nenhum recibo gerado ainda'}</span>
+        <button onclick="vMarcaDel('${m.id}')" ${btng} style="margin-left:auto">✕ Remover</button>
+      </div>
+    </div>`;
+  }).join('') || '<p style="color:var(--cinza)">Nenhuma marca cadastrada ainda. Clique em "Adicionar marca" para o primeiro cadastro.</p>';
+  return `<div class="page" id="page-marcas">
+    <h2>🏷️ Marcas registradas — controle gerencial</h2>
+    <p style="color:var(--cinza);margin-bottom:18px">Dados completos (pagamento, documentos, contato) ficam em um repositório GitHub <b>privado</b>, separado do site público. Só a logomarca dos itens marcados "mostrar na vitrine" aparece publicamente.</p>
+    <div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <button onclick="vMarcaAdd()" ${btn}>+ Adicionar marca</button>
+      <button onclick="vMarcasLoad()" ${btng}>🔄 Recarregar dados privados</button>
+      <button onclick="vMarcasSalvar()" ${btn}>☁ Salvar tudo (privado + vitrine pública)</button>
     </div>
     ${cards}
   </div>`;
