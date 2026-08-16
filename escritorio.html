@@ -480,6 +480,10 @@ function entrar(){
     initDate();
     renderAll();
     showPage('hoje', document.querySelector('.tab'));
+    if(!localStorage.getItem('vertti_gh_token')){
+      const tok=prompt('Cole o token do GitHub (fica salvo so neste navegador e nao sera pedido de novo):')||'';
+      if(tok.trim()) localStorage.setItem('vertti_gh_token', tok.trim());
+    }
   } else {
     document.getElementById('loginErr').textContent='Senha incorreta. Tente novamente.';
   }
@@ -1453,7 +1457,8 @@ async function vMarcasSalvar(){
     await vMarcasSalvarVitrine(tok);
     alert('Salvo! Dados completos no repositorio privado. Vitrine publica (so logo+nome dos itens marcados "mostrar na vitrine") atualizada no site.');
   }catch(e){
-    alert('Falha ao salvar: '+e.message+'. Verifique o token.');
+    localStorage.removeItem('vertti_gh_token');
+    alert('Falha ao salvar (token pode ter mudado ou expirado): '+e.message+'. Na proxima vez que clicar em Salvar, vai pedir o token novamente.');
   }
 }
 function vMarcaGerarRecibo(id){
