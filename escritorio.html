@@ -247,6 +247,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600}
 .kpi-real .kr-valor{font-family:'Fraunces',serif;font-weight:600;font-size:1.9rem;color:var(--petroleo);margin-top:4px}
 .kpi-real .kr-nota{font-size:.72rem;color:var(--cinza);margin-top:3px}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
 
@@ -1693,6 +1694,62 @@ function pageMarcas(){
 /* ===== REGISTRO DE SOFTWARE (INPI) ===== */
 let V_SOFT=[];
 function vSoftUid(){ return 's'+Date.now()+Math.random().toString(36).slice(2,7); }
+async function vSoftImportarPacote(input){
+  const f=input.files&&input.files[0]; if(!f)return;
+  try{
+    const zip = await JSZip.loadAsync(f);
+    const dadosTxt = await zip.file('dados.json').async('string');
+    const dados = JSON.parse(dadosTxt);
+
+    let docBase64='', docNome='';
+    const docFile = zip.file('documento-identidade.pdf');
+    if(docFile){
+      const blob = await docFile.async('blob');
+      docBase64 = await new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(blob); });
+      docNome = dados.pessoa && dados.pessoa.docIdentidadeNome || 'documento-identidade.pdf';
+    }
+    let contratoBase64='', contratoNome='';
+    const contratoFile = zip.file('contrato-social.pdf');
+    if(contratoFile){
+      const blob = await contratoFile.async('blob');
+      contratoBase64 = await new Promise(res=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.readAsDataURL(blob); });
+      contratoNome = dados.empresa && dados.empresa.contratoSocialNome || 'contrato-social.pdf';
+    }
+
+    if(!V_SOFT.length){ alert('Crie primeiro um projeto de "Registro de Software" (botão "+ Novo registro de software") antes de importar um pacote de cliente.'); input.value=''; return; }
+
+    const opcoes = V_SOFT.map((s,i)=>`${i+1}. ${s.titulo||'(sem título)'}${dados.referenciaProjeto? (s.titulo && s.titulo.includes(dados.referenciaProjeto)?' ← referência bate':''):''}`).join('\n');
+    const escolha = prompt('Pacote de: '+(dados.pessoa&&dados.pessoa.nome)+(dados.referenciaProjeto?(' — referência informada: "'+dados.referenciaProjeto+'"'):'')+'\n\nEm qual projeto integrar estes dados? Digite o número:\n\n'+opcoes);
+    const idx = parseInt(escolha,10)-1;
+    if(isNaN(idx) || !V_SOFT[idx]){ alert('Importação cancelada.'); input.value=''; return; }
+    const s = V_SOFT[idx];
+
+    if(dados.pessoa && dados.pessoa.nome){
+      s.autores.push({
+        nome:dados.pessoa.nome||'', cpf:dados.pessoa.cpf||'', rg:dados.pessoa.rg||'',
+        nacionalidade:dados.pessoa.nacionalidade||'brasileiro(a)', nascimento:dados.pessoa.nascimento||'',
+        endereco:dados.pessoa.endereco||'', profissao:dados.pessoa.profissao||'',
+        percentual:dados.pessoa.percentual||'', vinculo:dados.pessoa.vinculo||'sócio',
+        docIdentidade:docBase64, docIdentidadeNome:docNome
+      });
+    }
+    if(dados.empresa && dados.empresa.razaoSocial){
+      s.empresa.razaoSocial = dados.empresa.razaoSocial;
+      s.empresa.cnpj = dados.empresa.cnpj;
+      s.empresa.endereco = dados.empresa.endereco;
+      if(contratoBase64){ s.empresa.contratoSocialArquivo = contratoBase64; s.empresa.contratoSocialNome = contratoNome; }
+    }
+    if(dados.sociosExtras && dados.sociosExtras.length){
+      dados.sociosExtras.forEach(so=>{ s.socios.push({nome:so.nome||'', cpf:so.cpf||'', cargo:so.cargo||'', isolado:false}); });
+    }
+
+    alert('Dados importados para o projeto "'+(s.titulo||'sem título')+'". Confira os campos e clique em "Salvar tudo" para gravar no repositório privado.');
+    vRefresh('software');
+  }catch(e){
+    alert('Não foi possível ler esse pacote (.zip). Confirme se é o arquivo gerado pela página de cadastro do cliente. Erro: '+e.message);
+  }
+  input.value='';
+}
 function vSoftNovo(){
   V_SOFT.push({
     id:vSoftUid(), titulo:'', descricao:'', linguagem:'', tipoPrograma:'Aplicativo',
@@ -2103,6 +2160,12 @@ function pageSoftware(){
   return `<div class="page" id="page-software">
     <h2>💻 Registro de Software (INPI) — pacote completo</h2>
     <p style="color:var(--cinza);margin-bottom:8px">Gera automaticamente: Instrumento de Cessão de Direitos/Transferência de Tecnologia, Declaração de Veracidade, Procuração e Ficha de dados para o Sistema e-Software, com base na Lei 9.609/98, Lei 9.610/98 e Código Civil. Dados sensíveis (CPF, contrato social) ficam no repositório privado.</p>
+    <div style="background:#eef5ee;border:1px solid #cfe4cf;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.82rem">
+      📥 <b>Cadastro pelo cliente:</b> envie este link para o autor/sócio preencher os dados dele mesmo, com validação de tamanho/tipo de arquivo:
+      <a href="cadastro-software.html" target="_blank" style="color:var(--petroleo)">cadastro-software.html</a>.
+      Quando ele te enviar o .zip pelo WhatsApp, baixe e importe aqui:
+      <input type="file" accept=".zip" onchange="vSoftImportarPacote(this)" style="display:block;margin-top:6px;font-size:.8rem">
+    </div>
     <div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap">
       <button onclick="vSoftNovo()" ${btn}>+ Novo registro de software</button>
       <button onclick="vSoftLoad()" ${btng}>🔄 Recarregar dados privados</button>
