@@ -291,6 +291,7 @@ h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600}
       <div class="tab" onclick="showPage('relatorios',this)">Relatórios</div>
       <div class="tab" onclick="showPage('depoimentos',this);vDepLoad()">💬 Depoimentos</div>
       <div class="tab" onclick="showPage('marcas',this);vMarcasLoad()">🏷️ Marcas Registradas</div>
+      <div class="tab" onclick="showPage('software',this);vSoftLoad()">💻 Registro de Software</div>
     </div>
 
     <div id="pages"></div>
@@ -512,7 +513,7 @@ function money(v){ return 'R$ '+v.toLocaleString('pt-BR'); }
 
 function renderAll(){
   const c=document.getElementById('pages');
-  c.innerHTML = pageHoje()+pageLeads()+pageFechamento()+pageFinanceiro()+pageSegmentacao()+pageNichos()+pageAcoes()+pageReposicionamento()+pageCaptacao()+pageContratos()+pageMotorAuto()+pageMotor()+pageRelatorios()+pageDepoimentos()+pageMarcas();
+  c.innerHTML = pageHoje()+pageLeads()+pageFechamento()+pageFinanceiro()+pageSegmentacao()+pageNichos()+pageAcoes()+pageReposicionamento()+pageCaptacao()+pageContratos()+pageMotorAuto()+pageMotor()+pageRelatorios()+pageDepoimentos()+pageMarcas()+pageSoftware();
   // animar barras do funil
   setTimeout(()=>{
     document.querySelectorAll('[data-w]').forEach(b=>{ b.style.width=b.dataset.w+'%'; });
@@ -1683,6 +1684,414 @@ function pageMarcas(){
       <button onclick="vMarcaAdd()" ${btn}>+ Adicionar marca</button>
       <button onclick="vMarcasLoad()" ${btng}>🔄 Recarregar dados privados</button>
       <button onclick="vMarcasSalvar()" ${btn}>☁ Salvar tudo (privado + vitrine pública)</button>
+    </div>
+    ${cards}
+  </div>`;
+}
+
+
+/* ===== REGISTRO DE SOFTWARE (INPI) ===== */
+let V_SOFT=[];
+function vSoftUid(){ return 's'+Date.now()+Math.random().toString(36).slice(2,7); }
+function vSoftNovo(){
+  V_SOFT.push({
+    id:vSoftUid(), titulo:'', descricao:'', linguagem:'', tipoPrograma:'Aplicativo',
+    campoAplicacao:'', ambienteOperacional:'', dataCriacao:'', dataPublicacao:'',
+    autores:[ {nome:'',nacionalidade:'brasileiro(a)',cpf:'',rg:'',nascimento:'',endereco:'',profissao:'',percentual:'',vinculo:'sócio'} ],
+    empresa:{ razaoSocial:'', cnpj:'', endereco:'', contratoSocialArquivo:'', contratoSocialNome:'' },
+    socios:[ {nome:'',cpf:'',cargo:'',isolado:false} ],
+    poderAssinatura:'conjunta', qtdAssinaturasConjuntas:2, obsPoderes:'',
+    cessaoGratuita:true, valorCessao:0, formaPagamentoCessao:'',
+    ordem:V_SOFT.length+1
+  });
+  vRefresh('software');
+}
+function vSoftDel(id){
+  if(!confirm('Remover este projeto de registro de software?'))return;
+  V_SOFT=V_SOFT.filter(s=>s.id!==id);
+  vRefresh('software');
+}
+function vSoftCampo(id,campo,valor){
+  const s=V_SOFT.find(x=>x.id===id); if(!s)return;
+  const partes=campo.split('.');
+  if(partes.length===1){ s[campo]=valor; }
+  else if(partes[0]==='empresa'){ s.empresa[partes[1]]=valor; }
+}
+function vSoftAutorCampo(id,idx,campo,valor){
+  const s=V_SOFT.find(x=>x.id===id); if(!s)return;
+  s.autores[idx][campo]=valor;
+}
+function vSoftAutorAdd(id){
+  const s=V_SOFT.find(x=>x.id===id); if(!s)return;
+  s.autores.push({nome:'',nacionalidade:'brasileiro(a)',cpf:'',rg:'',nascimento:'',endereco:'',profissao:'',percentual:'',vinculo:'sócio'});
+  vRefresh('software');
+}
+function vSoftAutorDel(id,idx){
+  const s=V_SOFT.find(x=>x.id===id); if(!s)return;
+  s.autores.splice(idx,1);
+  vRefresh('software');
+}
+function vSoftSocioCampo(id,idx,campo,valor){
+  const s=V_SOFT.find(x=>x.id===id); if(!s)return;
+  s.socios[idx][campo]=valor;
+}
+function vSoftSocioAdd(id){
+  const s=V_SOFT.find(x=>x.id===id); if(!s)return;
+  s.socios.push({nome:'',cpf:'',cargo:'',isolado:false});
+  vRefresh('software');
+}
+function vSoftSocioDel(id,idx){
+  const s=V_SOFT.find(x=>x.id===id); if(!s)return;
+  s.socios.splice(idx,1);
+  vRefresh('software');
+}
+function vSoftArquivo(id,campo,nomeCampo,input){
+  const f=input.files&&input.files[0]; if(!f)return;
+  if(f.size>3*1024*1024){ alert('Arquivo grande (>3MB). Prefira um arquivo menor.'); }
+  const r=new FileReader();
+  r.onload=function(){
+    const s=V_SOFT.find(x=>x.id===id); if(s){ s.empresa[campo]=r.result; s.empresa[nomeCampo]=f.name; vRefresh('software'); }
+  };
+  r.readAsDataURL(f);
+}
+async function vSoftLoad(){
+  let tok=localStorage.getItem('vertti_gh_token');
+  if(!tok){ tok=prompt('Cole o token do GitHub para acessar os dados privados de software:')||'';
+    if(!tok){ vRefresh('software'); return; } localStorage.setItem('vertti_gh_token',tok.trim()); tok=tok.trim(); }
+  try{
+    const r=await fetch('https://api.github.com/repos/'+V_REPO_PRIVADO+'/contents/softwares.json',
+      {headers:{'Authorization':'token '+tok,'Accept':'application/vnd.github+json'}});
+    if(r.ok){
+      const j=await r.json();
+      const conteudo=JSON.parse(decodeURIComponent(escape(atob(j.content))));
+      V_SOFT=(conteudo.softwares||[]).map(s=>Object.assign({id:vSoftUid()},s));
+    }
+  }catch(e){}
+  vRefresh('software');
+}
+async function vSoftSalvar(){
+  let tok=localStorage.getItem('vertti_gh_token')||V_GH_TOKEN_PADRAO;
+  const api='https://api.github.com/repos/'+V_REPO_PRIVADO+'/contents/softwares.json';
+  const hd={'Authorization':'token '+tok,'Accept':'application/vnd.github+json'};
+  let sha=null;
+  try{ const r=await fetch(api,{headers:hd}); if(r.ok){ sha=(await r.json()).sha; } }catch(e){}
+  const payload={softwares:V_SOFT.map(({id,...rest})=>rest)};
+  const body={message:'Registros de software atualizados '+vHoje(),
+    content:btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,1))))};
+  if(sha) body.sha=sha;
+  try{
+    const r=await fetch(api,{method:'PUT',headers:hd,body:JSON.stringify(body)});
+    if(r.ok){ alert('Salvo no repositório privado.'); }
+    else{ const j=await r.json(); localStorage.removeItem('vertti_gh_token');
+      alert('Falha ao salvar (token pode ter mudado): '+(j.message||r.status)+'. Tente salvar de novo.'); }
+  }catch(e){ alert('Erro de rede ao salvar.'); }
+}
+
+function vSoftAbrirDoc(titulo, html){
+  const win=window.open('','_blank');
+  if(!win){ alert('O navegador bloqueou a nova janela. Permita pop-ups.'); return; }
+  win.document.write(html); win.document.close();
+}
+function vSoftDocCss(){
+  return `body{font-family:'Georgia','Times New Roman',serif;max-width:760px;margin:34px auto;padding:0 24px;line-height:1.55;color:#1a1a1a;font-size:.95rem}
+  h1{font-size:1.15rem;text-align:center;margin:0 0 4px;letter-spacing:.02em}
+  .sub{text-align:center;color:#888;font-size:.76rem;margin-bottom:26px}
+  h2{font-size:.92rem;margin:22px 0 6px;color:#0E2A36;border-bottom:1px solid #C9A24B;padding-bottom:3px}
+  p{margin:5px 0;text-align:justify}
+  .qualif{margin:10px 0 16px;padding:10px 14px;background:#faf8f4;border-radius:8px;font-size:.88rem}
+  table{width:100%;border-collapse:collapse;margin:8px 0}
+  td,th{border:1px solid #ddd;padding:6px 9px;text-align:left;font-size:.85rem}
+  .assinaturas{margin-top:56px}
+  .assinaturas .linha{border-top:1px solid #333;width:340px;margin:44px auto 0;padding-top:6px;text-align:center;font-size:.85rem}
+  .print-btn{position:fixed;top:16px;right:16px;padding:10px 18px;background:#0E2A36;color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:Arial,sans-serif;font-size:.85rem}
+  @media print{ .print-btn{display:none} body{margin:0 auto} }
+  .clausula-num{font-weight:700}`;
+}
+
+function vSoftGerarCessao(id){
+  const s=V_SOFT.find(x=>x.id===id); if(!s){ alert('Registro não encontrado.'); return; }
+  const autoresQualif=s.autores.map((a,i)=>`<p><b>CEDENTE ${i+1}:</b> ${escHtml(a.nome||'—')}, ${escHtml(a.nacionalidade||'brasileiro(a)')}, ${escHtml(a.profissao||'—')}, portador(a) do CPF nº ${escHtml(a.cpf||'—')} e RG nº ${escHtml(a.rg||'—')}, nascido(a) em ${vFmtData(a.nascimento)}, residente e domiciliado(a) em ${escHtml(a.endereco||'—')}, doravante designado(a) simplesmente CEDENTE, contribuindo com ${escHtml(a.percentual||'—')}% do desenvolvimento do programa, na qualidade de ${escHtml(a.vinculo||'—')} da CESSIONÁRIA.</p>`).join('');
+  const autoresLista=s.autores.map(a=>escHtml(a.nome||'—')).join(', ');
+  const assinantesEmpresa=s.socios.filter(so=>so.isolado || s.poderAssinatura==='isolada');
+  const listaAssinantes = s.poderAssinatura==='isolada'
+    ? s.socios.filter(so=>so.isolado).map(so=>`${escHtml(so.nome||'—')} (${escHtml(so.cargo||'administrador(a)')}, CPF ${escHtml(so.cpf||'—')}), isoladamente`).join('; ')
+    : s.socios.map(so=>`${escHtml(so.nome||'—')} (${escHtml(so.cargo||'administrador(a)')}, CPF ${escHtml(so.cpf||'—')})`).join('; ') + ` — em conjunto, no mínimo ${s.qtdAssinaturasConjuntas||2} assinatura(s), conforme cláusula de representação do contrato social`;
+  const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Instrumento de Cessão — ${escHtml(s.titulo)}</title>
+<style>${vSoftDocCss()}</style></head><body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar como PDF</button>
+<h1>INSTRUMENTO PARTICULAR DE CESSÃO DE DIREITOS PATRIMONIAIS DE PROGRAMA DE COMPUTADOR E TRANSFERÊNCIA DE TECNOLOGIA</h1>
+<div class="sub">Programa de computador "${escHtml(s.titulo)}" — Campo Grande/MS, ${vFmtData(vHoje())}</div>
+
+<div class="qualif">
+${autoresQualif}
+<p><b>CESSIONÁRIA:</b> ${escHtml(s.empresa.razaoSocial||'—')}, pessoa jurídica de direito privado, inscrita no CNPJ sob o nº ${escHtml(s.empresa.cnpj||'—')}, com sede em ${escHtml(s.empresa.endereco||'—')}, neste ato representada na forma de seu contrato social por ${listaAssinantes||'representante(s) legal(is) a definir'}, doravante designada simplesmente CESSIONÁRIA.</p>
+</div>
+
+<p>As partes acima qualificadas têm, entre si, justo e acertado o presente Instrumento Particular de Cessão de Direitos Patrimoniais de Programa de Computador e Transferência de Tecnologia, que se regerá pela Lei nº 9.609, de 19 de fevereiro de 1998 (Lei de Software), pela Lei nº 9.610, de 19 de fevereiro de 1998 (Lei de Direitos Autorais, aplicável subsidiariamente por força do art. 2º da Lei nº 9.609/98), pelos artigos 104, 421, 421-A, 422 e 481 e seguintes do Código Civil (Lei nº 10.406/2002), pela Lei nº 13.709/2018 (Lei Geral de Proteção de Dados Pessoais, quanto aos dados pessoais aqui tratados) e pelas cláusulas e condições seguintes:</p>
+
+<h2>CLÁUSULA 1ª — DO OBJETO</h2>
+<p><span class="clausula-num">1.1.</span> É objeto do presente instrumento a cessão total, definitiva, irrevogável e irretratável, pelo(s) CEDENTE(S) à CESSIONÁRIA, de todos os direitos patrimoniais de autor sobre o programa de computador denominado <b>"${escHtml(s.titulo)}"</b> (doravante "o PROGRAMA"), assim descrito: ${escHtml(s.descricao||'—')}, desenvolvido na(s) linguagem(ns) ${escHtml(s.linguagem||'—')}, classificado como ${escHtml(s.tipoPrograma||'—')}, com campo de aplicação em ${escHtml(s.campoAplicacao||'—')} e ambiente operacional ${escHtml(s.ambienteOperacional||'—')}, cuja criação foi concluída em ${vFmtData(s.dataCriacao)}${s.dataPublicacao?(' e publicado em '+vFmtData(s.dataPublicacao)):''}.</p>
+<p><span class="clausula-num">1.2.</span> A cessão de que trata esta cláusula é realizada nos termos do art. 4º da Lei nº 9.609/98, transferindo-se à CESSIONÁRIA a titularidade plena, exclusiva e originária, para todos os fins de direito, inclusive para requerimento de registro perante o Instituto Nacional da Propriedade Industrial — INPI, na forma dos artigos 3º e 11 da Lei nº 9.609/98.</p>
+
+<h2>CLÁUSULA 2ª — DA EXTENSÃO DA CESSÃO</h2>
+<p><span class="clausula-num">2.1.</span> A cessão abrange, sem qualquer limitação ou reserva: (a) o código-fonte e o código-objeto do PROGRAMA, em todas as suas versões existentes até a presente data; (b) a documentação técnica, funcional e de suporte associada; (c) o direito de reprodução, distribuição, comercialização, licenciamento a terceiros, modificação, adaptação, tradução para outras linguagens e criação de obras derivadas; (d) o direito de requerer, em nome próprio, o registro do PROGRAMA perante o INPI e demais órgãos competentes, no Brasil e no exterior; (e) o direito de exploração econômica sob qualquer modalidade, presente ou futura.</p>
+<p><span class="clausula-num">2.2.</span> A presente cessão é válida por todo o prazo de proteção legal do PROGRAMA, nos termos do art. 2º, § 2º, da Lei nº 9.609/98, e abrange todo o território nacional e estrangeiro.</p>
+
+<h2>CLÁUSULA 3ª — DOS DIREITOS MORAIS</h2>
+<p><span class="clausula-num">3.1.</span> Nos termos do art. 2º, § 1º, da Lei nº 9.609/98, não se aplicam ao PROGRAMA os direitos morais previstos no art. 24 da Lei nº 9.610/98, ressalvados (i) o direito do(s) CEDENTE(S) de reivindicar a paternidade da criação intelectual do PROGRAMA e (ii) o direito de opor-se a alterações não autorizadas, quando estas impliquem deformação, mutilação ou modificação que atinjam a sua honra ou reputação, direitos estes que permanecem, em caráter personalíssimo, com o(s) CEDENTE(S), independentemente da cessão patrimonial ora operada.</p>
+
+<h2>CLÁUSULA 4ª — DA CONTRAPRESTAÇÃO</h2>
+${s.cessaoGratuita
+  ? `<p><span class="clausula-num">4.1.</span> A presente cessão é realizada a título gratuito, tendo em vista que o(s) CEDENTE(S) desenvolveu(ram) o PROGRAMA no âmbito de seu vínculo societário e/ou contratual com a CESSIONÁRIA, nos termos do art. 4º, caput, da Lei nº 9.609/98, sem prejuízo da remuneração já percebida em razão desse vínculo, não sendo devida qualquer contraprestação adicional em decorrência exclusivamente desta cessão.</p>`
+  : `<p><span class="clausula-num">4.1.</span> Em contrapartida à cessão ora pactuada, a CESSIONÁRIA pagará ao(s) CEDENTE(S) o valor total de R$ ${(s.valorCessao||0).toLocaleString('pt-BR')}, na forma: ${escHtml(s.formaPagamentoCessao||'—')}, dando o(s) CEDENTE(S), a partir da quitação integral, plena, geral e irrevogável quitação quanto a esta obrigação.</p>`}
+
+<h2>CLÁUSULA 5ª — DAS DECLARAÇÕES E GARANTIAS DO(S) CEDENTE(S)</h2>
+<p><span class="clausula-num">5.1.</span> O(s) CEDENTE(S) declara(m), sob as penas da lei, que: (a) é(são) o(s) único(s) e legítimo(s) autor(es) e titular(es) originário(s) dos direitos patrimoniais ora cedidos; (b) o PROGRAMA é obra original, não constituindo cópia, plágio ou reprodução não autorizada de obra de terceiros; (c) o PROGRAMA não infringe direitos de propriedade intelectual, segredo industrial, dados pessoais ou quaisquer outros direitos de terceiros; (d) inexistem ônus, gravames, cessões anteriores, licenças ou disputas judiciais ou extrajudiciais pendentes que possam afetar a presente cessão.</p>
+<p><span class="clausula-num">5.2.</span> O(s) CEDENTE(S) responderá(ão), na forma da lei civil, por evicção, obrigando-se a indenizar a CESSIONÁRIA por quaisquer perdas e danos decorrentes de reivindicação de terceiros relativa à autoria ou titularidade do PROGRAMA.</p>
+
+<h2>CLÁUSULA 6ª — DO REGISTRO PERANTE O INPI</h2>
+<p><span class="clausula-num">6.1.</span> O(s) CEDENTE(S) outorga(m) à CESSIONÁRIA plenos poderes para requerer, em nome próprio, o registro do PROGRAMA perante o INPI, nos termos do Sistema e-Software e do Manual do Usuário para o Registro Eletrônico de Programas de Computador, comprometendo-se a fornecer a documentação técnica, os trechos de código-fonte e demais elementos necessários à geração do resumo digital (hash) exigido pelo INPI, na forma do art. 3º, § 1º, III, da Lei nº 9.609/98.</p>
+<p><span class="clausula-num">6.2.</span> A CESSIONÁRIA se compromete a guardar sigilo sobre a informação técnica confidencial do PROGRAMA a que tiver acesso em razão deste instrumento, nos termos do art. 3º, § 1º, da Lei nº 9.609/98.</p>
+
+<h2>CLÁUSULA 7ª — DA CONFIDENCIALIDADE</h2>
+<p><span class="clausula-num">7.1.</span> As partes obrigam-se a manter sigilo sobre todas as informações técnicas, comerciais e estratégicas trocadas em razão deste instrumento, por prazo indeterminado, mesmo após seu término, salvo informações que se tornem públicas por outro meio lícito.</p>
+
+<h2>CLÁUSULA 8ª — DA PROTEÇÃO DE DADOS PESSOAIS</h2>
+<p><span class="clausula-num">8.1.</span> Os dados pessoais do(s) CEDENTE(S) coletados para a formalização deste instrumento e para o registro do PROGRAMA perante o INPI serão tratados exclusivamente para essas finalidades, em conformidade com a Lei nº 13.709/2018 (LGPD), pelo prazo necessário ao cumprimento das obrigações legais e contratuais decorrentes.</p>
+
+<h2>CLÁUSULA 9ª — DA VIGÊNCIA E IRREVOGABILIDADE</h2>
+<p><span class="clausula-num">9.1.</span> A cessão ora pactuada é feita em caráter irrevogável e irretratável, obrigando as partes, seus herdeiros e sucessores, a qualquer título, valendo o presente instrumento como título executivo extrajudicial para todos os fins de direito.</p>
+
+<h2>CLÁUSULA 10ª — DAS DISPOSIÇÕES GERAIS</h2>
+<p><span class="clausula-num">10.1.</span> Este instrumento constitui o acordo integral entre as partes quanto ao seu objeto, substituindo quaisquer entendimentos anteriores, verbais ou escritos.</p>
+<p><span class="clausula-num">10.2.</span> Eventual tolerância quanto ao descumprimento de qualquer cláusula não implica novação ou renúncia de direitos.</p>
+<p><span class="clausula-num">10.3.</span> Caso qualquer disposição deste instrumento seja considerada nula ou ineficaz, as demais permanecerão em pleno vigor.</p>
+<p><span class="clausula-num">10.4.</span> Fica eleito o foro da comarca de Campo Grande, Estado de Mato Grosso do Sul, para dirimir quaisquer controvérsias oriundas deste instrumento, com renúncia expressa a qualquer outro, por mais privilegiado que seja.</p>
+
+<p>E, por estarem assim justas e contratadas, as partes assinam o presente instrumento, na presença das testemunhas abaixo, em via única digital, cuja autenticidade poderá ser conferida pelas assinaturas digitais nele apostas.</p>
+<p style="margin-top:18px">Campo Grande/MS, ${vFmtData(vHoje())}.</p>
+
+<div class="assinaturas">
+${s.autores.map(a=>`<div class="linha">${escHtml(a.nome||'—')}<br>CEDENTE — CPF ${escHtml(a.cpf||'—')}</div>`).join('')}
+<div class="linha">${escHtml(s.empresa.razaoSocial||'—')}<br>CESSIONÁRIA — por ${escHtml((s.socios[0]&&s.socios[0].nome)||'representante legal')}</div>
+<div class="linha">Testemunha 1 — CPF: _______________</div>
+<div class="linha">Testemunha 2 — CPF: _______________</div>
+</div>
+</body></html>`;
+  vSoftAbrirDoc('cessao', html);
+}
+
+function vSoftGerarDV(id){
+  const s=V_SOFT.find(x=>x.id===id); if(!s){ alert('Registro não encontrado.'); return; }
+  const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Declaração de Veracidade — ${escHtml(s.titulo)}</title>
+<style>${vSoftDocCss()}</style></head><body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar como PDF</button>
+<h1>DECLARAÇÃO DE VERACIDADE E DE ORIGINALIDADE</h1>
+<div class="sub">Referente ao pedido de Registro de Programa de Computador — INPI</div>
+
+<p><b>Titular do direito:</b> ${escHtml(s.empresa.razaoSocial||'—')}, CNPJ nº ${escHtml(s.empresa.cnpj||'—')}, com sede em ${escHtml(s.empresa.endereco||'—')}.</p>
+<p><b>Programa de computador:</b> "${escHtml(s.titulo)}".</p>
+
+<p>Declaro, sob as penas da lei, para fins de instrução do pedido de Registro de Programa de Computador perante o Instituto Nacional da Propriedade Industrial — INPI, nos termos do art. 3º da Lei nº 9.609/98 e do Manual do Usuário para o Registro Eletrônico de Programas de Computador (Sistema e-Software), que:</p>
+
+<p>1. As informações prestadas no formulário eletrônico de pedido de registro são verdadeiras e correspondem fielmente aos dados do programa de computador acima identificado;</p>
+<p>2. O resumo digital (hash) gerado a partir da documentação técnica e dos trechos do código-fonte apresentados corresponde, de forma íntegra, ao conteúdo efetivamente resguardado como confidencial pelo titular, nos termos do art. 3º, § 1º, III, da Lei nº 9.609/98;</p>
+<p>3. O titular acima qualificado é o legítimo detentor dos direitos patrimoniais sobre o programa de computador, por força de cessão regularmente formalizada com o(s) autor(es) original(is): ${escHtml(s.autores.map(a=>a.nome).join(', ')||'—')};</p>
+<p>4. Tem ciência de que a prestação de informação falsa sujeita o declarante às penalidades civis e criminais cabíveis, inclusive as previstas no art. 299 do Código Penal.</p>
+
+<p style="margin-top:26px">Campo Grande/MS, ${vFmtData(vHoje())}.</p>
+<div class="assinaturas">
+<div class="linha">${escHtml(s.empresa.razaoSocial||'—')}<br>Titular do direito — assinatura digital ICP-Brasil</div>
+</div>
+<p style="margin-top:30px;font-size:.76rem;color:#888">Observação: conforme o Manual do Usuário do INPI, este documento deve ser assinado digitalmente com certificado ICP-Brasil (assinaturas gov.br ou ACOAB não são aceitas pelo sistema e-Software) e anexado ao formulário eletrônico junto com a Procuração, quando houver.</p>
+</body></html>`;
+  vSoftAbrirDoc('dv', html);
+}
+
+function vSoftGerarProcuracao(id){
+  const s=V_SOFT.find(x=>x.id===id); if(!s){ alert('Registro não encontrado.'); return; }
+  const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Procuração — ${escHtml(s.titulo)}</title>
+<style>${vSoftDocCss()}</style></head><body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar como PDF</button>
+<h1>PROCURAÇÃO ESPECÍFICA</h1>
+<div class="sub">Para representação perante o INPI — Registro de Programa de Computador</div>
+
+<p><b>OUTORGANTE:</b> ${escHtml(s.empresa.razaoSocial||'—')}, pessoa jurídica de direito privado, inscrita no CNPJ sob o nº ${escHtml(s.empresa.cnpj||'—')}, com sede em ${escHtml(s.empresa.endereco||'—')}, neste ato representada na forma de seu contrato social.</p>
+
+<p><b>OUTORGADO:</b> Germano Coelho Ramos Rocha da Silva, Agente da Propriedade Industrial devidamente inscrito no INPI sob o nº 588, com escritório profissional em Campo Grande/MS (VERTTI Consultoria).</p>
+
+<p>Pelo presente instrumento, a OUTORGANTE nomeia e constitui o OUTORGADO seu bastante procurador, conferindo-lhe amplos, gerais e ilimitados poderes para representá-la perante o Instituto Nacional da Propriedade Industrial — INPI, especificamente para:</p>
+<p>a) requerer o Registro de Programa de Computador — RPC (serviço código 730) referente ao programa "${escHtml(s.titulo)}", por meio do Sistema Eletrônico e-Software;</p>
+<p>b) emitir e providenciar o pagamento da respectiva Guia de Recolhimento da União — GRU;</p>
+<p>c) prestar informações complementares, responder a comunicações do INPI e praticar todos os demais atos necessários ao regular processamento e obtenção do certificado de registro;</p>
+<p>d) acompanhar o andamento do processo administrativo até seu arquivamento definitivo.</p>
+
+<p>A presente procuração é outorgada em caráter específico para o objeto acima descrito, devendo ser assinada digitalmente pela OUTORGANTE (com certificado ICP-Brasil), conforme exigido pelo Manual do Usuário para o Registro Eletrônico de Programas de Computador do INPI.</p>
+
+<p style="margin-top:26px">Campo Grande/MS, ${vFmtData(vHoje())}.</p>
+<div class="assinaturas">
+<div class="linha">${escHtml(s.empresa.razaoSocial||'—')}<br>OUTORGANTE — assinatura digital ICP-Brasil</div>
+</div>
+</body></html>`;
+  vSoftAbrirDoc('procuracao', html);
+}
+
+function vSoftGerarFicha(id){
+  const s=V_SOFT.find(x=>x.id===id); if(!s){ alert('Registro não encontrado.'); return; }
+  const linhaAutor=a=>`<tr><td>${escHtml(a.nome||'—')}</td><td>${escHtml(a.cpf||'—')}</td><td>${escHtml(a.nacionalidade||'—')}</td><td>${escHtml(a.profissao||'—')}</td><td>${escHtml(a.percentual||'—')}%</td></tr>`;
+  const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Ficha de dados e-RPC — ${escHtml(s.titulo)}</title>
+<style>${vSoftDocCss()}</style></head><body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar como PDF</button>
+<h1>FICHA DE DADOS PARA PETICIONAMENTO — SISTEMA e-SOFTWARE</h1>
+<div class="sub">Uso interno do procurador para preenchimento do formulário eletrônico RPC (serviço 730)</div>
+
+<h2>Dados do programa</h2>
+<table>
+<tr><th>Título</th><td>${escHtml(s.titulo)}</td></tr>
+<tr><th>Descrição sucinta</th><td>${escHtml(s.descricao)}</td></tr>
+<tr><th>Linguagem(ns)</th><td>${escHtml(s.linguagem)}</td></tr>
+<tr><th>Tipo de programa</th><td>${escHtml(s.tipoPrograma)}</td></tr>
+<tr><th>Campo de aplicação</th><td>${escHtml(s.campoAplicacao)}</td></tr>
+<tr><th>Ambiente operacional</th><td>${escHtml(s.ambienteOperacional)}</td></tr>
+<tr><th>Data de término da criação</th><td>${vFmtData(s.dataCriacao)}</td></tr>
+<tr><th>Data de publicação (se houver)</th><td>${s.dataPublicacao?vFmtData(s.dataPublicacao):'inédito / não publicado'}</td></tr>
+</table>
+
+<h2>Titular (Cessionária)</h2>
+<table>
+<tr><th>Razão social</th><td>${escHtml(s.empresa.razaoSocial)}</td></tr>
+<tr><th>CNPJ</th><td>${escHtml(s.empresa.cnpj)}</td></tr>
+<tr><th>Endereço</th><td>${escHtml(s.empresa.endereco)}</td></tr>
+</table>
+
+<h2>Autores originais</h2>
+<table><thead><tr><th>Nome</th><th>CPF</th><th>Nacionalidade</th><th>Profissão</th><th>% contribuição</th></tr></thead>
+<tbody>${s.autores.map(linhaAutor).join('')}</tbody></table>
+
+<h2>Checklist de peticionamento (Manual do Usuário INPI)</h2>
+<p>☐ Cadastro no e-INPI feito &nbsp;&nbsp; ☐ GRU código 730 emitida (R$ 210,00 — Portaria INPI/PR nº 10/2025) &nbsp;&nbsp; ☐ Código-fonte/documentação técnica reunidos para geração do resumo hash &nbsp;&nbsp; ☐ Declaração de Veracidade — DV assinada digitalmente (ICP-Brasil) &nbsp;&nbsp; ☐ Procuração assinada digitalmente (ICP-Brasil), se aplicável &nbsp;&nbsp; ☐ Instrumento de Cessão assinado por todos os cedentes e pelos representantes legais da cessionária, conforme poderes do contrato social</p>
+<p style="font-size:.8rem;color:#888">Observação: desde a atualização do sistema, não há mais anexação de código-fonte separado nem etapas de exigência/recurso — apenas DV e Procuração são anexadas ao formulário eletrônico. O certificado é expedido em até 10 dias corridos do depósito, se não houver pendência formal.</p>
+</body></html>`;
+  vSoftAbrirDoc('ficha', html);
+}
+
+function pageSoftware(){
+  const inp='style="padding:9px 12px;border:1px solid var(--linha);border-radius:8px;font-family:inherit;font-size:.85rem;background:#fff;width:100%"';
+  const btn='style="padding:9px 16px;border:none;border-radius:8px;background:var(--petroleo);color:#fff;font-weight:600;cursor:pointer;font-size:.85rem"';
+  const btng='style="padding:7px 13px;border:1px solid var(--linha);border-radius:8px;background:#fff;cursor:pointer;font-size:.78rem"';
+  const btnr='style="padding:5px 10px;border:1px solid #d66;border-radius:6px;background:#fff;color:#c33;cursor:pointer;font-size:.72rem"';
+
+  const cards=V_SOFT.map(s=>{
+    const autoresHtml=s.autores.map((a,i)=>`
+      <div style="border:1px solid var(--linha);border-radius:8px;padding:10px;margin-bottom:8px;background:#fff">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <b style="font-size:.78rem">Autor/Cedente ${i+1}</b>
+          ${s.autores.length>1?`<button onclick="vSoftAutorDel('${s.id}',${i})" ${btnr}>✕</button>`:''}
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div style="flex:2;min-width:180px"><label style="font-size:.7rem;color:var(--cinza)">Nome completo</label><input ${inp} value="${escHtml(a.nome)}" oninput="vSoftAutorCampo('${s.id}',${i},'nome',this.value)"></div>
+          <div style="flex:1;min-width:120px"><label style="font-size:.7rem;color:var(--cinza)">CPF</label><input ${inp} value="${escHtml(a.cpf)}" oninput="vSoftAutorCampo('${s.id}',${i},'cpf',this.value)"></div>
+          <div style="flex:1;min-width:110px"><label style="font-size:.7rem;color:var(--cinza)">RG</label><input ${inp} value="${escHtml(a.rg)}" oninput="vSoftAutorCampo('${s.id}',${i},'rg',this.value)"></div>
+          <div style="flex:1;min-width:130px"><label style="font-size:.7rem;color:var(--cinza)">Nacionalidade</label><input ${inp} value="${escHtml(a.nacionalidade)}" oninput="vSoftAutorCampo('${s.id}',${i},'nacionalidade',this.value)"></div>
+          <div style="flex:1;min-width:120px"><label style="font-size:.7rem;color:var(--cinza)">Nascimento</label><input type="date" ${inp} value="${a.nascimento||''}" oninput="vSoftAutorCampo('${s.id}',${i},'nascimento',this.value)"></div>
+          <div style="flex:2;min-width:200px"><label style="font-size:.7rem;color:var(--cinza)">Endereço completo</label><input ${inp} value="${escHtml(a.endereco)}" oninput="vSoftAutorCampo('${s.id}',${i},'endereco',this.value)"></div>
+          <div style="flex:1;min-width:120px"><label style="font-size:.7rem;color:var(--cinza)">Profissão</label><input ${inp} value="${escHtml(a.profissao)}" oninput="vSoftAutorCampo('${s.id}',${i},'profissao',this.value)"></div>
+          <div style="flex:1;min-width:100px"><label style="font-size:.7rem;color:var(--cinza)">% contribuição</label><input type="number" ${inp} value="${escHtml(a.percentual)}" oninput="vSoftAutorCampo('${s.id}',${i},'percentual',this.value)"></div>
+          <div style="flex:1;min-width:140px"><label style="font-size:.7rem;color:var(--cinza)">Vínculo com a empresa</label>
+            <select ${inp} onchange="vSoftAutorCampo('${s.id}',${i},'vinculo',this.value)">
+              ${['sócio','funcionário','prestador de serviço','terceiro'].map(v=>`<option ${a.vinculo===v?'selected':''}>${v}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      </div>`).join('');
+
+    const sociosHtml=s.socios.map((so,i)=>`
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:8px;border-bottom:1px dashed var(--linha);padding-bottom:8px">
+        <div style="flex:2;min-width:160px"><label style="font-size:.7rem;color:var(--cinza)">Nome</label><input ${inp} value="${escHtml(so.nome)}" oninput="vSoftSocioCampo('${s.id}',${i},'nome',this.value)"></div>
+        <div style="flex:1;min-width:120px"><label style="font-size:.7rem;color:var(--cinza)">CPF</label><input ${inp} value="${escHtml(so.cpf)}" oninput="vSoftSocioCampo('${s.id}',${i},'cpf',this.value)"></div>
+        <div style="flex:1;min-width:140px"><label style="font-size:.7rem;color:var(--cinza)">Cargo (contrato social)</label><input ${inp} value="${escHtml(so.cargo)}" oninput="vSoftSocioCampo('${s.id}',${i},'cargo',this.value)"></div>
+        <label style="display:flex;align-items:center;gap:5px;font-size:.76rem"><input type="checkbox" ${so.isolado?'checked':''} onchange="vSoftSocioCampo('${s.id}',${i},'isolado',this.checked)"> assina isoladamente</label>
+        ${s.socios.length>1?`<button onclick="vSoftSocioDel('${s.id}',${i})" ${btnr}>✕</button>`:''}
+      </div>`).join('');
+
+    return `
+    <div style="border:1px solid var(--linha);border-radius:12px;padding:18px;margin-bottom:18px;background:#fff">
+      <div style="font-weight:700;margin-bottom:10px;color:var(--petroleo)">💻 ${escHtml(s.titulo||'(novo programa de computador)')}</div>
+
+      <b style="font-size:.82rem">1. Dados do software</b>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px">
+        <div style="flex:2;min-width:220px"><label style="font-size:.72rem;color:var(--cinza)">Título do programa</label><input ${inp} value="${escHtml(s.titulo)}" oninput="vSoftCampo('${s.id}','titulo',this.value)"></div>
+        <div style="flex:1;min-width:150px"><label style="font-size:.72rem;color:var(--cinza)">Linguagem(ns)</label><input ${inp} value="${escHtml(s.linguagem)}" oninput="vSoftCampo('${s.id}','linguagem',this.value)"></div>
+        <div style="flex:1;min-width:150px"><label style="font-size:.72rem;color:var(--cinza)">Tipo de programa</label><input ${inp} value="${escHtml(s.tipoPrograma)}" oninput="vSoftCampo('${s.id}','tipoPrograma',this.value)"></div>
+        <div style="flex:2;min-width:250px"><label style="font-size:.72rem;color:var(--cinza)">Descrição sucinta das funcionalidades</label><textarea ${inp} rows="2" oninput="vSoftCampo('${s.id}','descricao',this.value)">${escHtml(s.descricao)}</textarea></div>
+        <div style="flex:1;min-width:160px"><label style="font-size:.72rem;color:var(--cinza)">Campo de aplicação</label><input ${inp} value="${escHtml(s.campoAplicacao)}" oninput="vSoftCampo('${s.id}','campoAplicacao',this.value)"></div>
+        <div style="flex:1;min-width:160px"><label style="font-size:.72rem;color:var(--cinza)">Ambiente operacional</label><input ${inp} value="${escHtml(s.ambienteOperacional)}" oninput="vSoftCampo('${s.id}','ambienteOperacional',this.value)"></div>
+        <div style="flex:1;min-width:140px"><label style="font-size:.72rem;color:var(--cinza)">Término da criação</label><input type="date" ${inp} value="${s.dataCriacao||''}" oninput="vSoftCampo('${s.id}','dataCriacao',this.value)"></div>
+        <div style="flex:1;min-width:140px"><label style="font-size:.72rem;color:var(--cinza)">Publicação (opcional)</label><input type="date" ${inp} value="${s.dataPublicacao||''}" oninput="vSoftCampo('${s.id}','dataPublicacao',this.value)"></div>
+      </div>
+
+      <b style="font-size:.82rem">2. Autores / Cedentes</b>
+      <div style="margin:8px 0">${autoresHtml}</div>
+      <button onclick="vSoftAutorAdd('${s.id}')" ${btng}>+ Adicionar autor</button>
+
+      <b style="font-size:.82rem;display:block;margin-top:16px">3. Empresa cessionária</b>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 8px">
+        <div style="flex:2;min-width:220px"><label style="font-size:.72rem;color:var(--cinza)">Razão social</label><input ${inp} value="${escHtml(s.empresa.razaoSocial)}" oninput="vSoftCampo('${s.id}','empresa.razaoSocial',this.value)"></div>
+        <div style="flex:1;min-width:150px"><label style="font-size:.72rem;color:var(--cinza)">CNPJ</label><input ${inp} value="${escHtml(s.empresa.cnpj)}" oninput="vSoftCampo('${s.id}','empresa.cnpj',this.value)"></div>
+        <div style="flex:2;min-width:220px"><label style="font-size:.72rem;color:var(--cinza)">Endereço (sede)</label><input ${inp} value="${escHtml(s.empresa.endereco)}" oninput="vSoftCampo('${s.id}','empresa.endereco',this.value)"></div>
+        <div style="flex:1;min-width:200px">
+          <label style="font-size:.72rem;color:var(--cinza);display:block">Contrato social (upload)</label>
+          ${s.empresa.contratoSocialNome?`<div style="font-size:.74rem;color:var(--cinza);margin:2px 0">📎 ${escHtml(s.empresa.contratoSocialNome)}</div>`:''}
+          <input type="file" accept="*/*" onchange="vSoftArquivo('${s.id}','contratoSocialArquivo','contratoSocialNome',this)" style="font-size:.72rem">
+        </div>
+      </div>
+
+      <b style="font-size:.82rem">4. Sócios / administradores (para análise de poderes de assinatura)</b>
+      <div style="margin:8px 0">${sociosHtml}</div>
+      <button onclick="vSoftSocioAdd('${s.id}')" ${btng}>+ Adicionar sócio/administrador</button>
+
+      <b style="font-size:.82rem;display:block;margin-top:16px">5. Análise de poderes de assinatura (conforme contrato social)</b>
+      <div style="background:#faf8f4;border-radius:10px;padding:10px 12px;margin-top:6px">
+        <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+          <label style="font-size:.8rem"><input type="radio" name="pod${s.id}" ${s.poderAssinatura==='isolada'?'checked':''} onchange="vSoftCampo('${s.id}','poderAssinatura','isolada')"> Administração isolada (qualquer sócio marcado acima assina sozinho)</label>
+          <label style="font-size:.8rem"><input type="radio" name="pod${s.id}" ${s.poderAssinatura==='conjunta'?'checked':''} onchange="vSoftCampo('${s.id}','poderAssinatura','conjunta')"> Administração conjunta — mínimo
+            <input type="number" style="width:50px;padding:4px" value="${s.qtdAssinaturasConjuntas||2}" oninput="vSoftCampo('${s.id}','qtdAssinaturasConjuntas',parseInt(this.value)||2)"> assinatura(s)
+          </label>
+        </div>
+        <label style="font-size:.72rem;color:var(--cinza);display:block;margin-top:8px">Observações da análise (cláusula do contrato social conferida, limites de alçada, necessidade de procuração específica etc.)</label>
+        <textarea ${inp} rows="2" oninput="vSoftCampo('${s.id}','obsPoderes',this.value)">${escHtml(s.obsPoderes)}</textarea>
+        <p style="font-size:.72rem;color:#a33;margin-top:6px">⚠ Confirme sempre no contrato social carregado acima quem tem poderes de representação antes de gerar os documentos — este campo é preenchido por você, procurador, após a análise.</p>
+      </div>
+
+      <b style="font-size:.82rem;display:block;margin-top:16px">6. Contraprestação da cessão</b>
+      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:6px">
+        <label style="font-size:.8rem"><input type="checkbox" ${s.cessaoGratuita?'checked':''} onchange="vSoftCampo('${s.id}','cessaoGratuita',this.checked)"> Cessão gratuita (autor já remunerado pelo vínculo societário/empregatício — art. 4º Lei 9.609/98)</label>
+        ${!s.cessaoGratuita?`
+        <div><label style="font-size:.72rem;color:var(--cinza)">Valor (R$)</label><input type="number" style="padding:6px" value="${s.valorCessao||0}" oninput="vSoftCampo('${s.id}','valorCessao',parseFloat(this.value)||0)"></div>
+        <div style="flex:1;min-width:200px"><label style="font-size:.72rem;color:var(--cinza)">Forma de pagamento</label><input ${inp} value="${escHtml(s.formaPagamentoCessao)}" oninput="vSoftCampo('${s.id}','formaPagamentoCessao',this.value)"></div>`:''}
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;border-top:1px solid var(--linha);padding-top:12px">
+        <button onclick="vSoftGerarCessao('${s.id}')" ${btn}>📄 Gerar Instrumento de Cessão</button>
+        <button onclick="vSoftGerarDV('${s.id}')" ${btng}>📄 Declaração de Veracidade</button>
+        <button onclick="vSoftGerarProcuracao('${s.id}')" ${btng}>📄 Procuração</button>
+        <button onclick="vSoftGerarFicha('${s.id}')" ${btng}>📄 Ficha para peticionamento e-RPC</button>
+        <button onclick="vSoftDel('${s.id}')" ${btnr} style="margin-left:auto">✕ Remover projeto</button>
+      </div>
+    </div>`;
+  }).join('') || '<p style="color:var(--cinza)">Nenhum projeto de registro de software cadastrado ainda. Clique em "Novo registro de software" para começar.</p>';
+
+  return `<div class="page" id="page-software">
+    <h2>💻 Registro de Software (INPI) — pacote completo</h2>
+    <p style="color:var(--cinza);margin-bottom:8px">Gera automaticamente: Instrumento de Cessão de Direitos/Transferência de Tecnologia, Declaração de Veracidade, Procuração e Ficha de dados para o Sistema e-Software, com base na Lei 9.609/98, Lei 9.610/98 e Código Civil. Dados sensíveis (CPF, contrato social) ficam no repositório privado.</p>
+    <div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <button onclick="vSoftNovo()" ${btn}>+ Novo registro de software</button>
+      <button onclick="vSoftLoad()" ${btng}>🔄 Recarregar dados privados</button>
+      <button onclick="vSoftSalvar()" ${btn}>☁ Salvar tudo (privado)</button>
     </div>
     ${cards}
   </div>`;
