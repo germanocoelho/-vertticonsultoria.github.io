@@ -96,6 +96,8 @@ textarea{resize:vertical}
       <div class="campo"><label>Nacionalidade</label><input type="text" id="f-nacionalidade" value="brasileiro(a)"></div>
       <div class="campo"><label>Data de nascimento</label><input type="date" id="f-nascimento"></div>
       <div class="campo"><label>Profissão</label><input type="text" id="f-profissao"></div>
+      <div class="campo"><label>E-mail *</label><input type="text" id="f-email" placeholder="seuemail@exemplo.com"></div>
+      <div class="campo"><label>WhatsApp * (com DDD)</label><input type="text" id="f-whatsapp" placeholder="(67) 90000-0000"></div>
     </div>
     <div class="campo"><label>Endereço completo (rua, número, bairro, cidade, UF, CEP) *</label><textarea id="f-endereco" rows="2"></textarea></div>
     <div class="campo"><label>Você é: </label>
@@ -147,8 +149,9 @@ textarea{resize:vertical}
 
   <div id="resultado">
     <h3>✅ Pacote gerado com sucesso!</h3>
-    <p>O arquivo <b id="nome-arquivo-zip"></b> foi baixado no seu aparelho.<br>Agora é só enviar esse arquivo pelo WhatsApp abaixo — já deixamos a mensagem pronta, você só precisa anexar o arquivo baixado na conversa.</p>
+    <p>O arquivo <b id="nome-arquivo-zip"></b> foi baixado no seu aparelho.<br>Agora é só enviar esse arquivo pelo WhatsApp ou e-mail abaixo — já deixamos a mensagem pronta, você só precisa anexar o arquivo baixado na conversa/e-mail.</p>
     <a class="btn-wa" id="link-wa" href="#" target="_blank">💬 Abrir WhatsApp e enviar</a>
+    <a class="btn-wa" id="link-email" href="#" style="background:var(--petroleo);margin-left:8px">✉ Ou avisar por e-mail</a>
   </div>
 
   <div class="card" style="margin-top:44px;border-top:3px solid var(--ouro)">
@@ -181,6 +184,7 @@ textarea{resize:vertical}
     <div id="resultado-assinados" style="display:none;text-align:center;margin-top:20px;padding:20px;background:#f2f8f4;border-radius:12px">
       <p>✅ Pacote com os documentos assinados baixado. Envie pelo WhatsApp abaixo.</p>
       <a class="btn-wa" id="link-wa-assinados" href="#" target="_blank">💬 Abrir WhatsApp e enviar</a>
+      <a class="btn-wa" id="link-email-assinados" href="#" style="background:var(--petroleo);margin-left:8px">✉ Ou avisar por e-mail</a>
     </div>
   </div>
 </div>
@@ -189,6 +193,7 @@ textarea{resize:vertical}
 const LIMITE_DOC_MB = 5;
 const LIMITE_CONTRATO_MB = 15;
 const WHATSAPP_ESCRITORIO = '5567981644664';
+const EMAIL_ESCRITORIO = 'germano.consneo@gmail.com';
 
 document.getElementById('f-tem-empresa').addEventListener('change', function(){
   document.getElementById('bloco-empresa').style.display = this.checked ? 'block' : 'none';
@@ -268,10 +273,12 @@ async function finalizarCadastro(){
   const nome = document.getElementById('f-nome').value.trim();
   const cpf = document.getElementById('f-cpf').value.trim();
   const endereco = document.getElementById('f-endereco').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const whatsapp = document.getElementById('f-whatsapp').value.trim();
   const temEmpresa = document.getElementById('f-tem-empresa').checked;
 
-  if (!nome || !cpf || !endereco){
-    erroBox.textContent = 'Preencha ao menos Nome, CPF e Endereço antes de continuar.';
+  if (!nome || !cpf || !endereco || !email || !whatsapp){
+    erroBox.textContent = 'Preencha ao menos Nome, CPF, Endereço, E-mail e WhatsApp antes de continuar.';
     erroBox.className = 'erro-geral mostrar';
     window.scrollTo({top:0,behavior:'smooth'});
     return;
@@ -305,6 +312,7 @@ async function finalizarCadastro(){
         nacionalidade: document.getElementById('f-nacionalidade').value.trim(),
         nascimento: document.getElementById('f-nascimento').value,
         profissao: document.getElementById('f-profissao').value.trim(),
+        email, whatsapp,
         endereco,
         vinculo: document.getElementById('f-vinculo').value,
         percentual: document.getElementById('f-percentual').value.trim(),
@@ -335,6 +343,9 @@ async function finalizarCadastro(){
 
     const textoWa = encodeURIComponent(`Olá! Acabei de preencher o cadastro para registro de software (${nome}). Segue em anexo o arquivo ${nomeArquivo}.`);
     document.getElementById('link-wa').href = 'https://wa.me/'+WHATSAPP_ESCRITORIO+'?text='+textoWa;
+    const assuntoEmail = encodeURIComponent('Cadastro para Registro de Software — '+nome);
+    const corpoEmail = encodeURIComponent(`Olá! Acabei de preencher o cadastro para registro de software.\n\nNome: ${nome}\nCPF: ${cpf}\nE-mail: ${email}\nWhatsApp: ${whatsapp}\n${temEmpresa?'Empresa: '+document.getElementById('f-razao').value.trim():''}\n\nO arquivo ${nomeArquivo} foi baixado no meu aparelho — vou anexá-lo a este e-mail antes de enviar.`);
+    document.getElementById('link-email').href = 'mailto:'+EMAIL_ESCRITORIO+'?subject='+assuntoEmail+'&body='+corpoEmail;
     document.getElementById('nome-arquivo-zip').textContent = nomeArquivo;
     document.getElementById('resultado').className = 'mostrar';
     document.getElementById('resultado').scrollIntoView({behavior:'smooth'});
@@ -374,6 +385,8 @@ async function enviarAssinados(){
 
     const texto = encodeURIComponent(`Olá! Segue em anexo meus documentos já assinados digitalmente (${[procFile?'Procuração':null, dvFile?'Declaração de Veracidade':null].filter(Boolean).join(' e ')}) — arquivo ${nomeArquivo}.`);
     document.getElementById('link-wa-assinados').href = 'https://wa.me/'+WHATSAPP_ESCRITORIO+'?text='+texto;
+    const assuntoAss = encodeURIComponent('VERTTI — Documentos assinados — '+nomeRef);
+    document.getElementById('link-email-assinados').href = 'mailto:'+EMAIL_ESCRITORIO+'?subject='+assuntoAss+'&body='+texto;
     document.getElementById('resultado-assinados').style.display = 'block';
     document.getElementById('resultado-assinados').scrollIntoView({behavior:'smooth'});
     btn.textContent = '✅ Pacote gerado';
