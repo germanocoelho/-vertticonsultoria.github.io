@@ -150,6 +150,39 @@ textarea{resize:vertical}
     <p>O arquivo <b id="nome-arquivo-zip"></b> foi baixado no seu aparelho.<br>Agora é só enviar esse arquivo pelo WhatsApp abaixo — já deixamos a mensagem pronta, você só precisa anexar o arquivo baixado na conversa.</p>
     <a class="btn-wa" id="link-wa" href="#" target="_blank">💬 Abrir WhatsApp e enviar</a>
   </div>
+
+  <div class="card" style="margin-top:44px;border-top:3px solid var(--ouro)">
+    <h2>✍️ Já recebeu documentos da VERTTI para assinar?</h2>
+    <div class="desc">
+      Depois que a VERTTI preparar a <b>Procuração</b> e/ou a <b>Declaração de Veracidade</b>, ela te envia o PDF por e-mail ou WhatsApp. Esses documentos precisam de <b>assinatura digital com certificado ICP-Brasil (e-CPF)</b> — é uma exigência do próprio INPI, que só aceita assinatura feita localmente, no seu computador ou token, com o seu certificado. Não é possível assinar esse documento aqui dentro do site (nenhum site consegue fazer isso, por segurança do próprio sistema do INPI).
+    </div>
+    <div style="background:#faf8f4;border-radius:10px;padding:14px 16px;font-size:.85rem;margin-bottom:18px">
+      <b>Como assinar:</b>
+      <ol style="margin:8px 0 0;padding-left:20px">
+        <li>Baixe o PDF que a VERTTI te enviou.</li>
+        <li>Abra em um programa assinador com seu certificado ICP-Brasil instalado — pode ser o <a href="https://assinador.iti.br" target="_blank">Assinador Serpro/ITI</a> (gratuito) ou o Adobe Acrobat Reader com seu certificado configurado.</li>
+        <li>Assine digitalmente o documento.</li>
+        <li>Envie o PDF já assinado de volta usando o formulário abaixo.</li>
+      </ol>
+    </div>
+    <div class="filebox" id="box-proc">
+      <label style="margin-bottom:0">📄 Procuração assinada (PDF, até 5 MB)</label>
+      <input type="file" id="f-proc-assinada" accept="application/pdf">
+      <div class="status" id="status-proc"></div>
+    </div>
+    <div class="filebox" id="box-dv" style="margin-top:12px">
+      <label style="margin-bottom:0">📄 Declaração de Veracidade assinada (PDF, até 5 MB)</label>
+      <input type="file" id="f-dv-assinada" accept="application/pdf">
+      <div class="status" id="status-dv"></div>
+    </div>
+    <div class="footer-actions" style="margin-top:18px">
+      <button class="btn-final" id="btn-enviar-assinados" onclick="enviarAssinados()">📤 Enviar documentos assinados</button>
+    </div>
+    <div id="resultado-assinados" style="display:none;text-align:center;margin-top:20px;padding:20px;background:#f2f8f4;border-radius:12px">
+      <p>✅ Pacote com os documentos assinados baixado. Envie pelo WhatsApp abaixo.</p>
+      <a class="btn-wa" id="link-wa-assinados" href="#" target="_blank">💬 Abrir WhatsApp e enviar</a>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -310,6 +343,43 @@ async function finalizarCadastro(){
     erroBox.textContent = 'Ocorreu um erro ao montar o pacote: ' + e.message + '. Tente novamente ou fale direto com o escritório.';
     erroBox.className = 'erro-geral mostrar';
     btn.disabled = false; btn.textContent = '📦 Gerar meu pacote e enviar';
+  }
+}
+
+document.getElementById('f-proc-assinada').addEventListener('change', function(){ validarArquivo('f-proc-assinada','status-proc','box-proc',5); });
+document.getElementById('f-dv-assinada').addEventListener('change', function(){ validarArquivo('f-dv-assinada','status-dv','box-dv',5); });
+
+async function enviarAssinados(){
+  const procFile = document.getElementById('f-proc-assinada').files[0];
+  const dvFile = document.getElementById('f-dv-assinada').files[0];
+  if(!procFile && !dvFile){
+    alert('Selecione ao menos um documento assinado (Procuração ou Declaração de Veracidade) antes de enviar.');
+    return;
+  }
+  const btn = document.getElementById('btn-enviar-assinados');
+  btn.disabled = true; btn.textContent = 'Montando pacote...';
+  try{
+    const zip = new JSZip();
+    const nomeRef = document.getElementById('f-nome').value.trim() || document.getElementById('f-ref').value.trim() || 'cliente';
+    zip.file('info.json', JSON.stringify({tipo:'documentos-assinados', nome:nomeRef, referenciaProjeto:document.getElementById('f-ref').value.trim(), enviadoEm:new Date().toISOString()}, null, 2));
+    if(procFile) zip.file('procuracao-assinada.pdf', procFile);
+    if(dvFile) zip.file('declaracao-veracidade-assinada.pdf', dvFile);
+    const blob = await zip.generateAsync({type:'blob'});
+    const nomeArquivo = 'documentos-assinados-' + nomeRef.replace(/\s+/g,'-').toLowerCase() + '.zip';
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = nomeArquivo;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 4000);
+
+    const texto = encodeURIComponent(`Olá! Segue em anexo meus documentos já assinados digitalmente (${[procFile?'Procuração':null, dvFile?'Declaração de Veracidade':null].filter(Boolean).join(' e ')}) — arquivo ${nomeArquivo}.`);
+    document.getElementById('link-wa-assinados').href = 'https://wa.me/'+WHATSAPP_ESCRITORIO+'?text='+texto;
+    document.getElementById('resultado-assinados').style.display = 'block';
+    document.getElementById('resultado-assinados').scrollIntoView({behavior:'smooth'});
+    btn.textContent = '✅ Pacote gerado';
+  }catch(e){
+    alert('Erro ao montar o pacote: '+e.message);
+    btn.disabled = false; btn.textContent = '📤 Enviar documentos assinados';
   }
 }
 </script>
