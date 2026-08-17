@@ -1697,7 +1697,7 @@ function vSoftNovo(){
   V_SOFT.push({
     id:vSoftUid(), titulo:'', descricao:'', linguagem:'', tipoPrograma:'Aplicativo',
     campoAplicacao:'', ambienteOperacional:'', dataCriacao:'', dataPublicacao:'',
-    autores:[ {nome:'',nacionalidade:'brasileiro(a)',cpf:'',rg:'',nascimento:'',endereco:'',profissao:'',percentual:'',vinculo:'sócio'} ],
+    autores:[ {nome:'',nacionalidade:'brasileiro(a)',cpf:'',rg:'',nascimento:'',endereco:'',profissao:'',percentual:'',vinculo:'sócio',docIdentidade:'',docIdentidadeNome:''} ],
     empresa:{ razaoSocial:'', cnpj:'', endereco:'', contratoSocialArquivo:'', contratoSocialNome:'' },
     socios:[ {nome:'',cpf:'',cargo:'',isolado:false} ],
     poderAssinatura:'conjunta', qtdAssinaturasConjuntas:2, obsPoderes:'',
@@ -1723,7 +1723,7 @@ function vSoftAutorCampo(id,idx,campo,valor){
 }
 function vSoftAutorAdd(id){
   const s=V_SOFT.find(x=>x.id===id); if(!s)return;
-  s.autores.push({nome:'',nacionalidade:'brasileiro(a)',cpf:'',rg:'',nascimento:'',endereco:'',profissao:'',percentual:'',vinculo:'sócio'});
+  s.autores.push({nome:'',nacionalidade:'brasileiro(a)',cpf:'',rg:'',nascimento:'',endereco:'',profissao:'',percentual:'',vinculo:'sócio',docIdentidade:'',docIdentidadeNome:''});
   vRefresh('software');
 }
 function vSoftAutorDel(id,idx){
@@ -1751,6 +1751,16 @@ function vSoftArquivo(id,campo,nomeCampo,input){
   const r=new FileReader();
   r.onload=function(){
     const s=V_SOFT.find(x=>x.id===id); if(s){ s.empresa[campo]=r.result; s.empresa[nomeCampo]=f.name; vRefresh('software'); }
+  };
+  r.readAsDataURL(f);
+}
+function vSoftAutorArquivo(id,idx,input){
+  const f=input.files&&input.files[0]; if(!f)return;
+  if(f.type!=='application/pdf'){ if(!confirm('Esse arquivo não é PDF. Continuar mesmo assim?')) return; }
+  if(f.size>4*1024*1024){ alert('Arquivo grande (>4MB). Prefira um PDF menor/comprimido para não perder o upload ao salvar.'); return; }
+  const r=new FileReader();
+  r.onload=function(){
+    const s=V_SOFT.find(x=>x.id===id); if(s){ s.autores[idx].docIdentidade=r.result; s.autores[idx].docIdentidadeNome=f.name; vRefresh('software'); }
   };
   r.readAsDataURL(f);
 }
@@ -2005,6 +2015,11 @@ function pageSoftware(){
             <select ${inp} onchange="vSoftAutorCampo('${s.id}',${i},'vinculo',this.value)">
               ${['sócio','funcionário','prestador de serviço','terceiro'].map(v=>`<option ${a.vinculo===v?'selected':''}>${v}</option>`).join('')}
             </select>
+          </div>
+          <div style="flex:2;min-width:220px">
+            <label style="font-size:.7rem;color:var(--cinza);display:block">Documento de identidade (PDF, individual por CPF — uso interno do escritório, não exigido pelo INPI no formulário eletrônico)</label>
+            ${a.docIdentidadeNome?`<span style="font-size:.72rem;color:var(--petroleo)">📎 ${escHtml(a.docIdentidadeNome)}</span>`:''}
+            <input type="file" accept="application/pdf" onchange="vSoftAutorArquivo('${s.id}',${i},this)" style="font-size:.7rem;display:block;margin-top:2px">
           </div>
         </div>
       </div>`).join('');
