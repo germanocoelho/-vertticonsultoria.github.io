@@ -1615,6 +1615,11 @@ footer{background:#091e27;color:rgba(255,255,255,.7);padding:60px 0 30px}
         <textarea id="dep-texto" rows="4" required></textarea>
         <button type="submit" class="btn btn-wa" data-i18n="dep.form.enviar">Enviar pelo WhatsApp</button>
       </form>
+      <div id="dep-form-sucesso" style="display:none;text-align:center;padding:6px 0">
+        <p style="color:rgba(255,255,255,.85);font-size:.9rem;margin-bottom:16px" data-i18n="dep.form.sucesso">Obrigado! Escolha como enviar sua opinião para a VERTTI:</p>
+        <a href="#" id="dep-link-wa" target="_blank" class="btn btn-wa" style="width:100%;justify-content:center;margin-bottom:10px" data-i18n="dep.form.enviar">Enviar pelo WhatsApp</a>
+        <a href="#" id="dep-link-email" class="btn btn-ghost" style="width:100%;justify-content:center" data-i18n="dep.form.enviarEmail">Ou enviar por e-mail</a>
+      </div>
     </div>
   </div>
 </section>
@@ -2344,6 +2349,8 @@ const I18N = {
   "dep.form.empresa": {pt:"Empresa / organização (opcional)", en:"Company / organization (optional)", es:"Empresa / organización (opcional)", fr:"Entreprise / organisation (facultatif)"},
   "dep.form.texto": {pt:"Sua opinião", en:"Your review", es:"Su opinión", fr:"Votre avis"},
   "dep.form.enviar": {pt:"Enviar pelo WhatsApp", en:"Send via WhatsApp", es:"Enviar por WhatsApp", fr:"Envoyer via WhatsApp"},
+  "dep.form.sucesso": {pt:"Obrigado! Escolha como enviar sua opinião para a VERTTI:", en:"Thank you! Choose how to send your review to VERTTI:", es:"¡Gracias! Elija cómo enviar su opinión a VERTTI:", fr:"Merci ! Choisissez comment envoyer votre avis à VERTTI :"},
+  "dep.form.enviarEmail": {pt:"Ou enviar por e-mail", en:"Or send via e-mail", es:"O enviar por correo", fr:"Ou envoyer par e-mail"},
 
   // ===== VALORES =====
   "precos.eyebrow": {pt:"Investimento", en:"Investment", es:"Inversión", fr:"Investissement"},
@@ -2708,7 +2715,12 @@ document.querySelectorAll('#langSwitch button').forEach(b=>{
     var fechar = document.getElementById('dep-modal-fechar');
     var fundo = document.getElementById('dep-modal-fundo');
     function abrirModal(){ modal.classList.add('aberto'); modal.setAttribute('aria-hidden','false'); }
-    function fecharModal(){ modal.classList.remove('aberto'); modal.setAttribute('aria-hidden','true'); }
+    function fecharModal(){
+      modal.classList.remove('aberto'); modal.setAttribute('aria-hidden','true');
+      var f=document.getElementById('dep-form'), suc=document.getElementById('dep-form-sucesso');
+      if(f){ f.style.display=''; f.reset(); }
+      if(suc){ suc.style.display='none'; }
+    }
     if (abrir) abrir.addEventListener('click', abrirModal);
     if (fechar) fechar.addEventListener('click', fecharModal);
     if (fundo) fundo.addEventListener('click', fecharModal);
@@ -2724,9 +2736,11 @@ document.querySelectorAll('#langSwitch button').forEach(b=>{
           (empresa ? '\nEmpresa: ' + empresa : '') +
           '\nOpinião: ' + texto +
           '\n\n(Se quiser, posso enviar a logo da empresa aqui mesmo pelo WhatsApp.)';
-        window.open('https://wa.me/5567981644664?text=' + encodeURIComponent(msg), '_blank');
-        fecharModal();
-        form.reset();
+        document.getElementById('dep-link-wa').href = 'https://wa.me/5567981644664?text=' + encodeURIComponent(msg);
+        var assuntoEmail = encodeURIComponent('Depoimento sobre a VERTTI — ' + nome);
+        document.getElementById('dep-link-email').href = 'mailto:germano.consneo@gmail.com?subject=' + assuntoEmail + '&body=' + encodeURIComponent(msg);
+        form.style.display = 'none';
+        document.getElementById('dep-form-sucesso').style.display = 'block';
       });
     }
   }catch(e){ if (window.console) console.error('vertti-depoimentos', e); }
