@@ -1395,7 +1395,8 @@ function vMarcaAdd(){
     comContrato:true,
     logo:'', logoNomeArquivo:'', documentoProtocolo:'', documentoNomeArquivo:'',
     pagamento:{valor:0, forma:'PIX', conta:'PIX VERTTI', data:vHoje(), notaFiscal:false, numeroNota:''},
-    reciboEnviado:false, reciboData:'', publicarVitrine:false, ordemVitrine:V_MARCAS.length+1});
+    reciboEnviado:false, reciboData:'', reciboAssinadoPdf:'', reciboAssinadoNomeArquivo:'',
+    publicarVitrine:false, ordemVitrine:V_MARCAS.length+1});
   vRefresh('marcas');
 }
 function vMarcaDel(id){
@@ -1469,6 +1470,28 @@ async function vMarcasSalvar(){
     localStorage.removeItem('vertti_gh_token');
     alert('Falha ao salvar (token pode ter mudado ou expirado): '+e.message+'. Na proxima vez que clicar em Salvar, vai pedir o token novamente.');
   }
+}
+function vMarcaBaixarReciboAssinado(id){
+  const m=V_MARCAS.find(x=>x.id===id); if(!m||!m.reciboAssinadoPdf){ alert('Nenhum recibo assinado carregado para esta marca.'); return; }
+  const a=document.createElement('a');
+  a.href=m.reciboAssinadoPdf;
+  a.download=m.reciboAssinadoNomeArquivo||('recibo-assinado-'+(m.marca||'marca')+'.pdf');
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function vMarcaEnviarReciboAssinado(id, via){
+  const m=V_MARCAS.find(x=>x.id===id); if(!m){ return; }
+  if(!m.reciboAssinadoPdf){ alert('Carregue o recibo assinado (PDF do gov.br) primeiro.'); return; }
+  vMarcaBaixarReciboAssinado(id);
+  const p=m.pagamento||{};
+  const texto='Olá'+(m.responsavel?', '+m.responsavel:'')+'! Segue o recibo assinado digitalmente (gov.br) referente ao registro da marca "'+(m.marca||'')+'" no valor de R$ '+((p.valor||0).toLocaleString('pt-BR'))+'. Vou anexar o PDF aqui em seguida.';
+  if(via==='whats'){
+    const fone=(m.whatsapp||'').replace(/\D/g,'');
+    window.open('https://wa.me/'+fone+'?text='+encodeURIComponent(texto), '_blank');
+  } else {
+    const assunto=encodeURIComponent('VERTTI Consultoria — Recibo assinado — '+(m.marca||m.empresa));
+    window.location.href='mailto:'+encodeURIComponent(m.email||'')+'?subject='+assunto+'&body='+encodeURIComponent(texto+'\n\nGermano Coelho — VERTTI Consultoria');
+  }
+  m.reciboEnviado=true; m.reciboData=vHoje(); vRefresh('marcas');
 }
 function vMarcaBaixarDocumento(id){
   const m=V_MARCAS.find(x=>x.id===id); if(!m||!m.documentoProtocolo){ alert('Nenhum documento carregado para esta marca.'); return; }
@@ -1625,6 +1648,18 @@ function pageMarcas(){
         <button onclick="vMarcaGerarRecibo('${m.id}')" ${btn}>🧾 Gerar recibo (com logo/assinatura)</button>
         <span style="font-size:.76rem;color:var(--cinza)">${m.reciboEnviado?'Último recibo gerado: '+vFmtData(m.reciboData):'Nenhum recibo gerado ainda'}</span>
         <button onclick="vMarcaDel('${m.id}')" ${btng} style="margin-left:auto">✕ Remover</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px dashed var(--linha);padding-top:10px;margin-top:10px">
+        <div style="font-size:.76rem;color:var(--cinza)">
+          Recibo assinado (gov.br):
+          ${m.reciboAssinadoNomeArquivo?`<span style="color:var(--petroleo)">📎 ${escHtml(m.reciboAssinadoNomeArquivo)}</span>`:'<span>nenhum carregado</span>'}
+        </div>
+        <input type="file" accept="application/pdf" onchange="vMarcaArquivo('${m.id}','reciboAssinadoPdf','reciboAssinadoNomeArquivo',this)" style="font-size:.72rem">
+        ${m.reciboAssinadoPdf?`
+          <button onclick="vMarcaBaixarReciboAssinado('${m.id}')" ${btng}>⬇ Baixar</button>
+          <button onclick="vMarcaEnviarReciboAssinado('${m.id}','email')" ${btng}>✉ E-mail</button>
+          <button onclick="vMarcaEnviarReciboAssinado('${m.id}','whats')" ${btng}>💬 WhatsApp</button>
+        `:''}
       </div>
     </div>`;
   }).join('') || '<p style="color:var(--cinza)">Nenhuma marca cadastrada ainda. Clique em "Adicionar marca" para o primeiro cadastro.</p>';
