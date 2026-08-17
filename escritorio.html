@@ -1354,7 +1354,7 @@ function pageDepoimentos(){
         <div style="flex:1;min-width:140px">
           <label style="font-size:.75rem;color:var(--cinza);display:block;margin-bottom:4px">Logo (opcional)</label>
           ${d.logo?`<img src="${d.logo}" style="height:36px;max-width:100px;object-fit:contain;background:#f4f4f4;border-radius:6px;padding:3px;margin-bottom:6px;display:block">`:''}
-          <input type="file" accept="image/*" onchange="vDepLogo('${d.id}',this)" style="font-size:.75rem">
+          <input type="file" accept="*/*" onchange="vDepLogo('${d.id}',this)" style="font-size:.75rem">
         </div>
       </div>
       <label style="font-size:.75rem;color:var(--cinza);display:block;margin:10px 0 4px">Texto do depoimento</label>
@@ -1618,12 +1618,12 @@ function pageMarcas(){
         <div style="flex:1;min-width:180px">
           <label style="font-size:.72rem;color:var(--cinza);display:block">Logomarca</label>
           ${m.logo?`<img src="${m.logo}" style="height:34px;max-width:110px;object-fit:contain;background:#f4f4f4;border-radius:6px;padding:3px;margin:4px 0;display:block">`:''}
-          <input type="file" accept="image/*" onchange="vMarcaArquivo('${m.id}','logo','logoNomeArquivo',this)" style="font-size:.72rem">
+          <input type="file" accept="*/*" onchange="vMarcaArquivo('${m.id}','logo','logoNomeArquivo',this)" style="font-size:.72rem">
         </div>
         <div style="flex:1;min-width:180px">
           <label style="font-size:.72rem;color:var(--cinza);display:block">Documento de protocolo (PDF/imagem)</label>
           ${m.documentoNomeArquivo?`<div style="font-size:.75rem;color:var(--cinza);margin:4px 0">📎 ${escHtml(m.documentoNomeArquivo)}</div>`:''}
-          <input type="file" accept="application/pdf,image/*" onchange="vMarcaArquivo('${m.id}','documentoProtocolo','documentoNomeArquivo',this)" style="font-size:.72rem">
+          <input type="file" accept="*/*" onchange="vMarcaArquivo('${m.id}','documentoProtocolo','documentoNomeArquivo',this)" style="font-size:.72rem">
           ${m.documentoProtocolo?`<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
             <button type="button" onclick="vMarcaBaixarDocumento('${m.id}')" ${btng}>⬇ Baixar</button>
             <button type="button" onclick="vMarcaEnviarDocumento('${m.id}','email')" ${btng}>✉ E-mail</button>
@@ -1654,7 +1654,7 @@ function pageMarcas(){
           Recibo assinado (gov.br):
           ${m.reciboAssinadoNomeArquivo?`<span style="color:var(--petroleo)">📎 ${escHtml(m.reciboAssinadoNomeArquivo)}</span>`:'<span>nenhum carregado</span>'}
         </div>
-        <input type="file" accept="application/pdf" onchange="vMarcaArquivo('${m.id}','reciboAssinadoPdf','reciboAssinadoNomeArquivo',this)" style="font-size:.72rem">
+        <input type="file" accept="*/*" onchange="vMarcaArquivo('${m.id}','reciboAssinadoPdf','reciboAssinadoNomeArquivo',this)" style="font-size:.72rem">
         ${m.reciboAssinadoPdf?`
           <button onclick="vMarcaBaixarReciboAssinado('${m.id}')" ${btng}>⬇ Baixar</button>
           <button onclick="vMarcaEnviarReciboAssinado('${m.id}','email')" ${btng}>✉ E-mail</button>
@@ -1670,12 +1670,12 @@ function pageMarcas(){
       <div>
         <label style="font-size:.75rem;color:var(--cinza);display:block;margin-bottom:4px">Logo da VERTTI (aparece em todos os recibos)</label>
         ${V_CONFIG.logoVertti?`<img src="${V_CONFIG.logoVertti}" style="height:34px;max-width:110px;object-fit:contain;background:#fff;border-radius:6px;padding:3px;margin-bottom:6px;display:block">`:''}
-        <input type="file" accept="image/*" onchange="vConfigArquivo('logoVertti',this)" style="font-size:.75rem">
+        <input type="file" accept="*/*" onchange="vConfigArquivo('logoVertti',this)" style="font-size:.75rem">
       </div>
       <div>
         <label style="font-size:.75rem;color:var(--cinza);display:block;margin-bottom:4px">Sua assinatura (foto/scan em fundo transparente ou branco)</label>
         ${V_CONFIG.assinaturaGermano?`<img src="${V_CONFIG.assinaturaGermano}" style="height:34px;max-width:140px;object-fit:contain;background:#fff;border-radius:6px;padding:3px;margin-bottom:6px;display:block">`:''}
-        <input type="file" accept="image/*" onchange="vConfigArquivo('assinaturaGermano',this)" style="font-size:.75rem">
+        <input type="file" accept="*/*" onchange="vConfigArquivo('assinaturaGermano',this)" style="font-size:.75rem">
       </div>
       <div style="font-size:.72rem;color:var(--cinza);max-width:260px">Faça upload uma vez aqui e clique em "Salvar tudo" abaixo — a partir daí, toda marca gera recibo já com sua logo e assinatura.</div>
     </div>
