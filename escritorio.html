@@ -1383,7 +1383,8 @@ function pageDepoimentos(){
 
 /* ===== MARCAS REGISTRADAS (CRM completo: empresa, pagamento, documentos, recibo) ===== */
 let V_MARCAS=[];
-let V_CONFIG={logoVertti:'', assinaturaGermano:''};
+let V_CONFIG={logoVertti:'', assinaturaGermano:'',
+  qualificacaoProcurador:'Germano Coelho Ramos Rocha da Silva, brasileiro, solteiro, Agente da Propriedade Industrial nº 0588 junto ao INPI, residente e domiciliado à Rua 13 de Junho, nº 3051, na cidade de Campo Grande, Estado de Mato Grosso do Sul'};
 function vConfigArquivo(campo,input){
   const f=input.files&&input.files[0]; if(!f)return;
   const r=new FileReader();
@@ -1431,7 +1432,7 @@ async function vMarcasLoad(){
       const j=await r.json();
       const conteudo=JSON.parse(decodeURIComponent(escape(atob(j.content))));
       V_MARCAS=(conteudo.marcas||[]).map(m=>Object.assign({id:vMarcaUid()},m));
-      V_CONFIG=Object.assign({logoVertti:'',assinaturaGermano:''}, conteudo.config||{});
+      V_CONFIG=Object.assign({logoVertti:'',assinaturaGermano:'',qualificacaoProcurador:V_CONFIG.qualificacaoProcurador}, conteudo.config||{});
     }
   }catch(e){ alert('Erro ao carregar marcas do repositorio privado.'); }
   vRefresh('marcas');
@@ -1730,6 +1731,7 @@ async function vSoftImportarPacote(input){
         nacionalidade:dados.pessoa.nacionalidade||'brasileiro(a)', nascimento:dados.pessoa.nascimento||'',
         endereco:dados.pessoa.endereco||'', profissao:dados.pessoa.profissao||'',
         percentual:dados.pessoa.percentual||'', vinculo:dados.pessoa.vinculo||'sócio',
+        email:dados.pessoa.email||'', whatsapp:dados.pessoa.whatsapp||'',
         docIdentidade:docBase64, docIdentidadeNome:docNome
       });
     }
@@ -1754,7 +1756,7 @@ function vSoftNovo(){
   V_SOFT.push({
     id:vSoftUid(), titulo:'', descricao:'', linguagem:'', tipoPrograma:'Aplicativo',
     campoAplicacao:'', ambienteOperacional:'', dataCriacao:'', dataPublicacao:'',
-    autores:[ {nome:'',nacionalidade:'brasileiro(a)',cpf:'',rg:'',nascimento:'',endereco:'',profissao:'',percentual:'',vinculo:'sócio',docIdentidade:'',docIdentidadeNome:''} ],
+    autores:[ {nome:'',nacionalidade:'brasileiro(a)',cpf:'',rg:'',nascimento:'',endereco:'',profissao:'',percentual:'',vinculo:'sócio',email:'',whatsapp:'',docIdentidade:'',docIdentidadeNome:''} ],
     empresa:{ razaoSocial:'', cnpj:'', endereco:'', contratoSocialArquivo:'', contratoSocialNome:'' },
     socios:[ {nome:'',cpf:'',cargo:'',isolado:false} ],
     poderAssinatura:'conjunta', qtdAssinaturasConjuntas:2, obsPoderes:'',
@@ -1780,7 +1782,7 @@ function vSoftAutorCampo(id,idx,campo,valor){
 }
 function vSoftAutorAdd(id){
   const s=V_SOFT.find(x=>x.id===id); if(!s)return;
-  s.autores.push({nome:'',nacionalidade:'brasileiro(a)',cpf:'',rg:'',nascimento:'',endereco:'',profissao:'',percentual:'',vinculo:'sócio',docIdentidade:'',docIdentidadeNome:''});
+  s.autores.push({nome:'',nacionalidade:'brasileiro(a)',cpf:'',rg:'',nascimento:'',endereco:'',profissao:'',percentual:'',vinculo:'sócio',email:'',whatsapp:'',docIdentidade:'',docIdentidadeNome:''});
   vRefresh('software');
 }
 function vSoftAutorDel(id,idx){
@@ -1821,6 +1823,20 @@ function vSoftAutorArquivo(id,idx,input){
   };
   r.readAsDataURL(f);
 }
+function vSoftPedirAssinatura(id, idx, via){
+  const s=V_SOFT.find(x=>x.id===id); if(!s)return;
+  const a=s.autores[idx];
+  const link='https://vertticonsultoria.com.br/cadastro-software.html#assinatura';
+  const texto=`Olá${a.nome?', '+a.nome:''}! Segue(m) em anexo o(s) documento(s) para assinatura digital (Procuração e/ou Declaração de Veracidade) referente ao registro do software "${s.titulo||''}". Assine com seu certificado ICP-Brasil (e-CPF) e envie de volta pelo link: ${link}`;
+  if(via==='whats'){
+    const fone=(a.whatsapp||'').replace(/\D/g,'');
+    if(!fone){ alert('Preencha o WhatsApp deste autor primeiro.'); return; }
+    window.open('https://wa.me/'+fone+'?text='+encodeURIComponent(texto), '_blank');
+  } else {
+    if(!a.email){ alert('Preencha o e-mail deste autor primeiro.'); return; }
+    window.location.href='mailto:'+encodeURIComponent(a.email)+'?subject='+encodeURIComponent('VERTTI Consultoria — Documentos para assinatura')+'&body='+encodeURIComponent(texto+'\n\nGermano Coelho — VERTTI Consultoria');
+  }
+}
 async function vSoftLoad(){
   let tok=localStorage.getItem('vertti_gh_token');
   if(!tok){ tok=prompt('Cole o token do GitHub para acessar os dados privados de software:')||'';
@@ -1837,12 +1853,14 @@ async function vSoftLoad(){
   vRefresh('software');
 }
 async function vSoftSalvar(){
-  let tok=localStorage.getItem('vertti_gh_token')||V_GH_TOKEN_PADRAO;
+  let tok=localStorage.getItem('vertti_gh_token');
+  if(!tok){ tok=prompt('Cole o token do GitHub (fica salvo so neste navegador):')||'';
+    if(!tok)return; localStorage.setItem('vertti_gh_token',tok.trim()); tok=tok.trim(); }
   const api='https://api.github.com/repos/'+V_REPO_PRIVADO+'/contents/softwares.json';
   const hd={'Authorization':'token '+tok,'Accept':'application/vnd.github+json'};
   let sha=null;
   try{ const r=await fetch(api,{headers:hd}); if(r.ok){ sha=(await r.json()).sha; } }catch(e){}
-  const payload={softwares:V_SOFT.map(({id,...rest})=>rest)};
+  const payload={softwares:V_SOFT.map(({id,...rest})=>rest), config:V_CONFIG};
   const body={message:'Registros de software atualizados '+vHoje(),
     content:btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,1))))};
   if(sha) body.sha=sha;
@@ -1872,7 +1890,16 @@ function vSoftDocCss(){
   .assinaturas .linha{border-top:1px solid #333;width:340px;margin:44px auto 0;padding-top:6px;text-align:center;font-size:.85rem}
   .print-btn{position:fixed;top:16px;right:16px;padding:10px 18px;background:#0E2A36;color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:Arial,sans-serif;font-size:.85rem}
   @media print{ .print-btn{display:none} body{margin:0 auto} }
-  .clausula-num{font-weight:700}`;
+  .clausula-num{font-weight:700}
+  .papel-timbrado{text-align:center;border-bottom:3px solid #C9A24B;padding-bottom:16px;margin-bottom:24px}
+  .papel-timbrado img{height:110px;max-width:340px;object-fit:contain;display:block;margin:0 auto 8px}
+  .papel-timbrado .nome-fallback{font-family:'Fraunces',Georgia,serif;font-size:1.8rem;font-weight:700;color:#0E2A36;letter-spacing:.02em}
+  .papel-timbrado .tagline{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#C9A24B;margin-top:2px}`;
+}
+function vSoftTimbrado(){
+  return V_CONFIG.logoVertti
+    ? `<div class="papel-timbrado"><img src="${V_CONFIG.logoVertti}" alt="VERTTI Consultoria"></div>`
+    : `<div class="papel-timbrado"><div class="nome-fallback">VERTTI Consultoria</div><div class="tagline">Propriedade Intelectual · Inovação · Tecnologia</div></div>`;
 }
 
 function vSoftGerarCessao(id){
@@ -1886,6 +1913,7 @@ function vSoftGerarCessao(id){
   const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <title>Instrumento de Cessão — ${escHtml(s.titulo)}</title>
 <style>${vSoftDocCss()}</style></head><body>
+${vSoftTimbrado()}
 <button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar como PDF</button>
 <h1>INSTRUMENTO PARTICULAR DE CESSÃO DE DIREITOS PATRIMONIAIS DE PROGRAMA DE COMPUTADOR E TRANSFERÊNCIA DE TECNOLOGIA</h1>
 <div class="sub">Programa de computador "${escHtml(s.titulo)}" — Campo Grande/MS, ${vFmtData(vHoje())}</div>
@@ -1954,6 +1982,7 @@ function vSoftGerarDV(id){
   const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <title>Declaração de Veracidade — ${escHtml(s.titulo)}</title>
 <style>${vSoftDocCss()}</style></head><body>
+${vSoftTimbrado()}
 <button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar como PDF</button>
 <h1>DECLARAÇÃO DE VERACIDADE E DE ORIGINALIDADE</h1>
 <div class="sub">Referente ao pedido de Registro de Programa de Computador — INPI</div>
@@ -1982,13 +2011,14 @@ function vSoftGerarProcuracao(id){
   const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <title>Procuração — ${escHtml(s.titulo)}</title>
 <style>${vSoftDocCss()}</style></head><body>
+${vSoftTimbrado()}
 <button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar como PDF</button>
 <h1>PROCURAÇÃO ESPECÍFICA</h1>
 <div class="sub">Para representação perante o INPI — Registro de Programa de Computador</div>
 
 <p><b>OUTORGANTE:</b> ${escHtml(s.empresa.razaoSocial||'—')}, pessoa jurídica de direito privado, inscrita no CNPJ sob o nº ${escHtml(s.empresa.cnpj||'—')}, com sede em ${escHtml(s.empresa.endereco||'—')}, neste ato representada na forma de seu contrato social.</p>
 
-<p><b>OUTORGADO:</b> Germano Coelho Ramos Rocha da Silva, Agente da Propriedade Industrial devidamente inscrito no INPI sob o nº 588, com escritório profissional em Campo Grande/MS (VERTTI Consultoria).</p>
+<p><b>OUTORGADO:</b> ${V_CONFIG.qualificacaoProcurador||'Germano Coelho Ramos Rocha da Silva, brasileiro, Agente da Propriedade Industrial nº 588 junto ao INPI, com escritório profissional em Campo Grande/MS (VERTTI Consultoria)'}.</p>
 
 <p>Pelo presente instrumento, a OUTORGANTE nomeia e constitui o OUTORGADO seu bastante procurador, conferindo-lhe amplos, gerais e ilimitados poderes para representá-la perante o Instituto Nacional da Propriedade Industrial — INPI, especificamente para:</p>
 <p>a) requerer o Registro de Programa de Computador — RPC (serviço código 730) referente ao programa "${escHtml(s.titulo)}", por meio do Sistema Eletrônico e-Software;</p>
@@ -2012,6 +2042,7 @@ function vSoftGerarFicha(id){
   const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <title>Ficha de dados e-RPC — ${escHtml(s.titulo)}</title>
 <style>${vSoftDocCss()}</style></head><body>
+${vSoftTimbrado()}
 <button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar como PDF</button>
 <h1>FICHA DE DADOS PARA PETICIONAMENTO — SISTEMA e-SOFTWARE</h1>
 <div class="sub">Uso interno do procurador para preenchimento do formulário eletrônico RPC (serviço 730)</div>
@@ -2073,10 +2104,16 @@ function pageSoftware(){
               ${['sócio','funcionário','prestador de serviço','terceiro'].map(v=>`<option ${a.vinculo===v?'selected':''}>${v}</option>`).join('')}
             </select>
           </div>
+          <div style="flex:1;min-width:170px"><label style="font-size:.7rem;color:var(--cinza)">E-mail</label><input ${inp} value="${escHtml(a.email)}" oninput="vSoftAutorCampo('${s.id}',${i},'email',this.value)"></div>
+          <div style="flex:1;min-width:150px"><label style="font-size:.7rem;color:var(--cinza)">WhatsApp (55DDNÚMERO)</label><input ${inp} value="${escHtml(a.whatsapp)}" oninput="vSoftAutorCampo('${s.id}',${i},'whatsapp',this.value)"></div>
           <div style="flex:2;min-width:220px">
             <label style="font-size:.7rem;color:var(--cinza);display:block">Documento de identidade (PDF, individual por CPF — uso interno do escritório, não exigido pelo INPI no formulário eletrônico)</label>
             ${a.docIdentidadeNome?`<span style="font-size:.72rem;color:var(--petroleo)">📎 ${escHtml(a.docIdentidadeNome)}</span>`:''}
             <input type="file" accept="application/pdf" onchange="vSoftAutorArquivo('${s.id}',${i},this)" style="font-size:.7rem;display:block;margin-top:2px">
+          </div>
+          <div style="flex:1;min-width:200px;display:flex;align-items:flex-end;gap:6px">
+            <button type="button" onclick="vSoftPedirAssinatura('${s.id}',${i},'email')" ${btng}>✉ Pedir assinatura</button>
+            <button type="button" onclick="vSoftPedirAssinatura('${s.id}',${i},'whats')" ${btng}>💬 Pedir assinatura</button>
           </div>
         </div>
       </div>`).join('');
@@ -2092,7 +2129,17 @@ function pageSoftware(){
 
     return `
     <div style="border:1px solid var(--linha);border-radius:12px;padding:18px;margin-bottom:18px;background:#fff">
-      <div style="font-weight:700;margin-bottom:10px;color:var(--petroleo)">💻 ${escHtml(s.titulo||'(novo programa de computador)')}</div>
+      <div style="font-weight:700;margin-bottom:6px;color:var(--petroleo)">💻 ${escHtml(s.titulo||'(novo programa de computador)')}</div>
+      ${(()=>{
+        const faltando=[];
+        if(!s.titulo) faltando.push('título do software');
+        s.autores.forEach((a,ai)=>{ if(!a.nome||!a.cpf||!a.endereco) faltando.push('dados do autor '+(ai+1)); });
+        if(!s.empresa.razaoSocial||!s.empresa.cnpj) faltando.push('dados da empresa');
+        if(!s.empresa.contratoSocialNome) faltando.push('contrato social');
+        return faltando.length
+          ? `<div style="font-size:.74rem;background:#fbf1e6;color:#8a5a1a;border-radius:8px;padding:6px 10px;margin-bottom:10px">⚠ Faltando: ${faltando.join(', ')}</div>`
+          : `<div style="font-size:.74rem;background:#eaf5ea;color:#2c6b2c;border-radius:8px;padding:6px 10px;margin-bottom:10px">✓ Dados essenciais completos</div>`;
+      })()}
 
       <b style="font-size:.82rem">1. Dados do software</b>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px">
@@ -2160,10 +2207,14 @@ function pageSoftware(){
   return `<div class="page" id="page-software">
     <h2>💻 Registro de Software (INPI) — pacote completo</h2>
     <p style="color:var(--cinza);margin-bottom:8px">Gera automaticamente: Instrumento de Cessão de Direitos/Transferência de Tecnologia, Declaração de Veracidade, Procuração e Ficha de dados para o Sistema e-Software, com base na Lei 9.609/98, Lei 9.610/98 e Código Civil. Dados sensíveis (CPF, contrato social) ficam no repositório privado.</p>
+    <div style="background:#faf8f4;border-radius:10px;padding:12px 14px;margin-bottom:16px">
+      <label style="font-size:.75rem;color:var(--cinza);display:block;margin-bottom:4px">Sua qualificação completa (usada como OUTORGADO/procurador em todos os documentos gerados)</label>
+      <textarea style="width:100%;padding:9px 12px;border:1px solid var(--linha);border-radius:8px;font-family:inherit;font-size:.85rem;background:#fff" rows="2" onchange="V_CONFIG.qualificacaoProcurador=this.value">${escHtml(V_CONFIG.qualificacaoProcurador)}</textarea>
+    </div>
     <div style="background:#eef5ee;border:1px solid #cfe4cf;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.82rem">
       📥 <b>Cadastro pelo cliente:</b> envie este link para o autor/sócio preencher os dados dele mesmo, com validação de tamanho/tipo de arquivo:
       <a href="cadastro-software.html" target="_blank" style="color:var(--petroleo)">cadastro-software.html</a>.
-      Quando ele te enviar o .zip pelo WhatsApp, baixe e importe aqui:
+      Quando ele te enviar o .zip pelo WhatsApp/e-mail, baixe e importe aqui:
       <input type="file" accept=".zip" onchange="vSoftImportarPacote(this)" style="display:block;margin-top:6px;font-size:.8rem">
     </div>
     <div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap">
