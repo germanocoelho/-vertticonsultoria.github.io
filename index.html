@@ -2732,10 +2732,14 @@ document.querySelectorAll('#langSwitch button').forEach(b=>{
         var nome = document.getElementById('dep-nome').value.trim();
         var empresa = document.getElementById('dep-empresa').value.trim();
         var texto = document.getElementById('dep-texto').value.trim();
+        var dadosImport = {nome:nome, empresa:empresa, texto:texto, criadoEm:new Date().toISOString()};
+        var codigo = '';
+        try{ codigo = btoa(unescape(encodeURIComponent(JSON.stringify(dadosImport)))); }catch(e){}
         var msg = 'Olá! Quero deixar minha opinião sobre a VERTTI.\n\nNome: ' + nome +
           (empresa ? '\nEmpresa: ' + empresa : '') +
           '\nOpinião: ' + texto +
-          '\n\n(Se quiser, posso enviar a logo da empresa aqui mesmo pelo WhatsApp.)';
+          '\n\n(Se quiser, posso enviar a logo da empresa aqui mesmo pelo WhatsApp.)' +
+          (codigo ? ('\n\n[cod:' + codigo + ']') : '');
         document.getElementById('dep-link-wa').href = 'https://wa.me/5567981644664?text=' + encodeURIComponent(msg);
         var assuntoEmail = encodeURIComponent('Depoimento sobre a VERTTI — ' + nome);
         document.getElementById('dep-link-email').href = 'mailto:germano.consneo@gmail.com?subject=' + assuntoEmail + '&body=' + encodeURIComponent(msg);

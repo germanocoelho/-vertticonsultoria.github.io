@@ -1293,6 +1293,20 @@ function vDepAdd(){
   V_DEP.push({id:vDepUid(), nome:'', empresa:'', texto:'', logo:'', aprovado:false, ordem:V_DEP.length+1});
   vRefresh('depoimentos');
 }
+function vDepImportarCodigo(){
+  var bruto = prompt('Cole aqui a mensagem (ou só o código [cod:...]) que o cliente te enviou pelo WhatsApp/e-mail:');
+  if(!bruto) return;
+  var m = bruto.match(/\[cod:([A-Za-z0-9+/=]+)\]/);
+  var codigo = m ? m[1] : bruto.trim();
+  try{
+    var dados = JSON.parse(decodeURIComponent(escape(atob(codigo))));
+    V_DEP.push({id:vDepUid(), nome:dados.nome||'', empresa:dados.empresa||'', texto:dados.texto||'', logo:'', aprovado:false, ordem:V_DEP.length+1});
+    vRefresh('depoimentos');
+    alert('Depoimento importado! Confira os dados, adicione a logo se quiser, marque "Aprovado" e clique em "Salvar tudo".');
+  }catch(e){
+    alert('Não consegui ler esse código. Confirme se copiou a mensagem completa, incluindo o trecho "[cod:...]" no final.');
+  }
+}
 function vDepDel(id){
   if(!confirm('Remover este depoimento?'))return;
   V_DEP=V_DEP.filter(d=>d.id!==id);
@@ -1368,12 +1382,13 @@ function pageDepoimentos(){
         </label>
         <button onclick="vDepDel('${d.id}')" ${btng}>✕ Remover</button>
       </div>
-    </div>`).join('') || '<p style="color:var(--cinza)">Nenhum depoimento cadastrado ainda. Clique em "Adicionar depoimento" para incluir o primeiro — as opiniões que chegarem por WhatsApp você digita aqui.</p>';
+    </div>`).join('') || '<p style="color:var(--cinza)">Nenhum depoimento cadastrado ainda. Clique em "📥 Importar por código" com a mensagem que o cliente te enviou — os dados já vêm preenchidos.</p>';
   return `<div class="page" id="page-depoimentos">
     <h2>💬 Depoimentos de clientes</h2>
-    <p style="color:var(--cinza);margin-bottom:18px">Cadastre aqui as opiniões recebidas (WhatsApp, e-mail etc). Só aparecem no site depois de marcadas como <b>Aprovado</b> e salvas. A pessoa que enviou a opinião não vê nem sabe sobre essa etapa de aprovação.</p>
+    <p style="color:var(--cinza);margin-bottom:18px">O cliente já envia os dados prontos (nome, empresa, opinião) pelo WhatsApp/e-mail — você só cola a mensagem recebida aqui e os campos são preenchidos automaticamente. Só aparecem no site depois de marcados como <b>Aprovado</b> e salvos. A pessoa que enviou a opinião não vê nem sabe sobre essa etapa de aprovação.</p>
     <div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap">
-      <button onclick="vDepAdd()" ${btn}>+ Adicionar depoimento</button>
+      <button onclick="vDepImportarCodigo()" ${btn}>📥 Importar por código (colar mensagem do cliente)</button>
+      <button onclick="vDepAdd()" ${btng}>+ Adicionar manualmente</button>
       <button onclick="vDepLoad()" ${btng}>🔄 Recarregar do site</button>
       <button onclick="vDepSave()" ${btn}>☁ Salvar no site</button>
     </div>
