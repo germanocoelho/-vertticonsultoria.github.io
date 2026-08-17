@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro seguro — Registro de Software | VERTTI Consultoria</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root{
+  --petroleo:#0E2A36; --petroleo-2:#12384a; --ouro:#C9A24B; --ouro-claro:#E3C77E;
+  --marfim:#F6F2E9; --branco:#fff; --cinza:#6b7680; --linha:#e4ddd0;
+  --verde:#2c7a4b; --vermelho:#b93b3b;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--marfim);color:var(--petroleo);line-height:1.55}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;line-height:1.15;font-weight:600;margin:0 0 8px}
+.wrap{max-width:720px;margin:0 auto;padding:40px 22px 90px}
+.head{text-align:center;margin-bottom:8px}
+.head .eyebrow{font-size:.74rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro)}
+.head h1{font-size:1.6rem;margin-top:6px}
+.head p{color:var(--cinza);font-size:.92rem;max-width:520px;margin:10px auto 0}
+.aviso-seguranca{
+  background:#fff; border:1px solid var(--linha); border-left:4px solid var(--ouro); border-radius:10px;
+  padding:14px 16px; margin:26px 0; font-size:.85rem; color:#444;
+}
+.card{background:#fff;border:1px solid var(--linha);border-radius:16px;padding:22px 20px;margin-bottom:20px;box-shadow:0 8px 30px -20px rgba(14,42,54,.15)}
+.card h2{font-size:1.05rem;display:flex;align-items:center;gap:8px}
+.card .desc{font-size:.82rem;color:var(--cinza);margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+label{display:block;font-size:.78rem;color:#555;margin-bottom:4px;font-weight:500}
+input[type=text],input[type=date],textarea{
+  width:100%;padding:11px 13px;border:1px solid var(--linha);border-radius:9px;font:inherit;font-size:.92rem;
+  background:#fcfaf6;transition:.2s;
+}
+input:focus,textarea:focus{outline:none;border-color:var(--ouro);background:#fff}
+textarea{resize:vertical}
+.campo{margin-bottom:14px}
+.filebox{
+  border:1.5px dashed var(--linha); border-radius:10px; padding:14px; background:#fcfaf6; font-size:.82rem;
+}
+.filebox.ok{border-color:var(--verde); background:#f2f8f4}
+.filebox.erro{border-color:var(--vermelho); background:#fbf1f1}
+.filebox input[type=file]{font-size:.8rem;margin-top:6px}
+.filebox .status{margin-top:6px;font-size:.78rem}
+.status.ok{color:var(--verde);font-weight:600}
+.status.erro{color:var(--vermelho);font-weight:600}
+.toggle{display:flex;align-items:center;gap:8px;font-size:.85rem;margin-bottom:14px;cursor:pointer;user-select:none}
+.toggle input{width:17px;height:17px}
+.socio-row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:end}
+.btn-mini{padding:6px 10px;border:1px solid var(--linha);border-radius:7px;background:#fff;cursor:pointer;font-size:.76rem}
+.btn-add{padding:8px 14px;border:1px dashed var(--ouro);border-radius:8px;background:#fff;color:var(--petroleo);cursor:pointer;font-size:.82rem;font-weight:600}
+.footer-actions{text-align:center;margin-top:8px}
+.btn-final{
+  background:var(--petroleo); color:#fff; border:none; padding:16px 34px; border-radius:100px;
+  font-weight:700; font-size:1rem; cursor:pointer; box-shadow:0 12px 30px -12px rgba(14,42,54,.5); transition:.2s;
+}
+.btn-final:hover{transform:translateY(-2px)}
+.btn-final:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.resumo-tam{font-size:.8rem;color:var(--cinza);margin-top:12px}
+.resumo-tam b{color:var(--petroleo)}
+#resultado{display:none;text-align:center;margin-top:26px;padding:24px;background:#fff;border-radius:14px;border:1px solid var(--linha)}
+#resultado.mostrar{display:block}
+#resultado h3{color:var(--verde)}
+.btn-wa{display:inline-block;margin-top:14px;background:#25D366;color:#fff;padding:12px 24px;border-radius:100px;text-decoration:none;font-weight:700;font-size:.92rem}
+.erro-geral{background:#fbf1f1;border:1px solid var(--vermelho);color:var(--vermelho);border-radius:10px;padding:12px 14px;font-size:.85rem;margin-top:14px;display:none}
+.erro-geral.mostrar{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <span class="eyebrow">VERTTI Consultoria</span>
+    <h1>Cadastro seguro para Registro de Software</h1>
+    <p>Preencha seus dados e envie seus documentos com segurança. Tudo fica só no seu navegador até você mesmo confirmar o envio — nada é enviado automaticamente.</p>
+  </div>
+
+  <div class="aviso-seguranca">
+    🔒 <b>Como funciona:</b> este formulário não tem nenhum servidor por trás. Ao finalizar, seu navegador monta um pacote (arquivo .zip) só com o que você preencheu e baixa ele no seu computador/celular. Você mesmo confere e envia esse arquivo pelo WhatsApp do escritório. Ninguém mais tem acesso aos seus dados até você enviar.
+  </div>
+
+  <div class="card">
+    <label>Código/referência do projeto (se a VERTTI te passou um código, cole aqui — ajuda a organizar seu cadastro)</label>
+    <input type="text" id="f-ref" placeholder="Ex: SOFT-2026-01 (opcional)">
+  </div>
+
+  <div class="card">
+    <h2>👤 Seus dados pessoais</h2>
+    <div class="desc">Preencha se você é autor(a)/desenvolvedor(a) do programa, ou sócio(a)/representante da empresa.</div>
+    <div class="grid">
+      <div class="campo"><label>Nome completo *</label><input type="text" id="f-nome"></div>
+      <div class="campo"><label>CPF *</label><input type="text" id="f-cpf" placeholder="000.000.000-00"></div>
+      <div class="campo"><label>RG</label><input type="text" id="f-rg"></div>
+      <div class="campo"><label>Nacionalidade</label><input type="text" id="f-nacionalidade" value="brasileiro(a)"></div>
+      <div class="campo"><label>Data de nascimento</label><input type="date" id="f-nascimento"></div>
+      <div class="campo"><label>Profissão</label><input type="text" id="f-profissao"></div>
+    </div>
+    <div class="campo"><label>Endereço completo (rua, número, bairro, cidade, UF, CEP) *</label><textarea id="f-endereco" rows="2"></textarea></div>
+    <div class="campo"><label>Você é: </label>
+      <select id="f-vinculo" style="width:100%;padding:11px 13px;border:1px solid var(--linha);border-radius:9px;font:inherit;background:#fcfaf6">
+        <option value="sócio">Sócio(a) da empresa</option>
+        <option value="autor-nao-socio">Autor(a)/desenvolvedor(a) — não sócio</option>
+        <option value="funcionário">Funcionário(a)</option>
+        <option value="prestador de serviço">Prestador(a) de serviço</option>
+        <option value="representante">Representante legal da empresa (assinatura)</option>
+      </select>
+    </div>
+    <div class="campo" id="f-percentual-wrap"><label>Se autor(a): percentual de contribuição na criação do software (%)</label><input type="text" id="f-percentual" placeholder="Ex: 50"></div>
+
+    <div class="filebox" id="box-doc">
+      <label style="margin-bottom:0">📄 Documento de identidade (RG, CNH ou CPF) — apenas PDF, até 5 MB</label>
+      <input type="file" id="f-doc" accept="application/pdf">
+      <div class="status" id="status-doc"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <label class="toggle"><input type="checkbox" id="f-tem-empresa"> Também vou enviar os dados da empresa</label>
+    <div id="bloco-empresa" style="display:none">
+      <h2>🏢 Dados da empresa (cessionária)</h2>
+      <div class="desc">O contrato social pode ser o arquivo original vindo da Junta Comercial — aceitamos até 15 MB para não haver perda por tamanho.</div>
+      <div class="grid">
+        <div class="campo"><label>Razão social *</label><input type="text" id="f-razao"></div>
+        <div class="campo"><label>CNPJ *</label><input type="text" id="f-cnpj" placeholder="00.000.000/0000-00"></div>
+      </div>
+      <div class="campo"><label>Endereço da sede *</label><textarea id="f-end-empresa" rows="2"></textarea></div>
+      <div class="filebox" id="box-contrato">
+        <label style="margin-bottom:0">📄 Contrato social (arquivo da Junta Comercial) — apenas PDF, até 15 MB</label>
+        <input type="file" id="f-contrato" accept="application/pdf">
+        <div class="status" id="status-contrato"></div>
+      </div>
+
+      <h2 style="margin-top:20px">👥 Outros sócios/administradores (opcional)</h2>
+      <div class="desc">Se souber, informe quem mais assina pela empresa — ajuda o procurador a confirmar os poderes de assinatura no contrato social.</div>
+      <div id="socios-lista"></div>
+      <button type="button" class="btn-add" onclick="addSocio()">+ Adicionar outro sócio</button>
+    </div>
+  </div>
+
+  <div class="erro-geral" id="erro-geral"></div>
+  <div class="footer-actions">
+    <button class="btn-final" id="btn-finalizar" onclick="finalizarCadastro()">📦 Gerar meu pacote e enviar</button>
+    <div class="resumo-tam" id="resumo-tam"></div>
+  </div>
+
+  <div id="resultado">
+    <h3>✅ Pacote gerado com sucesso!</h3>
+    <p>O arquivo <b id="nome-arquivo-zip"></b> foi baixado no seu aparelho.<br>Agora é só enviar esse arquivo pelo WhatsApp abaixo — já deixamos a mensagem pronta, você só precisa anexar o arquivo baixado na conversa.</p>
+    <a class="btn-wa" id="link-wa" href="#" target="_blank">💬 Abrir WhatsApp e enviar</a>
+  </div>
+</div>
+
+<script>
+const LIMITE_DOC_MB = 5;
+const LIMITE_CONTRATO_MB = 15;
+const WHATSAPP_ESCRITORIO = '5567981644664';
+
+document.getElementById('f-tem-empresa').addEventListener('change', function(){
+  document.getElementById('bloco-empresa').style.display = this.checked ? 'block' : 'none';
+});
+
+function validarArquivo(inputId, statusId, boxId, limiteMB){
+  const input = document.getElementById(inputId);
+  const status = document.getElementById(statusId);
+  const box = document.getElementById(boxId);
+  const f = input.files && input.files[0];
+  box.classList.remove('ok','erro');
+  if (!f){ status.textContent=''; status.className='status'; return null; }
+  const tamanhoMB = f.size / (1024*1024);
+  const tipoOk = f.type === 'application/pdf' || /\.pdf$/i.test(f.name);
+  if (!tipoOk){
+    status.textContent = '⚠ Este arquivo não parece ser um PDF. Envie o documento em formato PDF.';
+    status.className = 'status erro'; box.classList.add('erro');
+    input.value = '';
+    return null;
+  }
+  if (tamanhoMB > limiteMB){
+    status.textContent = `⚠ Arquivo de ${tamanhoMB.toFixed(1)} MB — acima do limite de ${limiteMB} MB. Comprima o PDF (ex: ilovepdf.com/compress_pdf) e envie novamente.`;
+    status.className = 'status erro'; box.classList.add('erro');
+    input.value = '';
+    return null;
+  }
+  status.textContent = `✓ ${f.name} (${tamanhoMB.toFixed(1)} MB) — pronto para envio`;
+  status.className = 'status ok'; box.classList.add('ok');
+  return f;
+}
+document.getElementById('f-doc').addEventListener('change', function(){ validarArquivo('f-doc','status-doc','box-doc',LIMITE_DOC_MB); atualizarResumo(); });
+document.getElementById('f-contrato').addEventListener('change', function(){ validarArquivo('f-contrato','status-contrato','box-contrato',LIMITE_CONTRATO_MB); atualizarResumo(); });
+
+let sociosExtras = [];
+function addSocio(){
+  const idx = sociosExtras.length;
+  sociosExtras.push({nome:'',cpf:'',cargo:''});
+  renderSocios();
+}
+function delSocio(idx){ sociosExtras.splice(idx,1); renderSocios(); }
+function socioCampo(idx,campo,val){ sociosExtras[idx][campo]=val; }
+function renderSocios(){
+  const el = document.getElementById('socios-lista');
+  el.innerHTML = sociosExtras.map((so,i)=>`
+    <div class="socio-row">
+      <div><label>Nome</label><input type="text" value="${so.nome}" oninput="socioCampo(${i},'nome',this.value)"></div>
+      <div><label>CPF</label><input type="text" value="${so.cpf}" oninput="socioCampo(${i},'cpf',this.value)"></div>
+      <div><label>Cargo</label><input type="text" value="${so.cargo}" oninput="socioCampo(${i},'cargo',this.value)"></div>
+      <button type="button" class="btn-mini" onclick="delSocio(${i})">✕</button>
+    </div>`).join('');
+}
+
+function fileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const r = new FileReader();
+    r.onload = ()=>resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+function atualizarResumo(){
+  const docF = document.getElementById('f-doc').files[0];
+  const contF = document.getElementById('f-contrato').files[0];
+  let total = (docF?docF.size:0) + (contF?contF.size:0);
+  const totalMB = (total/(1024*1024)).toFixed(1);
+  const resumo = document.getElementById('resumo-tam');
+  if (total>0){
+    resumo.innerHTML = `Tamanho total dos arquivos: <b>${totalMB} MB</b>` + (total > 20*1024*1024 ? ' <span style="color:var(--vermelho)">— pode ser grande demais para e-mail; o WhatsApp aceita tranquilamente.</span>' : '');
+  } else { resumo.textContent=''; }
+}
+
+async function finalizarCadastro(){
+  const erroBox = document.getElementById('erro-geral');
+  erroBox.className = 'erro-geral'; erroBox.textContent='';
+
+  const nome = document.getElementById('f-nome').value.trim();
+  const cpf = document.getElementById('f-cpf').value.trim();
+  const endereco = document.getElementById('f-endereco').value.trim();
+  const temEmpresa = document.getElementById('f-tem-empresa').checked;
+
+  if (!nome || !cpf || !endereco){
+    erroBox.textContent = 'Preencha ao menos Nome, CPF e Endereço antes de continuar.';
+    erroBox.className = 'erro-geral mostrar';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  if (temEmpresa){
+    const razao = document.getElementById('f-razao').value.trim();
+    const cnpj = document.getElementById('f-cnpj').value.trim();
+    const endEmpresa = document.getElementById('f-end-empresa').value.trim();
+    if (!razao || !cnpj || !endEmpresa){
+      erroBox.textContent = 'Você marcou "enviar dados da empresa" — preencha Razão social, CNPJ e Endereço da empresa.';
+      erroBox.className = 'erro-geral mostrar';
+      window.scrollTo({top:0,behavior:'smooth'});
+      return;
+    }
+  }
+
+  const btn = document.getElementById('btn-finalizar');
+  btn.disabled = true; btn.textContent = 'Montando pacote...';
+
+  try{
+    const docFile = document.getElementById('f-doc').files[0];
+    const contratoFile = temEmpresa ? document.getElementById('f-contrato').files[0] : null;
+
+    const dados = {
+      tipo: 'cadastro-software-cliente',
+      criadoEm: new Date().toISOString(),
+      referenciaProjeto: document.getElementById('f-ref').value.trim(),
+      pessoa: {
+        nome, cpf,
+        rg: document.getElementById('f-rg').value.trim(),
+        nacionalidade: document.getElementById('f-nacionalidade').value.trim(),
+        nascimento: document.getElementById('f-nascimento').value,
+        profissao: document.getElementById('f-profissao').value.trim(),
+        endereco,
+        vinculo: document.getElementById('f-vinculo').value,
+        percentual: document.getElementById('f-percentual').value.trim(),
+        docIdentidadeNome: docFile ? docFile.name : ''
+      },
+      empresa: temEmpresa ? {
+        razaoSocial: document.getElementById('f-razao').value.trim(),
+        cnpj: document.getElementById('f-cnpj').value.trim(),
+        endereco: document.getElementById('f-end-empresa').value.trim(),
+        contratoSocialNome: contratoFile ? contratoFile.name : ''
+      } : null,
+      sociosExtras: temEmpresa ? sociosExtras : []
+    };
+
+    const zip = new JSZip();
+    zip.file('dados.json', JSON.stringify(dados, null, 2));
+    if (docFile) zip.file('documento-identidade.pdf', docFile);
+    if (contratoFile) zip.file('contrato-social.pdf', contratoFile);
+
+    const blob = await zip.generateAsync({type:'blob'});
+    const nomeArquivo = 'cadastro-software-' + cpf.replace(/\D/g,'') + '.zip';
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = nomeArquivo;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 4000);
+
+    const textoWa = encodeURIComponent(`Olá! Acabei de preencher o cadastro para registro de software (${nome}). Segue em anexo o arquivo ${nomeArquivo}.`);
+    document.getElementById('link-wa').href = 'https://wa.me/'+WHATSAPP_ESCRITORIO+'?text='+textoWa;
+    document.getElementById('nome-arquivo-zip').textContent = nomeArquivo;
+    document.getElementById('resultado').className = 'mostrar';
+    document.getElementById('resultado').scrollIntoView({behavior:'smooth'});
+    btn.textContent = '✅ Pacote gerado';
+  }catch(e){
+    erroBox.textContent = 'Ocorreu um erro ao montar o pacote: ' + e.message + '. Tente novamente ou fale direto com o escritório.';
+    erroBox.className = 'erro-geral mostrar';
+    btn.disabled = false; btn.textContent = '📦 Gerar meu pacote e enviar';
+  }
+}
+</script>
+</body>
+</html>
