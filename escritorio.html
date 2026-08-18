@@ -1760,7 +1760,7 @@ async function vSoftImportarPacote(input){
       dados.sociosExtras.forEach(so=>{ s.socios.push({nome:so.nome||'', cpf:so.cpf||'', cargo:so.cargo||'', isolado:false}); });
     }
 
-    alert('Dados importados para o projeto "'+(s.titulo||'sem título')+'". Confira os campos e clique em "Salvar tudo" para gravar no repositório privado.');
+    alert('Dados importados para o projeto "'+(s.titulo||'sem título')+'"! Complete os dados do software (título, descrição etc.) se ainda faltar, clique em "☁ Salvar tudo" para gravar, e use "📋 Gerar TUDO para revisão" para já ter os 4 documentos prontos e conferir antes de enviar para assinatura.');
     vRefresh('software');
   }catch(e){
     alert('Não foi possível ler esse pacote (.zip). Confirme se é o arquivo gerado pela página de cadastro do cliente. Erro: '+e.message);
@@ -1915,6 +1915,176 @@ function vSoftTimbrado(){
   return V_CONFIG.logoVertti
     ? `<div class="papel-timbrado"><img src="${V_CONFIG.logoVertti}" alt="VERTTI Consultoria"></div>`
     : `<div class="papel-timbrado"><div class="nome-fallback">VERTTI Consultoria</div><div class="tagline">Propriedade Intelectual · Inovação · Tecnologia</div></div>`;
+}
+
+function vSoftGerarTudo(id){
+  const s=V_SOFT.find(x=>x.id===id); if(!s){ alert('Registro não encontrado.'); return; }
+
+  const cessao_autoresQualif=s.autores.map((a,i)=>`<p><b>CEDENTE ${i+1}:</b> ${escHtml(a.nome||'—')}, ${escHtml(a.nacionalidade||'brasileiro(a)')}, ${escHtml(a.profissao||'—')}, portador(a) do CPF nº ${escHtml(a.cpf||'—')} e RG nº ${escHtml(a.rg||'—')}, nascido(a) em ${vFmtData(a.nascimento)}, residente e domiciliado(a) em ${escHtml(a.endereco||'—')}, doravante designado(a) simplesmente CEDENTE, contribuindo com ${escHtml(a.percentual||'—')}% do desenvolvimento do programa, na qualidade de ${escHtml(a.vinculo||'—')} da CESSIONÁRIA.</p>`).join('');
+  const cessao_autoresLista=s.autores.map(a=>escHtml(a.nome||'—')).join(', ');
+  const cessao_assinantesEmpresa=s.socios.filter(so=>so.isolado || s.poderAssinatura==='isolada');
+  const cessao_listaAssinantes = s.poderAssinatura==='isolada'
+    ? s.socios.filter(so=>so.isolado).map(so=>`${escHtml(so.nome||'—')} (${escHtml(so.cargo||'administrador(a)')}, CPF ${escHtml(so.cpf||'—')}), isoladamente`).join('; ')
+    : s.socios.map(so=>`${escHtml(so.nome||'—')} (${escHtml(so.cargo||'administrador(a)')}, CPF ${escHtml(so.cpf||'—')})`).join('; ') + ` — em conjunto, no mínimo ${s.qtdAssinaturasConjuntas||2} assinatura(s), conforme cláusula de representação do contrato social`;
+  const ficha_linhaAutor=a=>`<tr><td>${escHtml(a.nome||'—')}</td><td>${escHtml(a.cpf||'—')}</td><td>${escHtml(a.nacionalidade||'—')}</td><td>${escHtml(a.profissao||'—')}</td><td>${escHtml(a.percentual||'—')}%</td></tr>`;
+
+  const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Pacote completo — ${escHtml(s.titulo)}</title>
+<style>${vSoftDocCss()}</style></head><body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar tudo como PDF</button>
+<div style="text-align:center;background:#faf6ec;border:1px solid #e6d9b8;border-radius:10px;padding:10px 16px;margin-bottom:22px;font-size:.82rem;color:#5a4a1a">
+  📋 Pacote de revisão — ${escHtml(s.titulo)}. Confira os 4 documentos abaixo (cada um começa em uma nova página). Depois de revisado, use "Imprimir / Salvar tudo como PDF" e envie para assinatura.
+</div>
+    <div style="">
+      ${vSoftTimbrado()}
+      <div style="text-align:center;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-bottom:8pt">Documento 1 de 4 — Instrumento de Cessão de Direitos e Transferência de Tecnologia</div>
+      
+<h1>INSTRUMENTO PARTICULAR DE CESSÃO DE DIREITOS PATRIMONIAIS DE PROGRAMA DE COMPUTADOR E TRANSFERÊNCIA DE TECNOLOGIA</h1>
+<div class="sub">Programa de computador "${escHtml(s.titulo)}" — Campo Grande/MS, ${vFmtData(vHoje())}</div>
+
+<div class="qualif">
+${cessao_autoresQualif}
+<p><b>CESSIONÁRIA:</b> ${escHtml(s.empresa.razaoSocial||'—')}, pessoa jurídica de direito privado, inscrita no CNPJ sob o nº ${escHtml(s.empresa.cnpj||'—')}, com sede em ${escHtml(s.empresa.endereco||'—')}, neste ato representada na forma de seu contrato social por ${cessao_listaAssinantes||'representante(s) legal(is) a definir'}, doravante designada simplesmente CESSIONÁRIA.</p>
+</div>
+
+<p>As partes acima qualificadas têm, entre si, justo e acertado o presente Instrumento Particular de Cessão de Direitos Patrimoniais de Programa de Computador e Transferência de Tecnologia, que se regerá pela Lei nº 9.609, de 19 de fevereiro de 1998 (Lei de Software), pela Lei nº 9.610, de 19 de fevereiro de 1998 (Lei de Direitos Autorais, aplicável subsidiariamente por força do art. 2º da Lei nº 9.609/98), pelos artigos 104, 421, 421-A, 422 e 481 e seguintes do Código Civil (Lei nº 10.406/2002), pela Lei nº 13.709/2018 (Lei Geral de Proteção de Dados Pessoais, quanto aos dados pessoais aqui tratados) e pelas cláusulas e condições seguintes:</p>
+
+<h2>CLÁUSULA 1ª — DO OBJETO</h2>
+<p><span class="clausula-num">1.1.</span> É objeto do presente instrumento a cessão total, definitiva, irrevogável e irretratável, pelo(s) CEDENTE(S) à CESSIONÁRIA, de todos os direitos patrimoniais de autor sobre o programa de computador denominado <b>"${escHtml(s.titulo)}"</b> (doravante "o PROGRAMA"), assim descrito: ${escHtml(s.descricao||'—')}, desenvolvido na(s) linguagem(ns) ${escHtml(s.linguagem||'—')}, classificado como ${escHtml(s.tipoPrograma||'—')}, com campo de aplicação em ${escHtml(s.campoAplicacao||'—')} e ambiente operacional ${escHtml(s.ambienteOperacional||'—')}, cuja criação foi concluída em ${vFmtData(s.dataCriacao)}${s.dataPublicacao?(' e publicado em '+vFmtData(s.dataPublicacao)):''}.</p>
+<p><span class="clausula-num">1.2.</span> A cessão de que trata esta cláusula é realizada nos termos do art. 4º da Lei nº 9.609/98, transferindo-se à CESSIONÁRIA a titularidade plena, exclusiva e originária, para todos os fins de direito, inclusive para requerimento de registro perante o Instituto Nacional da Propriedade Industrial — INPI, na forma dos artigos 3º e 11 da Lei nº 9.609/98.</p>
+
+<h2>CLÁUSULA 2ª — DA EXTENSÃO DA CESSÃO</h2>
+<p><span class="clausula-num">2.1.</span> A cessão abrange, sem qualquer limitação ou reserva: (a) o código-fonte e o código-objeto do PROGRAMA, em todas as suas versões existentes até a presente data; (b) a documentação técnica, funcional e de suporte associada; (c) o direito de reprodução, distribuição, comercialização, licenciamento a terceiros, modificação, adaptação, tradução para outras linguagens e criação de obras derivadas; (d) o direito de requerer, em nome próprio, o registro do PROGRAMA perante o INPI e demais órgãos competentes, no Brasil e no exterior; (e) o direito de exploração econômica sob qualquer modalidade, presente ou futura.</p>
+<p><span class="clausula-num">2.2.</span> A presente cessão é válida por todo o prazo de proteção legal do PROGRAMA, nos termos do art. 2º, § 2º, da Lei nº 9.609/98, e abrange todo o território nacional e estrangeiro.</p>
+
+<h2>CLÁUSULA 3ª — DOS DIREITOS MORAIS</h2>
+<p><span class="clausula-num">3.1.</span> Nos termos do art. 2º, § 1º, da Lei nº 9.609/98, não se aplicam ao PROGRAMA os direitos morais previstos no art. 24 da Lei nº 9.610/98, ressalvados (i) o direito do(s) CEDENTE(S) de reivindicar a paternidade da criação intelectual do PROGRAMA e (ii) o direito de opor-se a alterações não autorizadas, quando estas impliquem deformação, mutilação ou modificação que atinjam a sua honra ou reputação, direitos estes que permanecem, em caráter personalíssimo, com o(s) CEDENTE(S), independentemente da cessão patrimonial ora operada.</p>
+
+<h2>CLÁUSULA 4ª — DA CONTRAPRESTAÇÃO</h2>
+${s.cessaoGratuita
+  ? `<p><span class="clausula-num">4.1.</span> A presente cessão é realizada a título gratuito, tendo em vista que o(s) CEDENTE(S) desenvolveu(ram) o PROGRAMA no âmbito de seu vínculo societário e/ou contratual com a CESSIONÁRIA, nos termos do art. 4º, caput, da Lei nº 9.609/98, sem prejuízo da remuneração já percebida em razão desse vínculo, não sendo devida qualquer contraprestação adicional em decorrência exclusivamente desta cessão.</p>`
+  : `<p><span class="clausula-num">4.1.</span> Em contrapartida à cessão ora pactuada, a CESSIONÁRIA pagará ao(s) CEDENTE(S) o valor total de R$ ${(s.valorCessao||0).toLocaleString('pt-BR')}, na forma: ${escHtml(s.formaPagamentoCessao||'—')}, dando o(s) CEDENTE(S), a partir da quitação integral, plena, geral e irrevogável quitação quanto a esta obrigação.</p>`}
+
+<h2>CLÁUSULA 5ª — DAS DECLARAÇÕES E GARANTIAS DO(S) CEDENTE(S)</h2>
+<p><span class="clausula-num">5.1.</span> O(s) CEDENTE(S) declara(m), sob as penas da lei, que: (a) é(são) o(s) único(s) e legítimo(s) autor(es) e titular(es) originário(s) dos direitos patrimoniais ora cedidos; (b) o PROGRAMA é obra original, não constituindo cópia, plágio ou reprodução não autorizada de obra de terceiros; (c) o PROGRAMA não infringe direitos de propriedade intelectual, segredo industrial, dados pessoais ou quaisquer outros direitos de terceiros; (d) inexistem ônus, gravames, cessões anteriores, licenças ou disputas judiciais ou extrajudiciais pendentes que possam afetar a presente cessão.</p>
+<p><span class="clausula-num">5.2.</span> O(s) CEDENTE(S) responderá(ão), na forma da lei civil, por evicção, obrigando-se a indenizar a CESSIONÁRIA por quaisquer perdas e danos decorrentes de reivindicação de terceiros relativa à autoria ou titularidade do PROGRAMA.</p>
+
+<h2>CLÁUSULA 6ª — DO REGISTRO PERANTE O INPI</h2>
+<p><span class="clausula-num">6.1.</span> O(s) CEDENTE(S) outorga(m) à CESSIONÁRIA plenos poderes para requerer, em nome próprio, o registro do PROGRAMA perante o INPI, nos termos do Sistema e-Software e do Manual do Usuário para o Registro Eletrônico de Programas de Computador, comprometendo-se a fornecer a documentação técnica, os trechos de código-fonte e demais elementos necessários à geração do resumo digital (hash) exigido pelo INPI, na forma do art. 3º, § 1º, III, da Lei nº 9.609/98.</p>
+<p><span class="clausula-num">6.2.</span> A CESSIONÁRIA se compromete a guardar sigilo sobre a informação técnica confidencial do PROGRAMA a que tiver acesso em razão deste instrumento, nos termos do art. 3º, § 1º, da Lei nº 9.609/98.</p>
+
+<h2>CLÁUSULA 7ª — DA CONFIDENCIALIDADE</h2>
+<p><span class="clausula-num">7.1.</span> As partes obrigam-se a manter sigilo sobre todas as informações técnicas, comerciais e estratégicas trocadas em razão deste instrumento, por prazo indeterminado, mesmo após seu término, salvo informações que se tornem públicas por outro meio lícito.</p>
+
+<h2>CLÁUSULA 8ª — DA PROTEÇÃO DE DADOS PESSOAIS</h2>
+<p><span class="clausula-num">8.1.</span> Os dados pessoais do(s) CEDENTE(S) coletados para a formalização deste instrumento e para o registro do PROGRAMA perante o INPI serão tratados exclusivamente para essas finalidades, em conformidade com a Lei nº 13.709/2018 (LGPD), pelo prazo necessário ao cumprimento das obrigações legais e contratuais decorrentes.</p>
+
+<h2>CLÁUSULA 9ª — DA VIGÊNCIA E IRREVOGABILIDADE</h2>
+<p><span class="clausula-num">9.1.</span> A cessão ora pactuada é feita em caráter irrevogável e irretratável, obrigando as partes, seus herdeiros e sucessores, a qualquer título, valendo o presente instrumento como título executivo extrajudicial para todos os fins de direito.</p>
+
+<h2>CLÁUSULA 10ª — DAS DISPOSIÇÕES GERAIS</h2>
+<p><span class="clausula-num">10.1.</span> Este instrumento constitui o acordo integral entre as partes quanto ao seu objeto, substituindo quaisquer entendimentos anteriores, verbais ou escritos.</p>
+<p><span class="clausula-num">10.2.</span> Eventual tolerância quanto ao descumprimento de qualquer cláusula não implica novação ou renúncia de direitos.</p>
+<p><span class="clausula-num">10.3.</span> Caso qualquer disposição deste instrumento seja considerada nula ou ineficaz, as demais permanecerão em pleno vigor.</p>
+<p><span class="clausula-num">10.4.</span> Fica eleito o foro da comarca de Campo Grande, Estado de Mato Grosso do Sul, para dirimir quaisquer controvérsias oriundas deste instrumento, com renúncia expressa a qualquer outro, por mais privilegiado que seja.</p>
+
+<p>E, por estarem assim justas e contratadas, as partes assinam o presente instrumento, na presença das testemunhas abaixo, em via única digital, cuja autenticidade poderá ser conferida pelas assinaturas digitais nele apostas.</p>
+<p style="margin-top:18px">Campo Grande/MS, ${vFmtData(vHoje())}.</p>
+
+<div class="assinaturas">
+${s.autores.map(a=>`<div class="linha">${escHtml(a.nome||'—')}<br>CEDENTE — CPF ${escHtml(a.cpf||'—')}</div>`).join('')}
+<div class="linha">${escHtml(s.empresa.razaoSocial||'—')}<br>CESSIONÁRIA — por ${escHtml((s.socios[0]&&s.socios[0].nome)||'representante legal')}</div>
+<div class="linha">Testemunha 1 — CPF: _______________</div>
+<div class="linha">Testemunha 2 — CPF: _______________</div>
+</div>
+
+    </div>
+    <div style="page-break-before:always;">
+      ${vSoftTimbrado()}
+      <div style="text-align:center;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-bottom:8pt">Documento 2 de 4 — Declaração de Veracidade</div>
+      
+<h1>DECLARAÇÃO DE VERACIDADE E DE ORIGINALIDADE</h1>
+<div class="sub">Referente ao pedido de Registro de Programa de Computador — INPI</div>
+
+<p><b>Titular do direito:</b> ${escHtml(s.empresa.razaoSocial||'—')}, CNPJ nº ${escHtml(s.empresa.cnpj||'—')}, com sede em ${escHtml(s.empresa.endereco||'—')}.</p>
+<p><b>Programa de computador:</b> "${escHtml(s.titulo)}".</p>
+
+<p>Declaro, sob as penas da lei, para fins de instrução do pedido de Registro de Programa de Computador perante o Instituto Nacional da Propriedade Industrial — INPI, nos termos do art. 3º da Lei nº 9.609/98 e do Manual do Usuário para o Registro Eletrônico de Programas de Computador (Sistema e-Software), que:</p>
+
+<p>1. As informações prestadas no formulário eletrônico de pedido de registro são verdadeiras e correspondem fielmente aos dados do programa de computador acima identificado;</p>
+<p>2. O resumo digital (hash) gerado a partir da documentação técnica e dos trechos do código-fonte apresentados corresponde, de forma íntegra, ao conteúdo efetivamente resguardado como confidencial pelo titular, nos termos do art. 3º, § 1º, III, da Lei nº 9.609/98;</p>
+<p>3. O titular acima qualificado é o legítimo detentor dos direitos patrimoniais sobre o programa de computador, por força de cessão regularmente formalizada com o(s) autor(es) original(is): ${escHtml(s.autores.map(a=>a.nome).join(', ')||'—')};</p>
+<p>4. Tem ciência de que a prestação de informação falsa sujeita o declarante às penalidades civis e criminais cabíveis, inclusive as previstas no art. 299 do Código Penal.</p>
+
+<p style="margin-top:26px">Campo Grande/MS, ${vFmtData(vHoje())}.</p>
+<div class="assinaturas">
+<div class="linha">${escHtml(s.empresa.razaoSocial||'—')}<br>Titular do direito — assinatura digital ICP-Brasil</div>
+</div>
+<p style="margin-top:30px;font-size:.76rem;color:#888">Observação: conforme o Manual do Usuário do INPI, este documento deve ser assinado digitalmente com certificado ICP-Brasil (assinaturas gov.br ou ACOAB não são aceitas pelo sistema e-Software) e anexado ao formulário eletrônico junto com a Procuração, quando houver.</p>
+
+    </div>
+    <div style="page-break-before:always;">
+      ${vSoftTimbrado()}
+      <div style="text-align:center;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-bottom:8pt">Documento 3 de 4 — Procuração</div>
+      
+<h1>PROCURAÇÃO ESPECÍFICA</h1>
+<div class="sub">Para representação perante o INPI — Registro de Programa de Computador</div>
+
+<p><b>OUTORGANTE:</b> ${escHtml(s.empresa.razaoSocial||'—')}, pessoa jurídica de direito privado, inscrita no CNPJ sob o nº ${escHtml(s.empresa.cnpj||'—')}, com sede em ${escHtml(s.empresa.endereco||'—')}, neste ato representada na forma de seu contrato social.</p>
+
+<p><b>OUTORGADO:</b> ${V_CONFIG.qualificacaoProcurador||'Germano Coelho Ramos Rocha da Silva, brasileiro, Agente da Propriedade Industrial nº 588 junto ao INPI, com escritório profissional em Campo Grande/MS (VERTTI Consultoria)'}.</p>
+
+<p>Pelo presente instrumento, a OUTORGANTE nomeia e constitui o OUTORGADO seu bastante procurador, conferindo-lhe amplos, gerais e ilimitados poderes para representá-la perante o Instituto Nacional da Propriedade Industrial — INPI, especificamente para:</p>
+<p>a) requerer o Registro de Programa de Computador — RPC (serviço código 730) referente ao programa "${escHtml(s.titulo)}", por meio do Sistema Eletrônico e-Software;</p>
+<p>b) emitir e providenciar o pagamento da respectiva Guia de Recolhimento da União — GRU;</p>
+<p>c) prestar informações complementares, responder a comunicações do INPI e praticar todos os demais atos necessários ao regular processamento e obtenção do certificado de registro;</p>
+<p>d) acompanhar o andamento do processo administrativo até seu arquivamento definitivo.</p>
+
+<p>A presente procuração é outorgada em caráter específico para o objeto acima descrito, devendo ser assinada digitalmente pela OUTORGANTE (com certificado ICP-Brasil), conforme exigido pelo Manual do Usuário para o Registro Eletrônico de Programas de Computador do INPI.</p>
+
+<p style="margin-top:26px">Campo Grande/MS, ${vFmtData(vHoje())}.</p>
+<div class="assinaturas">
+<div class="linha">${escHtml(s.empresa.razaoSocial||'—')}<br>OUTORGANTE — assinatura digital ICP-Brasil</div>
+</div>
+
+    </div>
+    <div style="page-break-before:always;">
+      ${vSoftTimbrado()}
+      <div style="text-align:center;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-bottom:8pt">Documento 4 de 4 — Ficha de dados para peticionamento e-RPC</div>
+      
+<h1>FICHA DE DADOS PARA PETICIONAMENTO — SISTEMA e-SOFTWARE</h1>
+<div class="sub">Uso interno do procurador para preenchimento do formulário eletrônico RPC (serviço 730)</div>
+
+<h2>Dados do programa</h2>
+<table>
+<tr><th>Título</th><td>${escHtml(s.titulo)}</td></tr>
+<tr><th>Descrição sucinta</th><td>${escHtml(s.descricao)}</td></tr>
+<tr><th>Linguagem(ns)</th><td>${escHtml(s.linguagem)}</td></tr>
+<tr><th>Tipo de programa</th><td>${escHtml(s.tipoPrograma)}</td></tr>
+<tr><th>Campo de aplicação</th><td>${escHtml(s.campoAplicacao)}</td></tr>
+<tr><th>Ambiente operacional</th><td>${escHtml(s.ambienteOperacional)}</td></tr>
+<tr><th>Data de término da criação</th><td>${vFmtData(s.dataCriacao)}</td></tr>
+<tr><th>Data de publicação (se houver)</th><td>${s.dataPublicacao?vFmtData(s.dataPublicacao):'inédito / não publicado'}</td></tr>
+</table>
+
+<h2>Titular (Cessionária)</h2>
+<table>
+<tr><th>Razão social</th><td>${escHtml(s.empresa.razaoSocial)}</td></tr>
+<tr><th>CNPJ</th><td>${escHtml(s.empresa.cnpj)}</td></tr>
+<tr><th>Endereço</th><td>${escHtml(s.empresa.endereco)}</td></tr>
+</table>
+
+<h2>Autores originais</h2>
+<table><thead><tr><th>Nome</th><th>CPF</th><th>Nacionalidade</th><th>Profissão</th><th>% contribuição</th></tr></thead>
+<tbody>${s.autores.map(ficha_linhaAutor).join('')}</tbody></table>
+
+<h2>Checklist de peticionamento (Manual do Usuário INPI)</h2>
+<p>☐ Cadastro no e-INPI feito &nbsp;&nbsp; ☐ GRU código 730 emitida (R$ 210,00 — Portaria INPI/PR nº 10/2025) &nbsp;&nbsp; ☐ Código-fonte/documentação técnica reunidos para geração do resumo hash &nbsp;&nbsp; ☐ Declaração de Veracidade — DV assinada digitalmente (ICP-Brasil) &nbsp;&nbsp; ☐ Procuração assinada digitalmente (ICP-Brasil), se aplicável &nbsp;&nbsp; ☐ Instrumento de Cessão assinado por todos os cedentes e pelos representantes legais da cessionária, conforme poderes do contrato social</p>
+<p style="font-size:.8rem;color:#888">Observação: desde a atualização do sistema, não há mais anexação de código-fonte separado nem etapas de exigência/recurso — apenas DV e Procuração são anexadas ao formulário eletrônico. O certificado é expedido em até 10 dias corridos do depósito, se não houver pendência formal.</p>
+
+    </div>
+</body></html>`;
+  vSoftAbrirDoc('pacote-completo', html);
 }
 
 function vSoftGerarCessao(id){
@@ -2210,12 +2380,18 @@ function pageSoftware(){
       </div>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;border-top:1px solid var(--linha);padding-top:12px">
-        <button onclick="vSoftGerarCessao('${s.id}')" ${btn}>📄 Gerar Instrumento de Cessão</button>
-        <button onclick="vSoftGerarDV('${s.id}')" ${btng}>📄 Declaração de Veracidade</button>
-        <button onclick="vSoftGerarProcuracao('${s.id}')" ${btng}>📄 Procuração</button>
-        <button onclick="vSoftGerarFicha('${s.id}')" ${btng}>📄 Ficha para peticionamento e-RPC</button>
+        <button onclick="vSoftGerarTudo('${s.id}')" style="padding:11px 20px;border:none;border-radius:8px;background:linear-gradient(135deg,#C9A24B,#b8903f);color:#fff;font-weight:700;cursor:pointer;font-size:.88rem;box-shadow:0 8px 20px -8px rgba(201,162,75,.6)">📋 Gerar TUDO para revisão (4 documentos)</button>
         <button onclick="vSoftDel('${s.id}')" ${btnr} style="margin-left:auto">✕ Remover projeto</button>
       </div>
+      <details style="margin-top:8px">
+        <summary style="cursor:pointer;font-size:.76rem;color:var(--cinza)">Gerar documentos separadamente</summary>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+          <button onclick="vSoftGerarCessao('${s.id}')" ${btng}>📄 Só o Instrumento de Cessão</button>
+          <button onclick="vSoftGerarDV('${s.id}')" ${btng}>📄 Só a Declaração de Veracidade</button>
+          <button onclick="vSoftGerarProcuracao('${s.id}')" ${btng}>📄 Só a Procuração</button>
+          <button onclick="vSoftGerarFicha('${s.id}')" ${btng}>📄 Só a Ficha e-RPC</button>
+        </div>
+      </details>
     </div>`;
   }).join('') || '<p style="color:var(--cinza)">Nenhum projeto de registro de software cadastrado ainda. Clique em "Novo registro de software" para começar.</p>';
 
