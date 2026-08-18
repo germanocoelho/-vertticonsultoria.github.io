@@ -1840,7 +1840,7 @@ function vSoftAutorArquivo(id,idx,input){
 }
 function vSoftPedirAssinatura(id, idx, via){
   const s=V_SOFT.find(x=>x.id===id); if(!s)return;
-  const a=s.autores[idx];
+  const a=s.autores[idx]; if(!a){ alert('Autor não encontrado. Atualize a página e tente novamente.'); return; }
   const link='https://vertticonsultoria.com.br/cadastro-software.html#assinatura';
   const texto=`Olá${a.nome?', '+a.nome:''}! Segue(m) em anexo o(s) documento(s) para assinatura digital (Procuração e/ou Declaração de Veracidade) referente ao registro do software "${s.titulo||''}". Assine com seu certificado ICP-Brasil (e-CPF) e envie de volta pelo link: ${link}`;
   if(via==='whats'){
@@ -2442,6 +2442,13 @@ function pageSoftware(){
         return faltando.length
           ? `<div style="font-size:.74rem;background:#fbf1e6;color:#8a5a1a;border-radius:8px;padding:6px 10px;margin-bottom:10px">⚠ Faltando: ${faltando.join(', ')}</div>`
           : `<div style="font-size:.74rem;background:#eaf5ea;color:#2c6b2c;border-radius:8px;padding:6px 10px;margin-bottom:10px">✓ Dados essenciais completos</div>`;
+      })()}
+      ${(()=>{
+        const todosPreenchidos = s.autores.length && s.autores.every(a=>a.percentual!=='' && a.percentual!=null);
+        if(!todosPreenchidos) return '';
+        const soma = s.autores.reduce((acc,a)=>acc+(parseFloat(String(a.percentual).replace(',','.'))||0),0);
+        if(Math.abs(soma-100)<0.01) return '';
+        return `<div style="font-size:.74rem;background:#fbf1e6;color:#8a5a1a;border-radius:8px;padding:6px 10px;margin-bottom:10px">⚠ Os percentuais de contribuição dos autores somam ${soma.toLocaleString('pt-BR')}%, não 100% — confira antes de gerar o Instrumento de Cessão</div>`;
       })()}
 
       <b style="font-size:.82rem">1. Dados do software</b>

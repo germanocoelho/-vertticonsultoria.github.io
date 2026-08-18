@@ -230,6 +230,12 @@ function validarArquivo(inputId, statusId, boxId, limiteMB){
     input.value = '';
     return null;
   }
+  if (f.size === 0){
+    status.textContent = '⚠ Este arquivo está vazio (0 KB) — provavelmente corrompido. Selecione o arquivo novamente.';
+    status.className = 'status erro'; box.classList.add('erro');
+    input.value = '';
+    return null;
+  }
   if (tamanhoMB > limiteMB){
     status.textContent = `⚠ Arquivo de ${tamanhoMB.toFixed(1)} MB — acima do limite de ${limiteMB} MB. Comprima o PDF (ex: ilovepdf.com/compress_pdf) e envie novamente.`;
     status.className = 'status erro'; box.classList.add('erro');
@@ -295,6 +301,20 @@ async function finalizarCadastro(){
 
   if (!nome || !cpf || !endereco || !email || !whatsapp){
     erroBox.textContent = 'Preencha ao menos Nome, CPF, Endereço, E-mail e WhatsApp antes de continuar.';
+    erroBox.className = 'erro-geral mostrar';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!emailValido){
+    erroBox.textContent = 'O e-mail informado não parece válido. Confira e tente novamente (ex: nome@exemplo.com).';
+    erroBox.className = 'erro-geral mostrar';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  const whatsappDigitos = whatsapp.replace(/\D/g,'');
+  if (whatsappDigitos.length < 10 || whatsappDigitos.length > 11){
+    erroBox.textContent = 'O WhatsApp informado não parece válido. Inclua o DDD (ex: (67) 90000-0000).';
     erroBox.className = 'erro-geral mostrar';
     window.scrollTo({top:0,behavior:'smooth'});
     return;
