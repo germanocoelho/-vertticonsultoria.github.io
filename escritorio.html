@@ -1917,6 +1917,17 @@ function vSoftTimbrado(){
     : `<div class="papel-timbrado"><div class="nome-fallback">VERTTI Consultoria</div><div class="tagline">Propriedade Intelectual · Inovação · Tecnologia</div></div>`;
 }
 
+function vSoftDetectarConflito(s){
+  // Quem efetivamente assina pela empresa, conforme a analise de poderes
+  const assinantes = s.poderAssinatura==='isolada'
+    ? s.socios.filter(so=>so.isolado)
+    : s.socios;
+  // Cruza por CPF: socio-assinante que tambem e autor/cedente = autocontratacao
+  const conflitantes = assinantes.filter(so =>
+    so.cpf && s.autores.some(a => a.cpf && a.cpf.replace(/\D/g,'') === so.cpf.replace(/\D/g,''))
+  );
+  return conflitantes;
+}
 function vSoftGerarTudo(id){
   const s=V_SOFT.find(x=>x.id===id); if(!s){ alert('Registro não encontrado.'); return; }
 
@@ -1927,6 +1938,13 @@ function vSoftGerarTudo(id){
     ? s.socios.filter(so=>so.isolado).map(so=>`${escHtml(so.nome||'—')} (${escHtml(so.cargo||'administrador(a)')}, CPF ${escHtml(so.cpf||'—')}), isoladamente`).join('; ')
     : s.socios.map(so=>`${escHtml(so.nome||'—')} (${escHtml(so.cargo||'administrador(a)')}, CPF ${escHtml(so.cpf||'—')})`).join('; ') + ` — em conjunto, no mínimo ${s.qtdAssinaturasConjuntas||2} assinatura(s), conforme cláusula de representação do contrato social`;
   const ficha_linhaAutor=a=>`<tr><td>${escHtml(a.nome||'—')}</td><td>${escHtml(a.cpf||'—')}</td><td>${escHtml(a.nacionalidade||'—')}</td><td>${escHtml(a.profissao||'—')}</td><td>${escHtml(a.percentual||'—')}%</td></tr>`;
+  const cessao_conflito = vSoftDetectarConflito(s);
+  const ata_conflitantes = cessao_conflito;
+  const ata_nomesConflitantes = ata_conflitantes.map(c=>escHtml(c.nome||'—')).join(', ');
+  const ata_autoresQueSaoSocios = s.autores.filter(a =>
+    s.socios.some(so=>so.cpf && a.cpf && so.cpf.replace(/\D/g,'')===a.cpf.replace(/\D/g,''))
+  ).map(a=>escHtml(a.nome||'—')).join(', ') || s.autores.map(a=>escHtml(a.nome||'—')).join(', ');
+  const ata_listaSocios = s.socios.map(so=>`<tr><td>${escHtml(so.nome||'—')}</td><td>${escHtml(so.cpf||'—')}</td><td>${escHtml(so.cargo||'—')}</td></tr>`).join('');
 
   const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <title>Pacote completo — ${escHtml(s.titulo)}</title>
@@ -1937,7 +1955,7 @@ function vSoftGerarTudo(id){
 </div>
     <div style="">
       ${vSoftTimbrado()}
-      <div style="text-align:center;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-bottom:8pt">Documento 1 de 4 — Instrumento de Cessão de Direitos e Transferência de Tecnologia</div>
+      <div style="text-align:center;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-bottom:8pt">Documento 1 de 5 — Instrumento de Cessão de Direitos e Transferência de Tecnologia</div>
       
 <h1>INSTRUMENTO PARTICULAR DE CESSÃO DE DIREITOS PATRIMONIAIS DE PROGRAMA DE COMPUTADOR E TRANSFERÊNCIA DE TECNOLOGIA</h1>
 <div class="sub">Programa de computador "${escHtml(s.titulo)}" — Campo Grande/MS, ${vFmtData(vHoje())}</div>
@@ -1982,6 +2000,13 @@ ${s.cessaoGratuita
 <h2>CLÁUSULA 9ª — DA VIGÊNCIA E IRREVOGABILIDADE</h2>
 <p><span class="clausula-num">9.1.</span> A cessão ora pactuada é feita em caráter irrevogável e irretratável, obrigando as partes, seus herdeiros e sucessores, a qualquer título, valendo o presente instrumento como título executivo extrajudicial para todos os fins de direito.</p>
 
+${cessao_conflito.length ? `
+<h2>CLÁUSULA ADICIONAL — DA AUTOCONTRATAÇÃO</h2>
+<p><span class="clausula-num">A.1.</span> Registra-se que ${cessao_conflito.map(c=>escHtml(c.nome||'—')).join(', ')}, na qualidade de CEDENTE(S) neste instrumento, também figura(m), no mesmo ato, como representante(s) legal(is) da CESSIONÁRIA, conforme poderes de administração previstos no contrato social.</p>
+<p><span class="clausula-num">A.2.</span> Nos termos do art. 117 do Código Civil, a validade deste ato de autocontratação está amparada pela autorização expressa dos demais sócios da CESSIONÁRIA, formalizada por meio de Ata de Deliberação dos Sócios lavrada nesta mesma data, que integra este instrumento como anexo e no qual os demais sócios declararam ciência e concordância com os termos da presente cessão, inclusive quanto à ausência de prejuízo à sociedade.</p>
+<p><span class="clausula-num">A.3.</span> As partes declaram que as condições pactuadas neste instrumento refletem a realidade do vínculo entre os CEDENTES e a CESSIONÁRIA, sendo razoáveis e não importando em prejuízo à sociedade ou a terceiros.</p>
+` : ''}
+
 <h2>CLÁUSULA 10ª — DAS DISPOSIÇÕES GERAIS</h2>
 <p><span class="clausula-num">10.1.</span> Este instrumento constitui o acordo integral entre as partes quanto ao seu objeto, substituindo quaisquer entendimentos anteriores, verbais ou escritos.</p>
 <p><span class="clausula-num">10.2.</span> Eventual tolerância quanto ao descumprimento de qualquer cláusula não implica novação ou renúncia de direitos.</p>
@@ -2001,7 +2026,7 @@ ${s.autores.map(a=>`<div class="linha">${escHtml(a.nome||'—')}<br>CEDENTE — 
     </div>
     <div style="page-break-before:always;">
       ${vSoftTimbrado()}
-      <div style="text-align:center;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-bottom:8pt">Documento 2 de 4 — Declaração de Veracidade</div>
+      <div style="text-align:center;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-bottom:8pt">Documento 2 de 5 — Declaração de Veracidade</div>
       
 <h1>DECLARAÇÃO DE VERACIDADE E DE ORIGINALIDADE</h1>
 <div class="sub">Referente ao pedido de Registro de Programa de Computador — INPI</div>
@@ -2025,7 +2050,7 @@ ${s.autores.map(a=>`<div class="linha">${escHtml(a.nome||'—')}<br>CEDENTE — 
     </div>
     <div style="page-break-before:always;">
       ${vSoftTimbrado()}
-      <div style="text-align:center;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-bottom:8pt">Documento 3 de 4 — Procuração</div>
+      <div style="text-align:center;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-bottom:8pt">Documento 3 de 5 — Procuração</div>
       
 <h1>PROCURAÇÃO ESPECÍFICA</h1>
 <div class="sub">Para representação perante o INPI — Registro de Programa de Computador</div>
@@ -2050,7 +2075,7 @@ ${s.autores.map(a=>`<div class="linha">${escHtml(a.nome||'—')}<br>CEDENTE — 
     </div>
     <div style="page-break-before:always;">
       ${vSoftTimbrado()}
-      <div style="text-align:center;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-bottom:8pt">Documento 4 de 4 — Ficha de dados para peticionamento e-RPC</div>
+      <div style="text-align:center;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-bottom:8pt">Documento 4 de 5 — Ficha de dados para peticionamento e-RPC</div>
       
 <h1>FICHA DE DADOS PARA PETICIONAMENTO — SISTEMA e-SOFTWARE</h1>
 <div class="sub">Uso interno do procurador para preenchimento do formulário eletrônico RPC (serviço 730)</div>
@@ -2083,6 +2108,43 @@ ${s.autores.map(a=>`<div class="linha">${escHtml(a.nome||'—')}<br>CEDENTE — 
 <p style="font-size:.8rem;color:#888">Observação: desde a atualização do sistema, não há mais anexação de código-fonte separado nem etapas de exigência/recurso — apenas DV e Procuração são anexadas ao formulário eletrônico. O certificado é expedido em até 10 dias corridos do depósito, se não houver pendência formal.</p>
 
     </div>
+    <div style="page-break-before:always;">
+      ${vSoftTimbrado()}
+      <div style="text-align:center;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#C9A24B;margin-bottom:8pt">Documento 5 de 5 — Ata de Deliberação dos Sócios${cessao_conflito.length ? ' (com autorização de autocontratação)' : ''}</div>
+      
+<h1>ATA DE DELIBERAÇÃO DOS SÓCIOS</h1>
+<div class="sub">${escHtml(s.empresa.razaoSocial||'—')} — CNPJ ${escHtml(s.empresa.cnpj||'—')}</div>
+
+<p>Aos ${vFmtData(vHoje())}, na sede social ou por meio eletrônico, reuniram-se os sócios de <b>${escHtml(s.empresa.razaoSocial||'—')}</b>, pessoa jurídica inscrita no CNPJ sob o nº ${escHtml(s.empresa.cnpj||'—')}, com sede em ${escHtml(s.empresa.endereco||'—')}, representando a totalidade do capital social, a saber:</p>
+
+<table>
+<thead><tr><th>Nome</th><th>CPF</th><th>Cargo/qualificação</th></tr></thead>
+<tbody>${ata_listaSocios}</tbody>
+</table>
+
+<h2>ORDEM DO DIA</h2>
+<p>Deliberar sobre a cessão de direitos patrimoniais de autor e a transferência de tecnologia referente ao programa de computador <b>"${escHtml(s.titulo)}"</b>, de que são autores originais ${ata_autoresQueSaoSocios}, em favor da sociedade, mediante Instrumento Particular de Cessão de Direitos Patrimoniais de Programa de Computador e Transferência de Tecnologia firmado nesta mesma data.</p>
+
+<h2>DELIBERAÇÕES</h2>
+<p><span class="clausula-num">1.</span> Os sócios, por unanimidade dos presentes, aprovam integralmente os termos do Instrumento de Cessão referido, ratificando a transferência da titularidade dos direitos patrimoniais sobre o programa "${escHtml(s.titulo)}" à sociedade, nos termos da Lei nº 9.609/98 e da Lei nº 9.610/98.</p>
+${ata_conflitantes.length ? `
+<div class="qualif" style="border-left:4pt solid #C9A24B">
+<p><span class="clausula-num">2.</span> Considerando que ${ata_nomesConflitantes} figura(m), simultaneamente, como CEDENTE(S) pessoa(s) física(s) no Instrumento de Cessão e como representante(s) legal(is) da sociedade (CESSIONÁRIA) no mesmo ato, os demais sócios, cientes da situação, <b>autorizam expressamente, nos termos do art. 117 do Código Civil</b>, a celebração do referido instrumento nessa condição de autocontratação, declarando:</p>
+<p>a) não haver prejuízo à sociedade nem aos demais sócios em decorrência da operação;</p>
+<p>b) que os termos e condições pactuados no Instrumento de Cessão (incluindo eventual contraprestação, ou sua gratuidade) refletem a realidade do vínculo societário e/ou contratual entre os cedentes e a sociedade, sendo razoáveis e de pleno conhecimento de todos os sócios;</p>
+<p>c) que renunciam, de forma expressa e irrevogável, a qualquer alegação futura de nulidade ou anulabilidade do Instrumento de Cessão fundada exclusivamente na autocontratação ora autorizada.</p>
+</div>` : `
+<p><span class="clausula-num">2.</span> Os sócios registram que a assinatura do Instrumento de Cessão pela sociedade se dá por representante(s) legal(is) sem coincidência com a pessoa dos cedentes, não havendo situação de autocontratação a ser especialmente autorizada nesta ata.</p>`}
+<p><span class="clausula-num">${ata_conflitantes.length?'3':'3'}.</span> Os sócios autorizam a sociedade, por seus representantes legais, a requerer o registro do programa de computador perante o Instituto Nacional da Propriedade Industrial — INPI, incluindo a assinatura da respectiva Declaração de Veracidade e, se necessário, de Procuração a profissional habilitado.</p>
+
+<p>Nada mais havendo a tratar, foi lavrada a presente ata, que vai assinada por todos os sócios presentes.</p>
+<p style="margin-top:10px">Campo Grande/MS, ${vFmtData(vHoje())}.</p>
+
+<div class="assinaturas">
+${s.socios.map(so=>`<div class="linha">${escHtml(so.nome||'—')}<br>${escHtml(so.cargo||'Sócio(a)')} — CPF ${escHtml(so.cpf||'—')}</div>`).join('')}
+</div>
+
+    </div>
 </body></html>`;
   vSoftAbrirDoc('pacote-completo', html);
 }
@@ -2095,6 +2157,7 @@ function vSoftGerarCessao(id){
   const listaAssinantes = s.poderAssinatura==='isolada'
     ? s.socios.filter(so=>so.isolado).map(so=>`${escHtml(so.nome||'—')} (${escHtml(so.cargo||'administrador(a)')}, CPF ${escHtml(so.cpf||'—')}), isoladamente`).join('; ')
     : s.socios.map(so=>`${escHtml(so.nome||'—')} (${escHtml(so.cargo||'administrador(a)')}, CPF ${escHtml(so.cpf||'—')})`).join('; ') + ` — em conjunto, no mínimo ${s.qtdAssinaturasConjuntas||2} assinatura(s), conforme cláusula de representação do contrato social`;
+  const cessao_conflito = vSoftDetectarConflito(s);
   const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <title>Instrumento de Cessão — ${escHtml(s.titulo)}</title>
 <style>${vSoftDocCss()}</style></head><body>
@@ -2142,6 +2205,13 @@ ${s.cessaoGratuita
 
 <h2>CLÁUSULA 9ª — DA VIGÊNCIA E IRREVOGABILIDADE</h2>
 <p><span class="clausula-num">9.1.</span> A cessão ora pactuada é feita em caráter irrevogável e irretratável, obrigando as partes, seus herdeiros e sucessores, a qualquer título, valendo o presente instrumento como título executivo extrajudicial para todos os fins de direito.</p>
+
+${cessao_conflito.length ? `
+<h2>CLÁUSULA ADICIONAL — DA AUTOCONTRATAÇÃO</h2>
+<p><span class="clausula-num">A.1.</span> Registra-se que ${cessao_conflito.map(c=>escHtml(c.nome||'—')).join(', ')}, na qualidade de CEDENTE(S) neste instrumento, também figura(m), no mesmo ato, como representante(s) legal(is) da CESSIONÁRIA, conforme poderes de administração previstos no contrato social.</p>
+<p><span class="clausula-num">A.2.</span> Nos termos do art. 117 do Código Civil, a validade deste ato de autocontratação está amparada pela autorização expressa dos demais sócios da CESSIONÁRIA, formalizada por meio de Ata de Deliberação dos Sócios lavrada nesta mesma data, que integra este instrumento como anexo e no qual os demais sócios declararam ciência e concordância com os termos da presente cessão, inclusive quanto à ausência de prejuízo à sociedade.</p>
+<p><span class="clausula-num">A.3.</span> As partes declaram que as condições pactuadas neste instrumento refletem a realidade do vínculo entre os CEDENTES e a CESSIONÁRIA, sendo razoáveis e não importando em prejuízo à sociedade ou a terceiros.</p>
+` : ''}
 
 <h2>CLÁUSULA 10ª — DAS DISPOSIÇÕES GERAIS</h2>
 <p><span class="clausula-num">10.1.</span> Este instrumento constitui o acordo integral entre as partes quanto ao seu objeto, substituindo quaisquer entendimentos anteriores, verbais ou escritos.</p>
@@ -2262,6 +2332,54 @@ ${vSoftTimbrado()}
   vSoftAbrirDoc('ficha', html);
 }
 
+function vSoftGerarAta(id){
+  const s=V_SOFT.find(x=>x.id===id); if(!s){ alert('Registro não encontrado.'); return; }
+  const conflitantes = vSoftDetectarConflito(s);
+  const nomesConflitantes = conflitantes.map(c=>escHtml(c.nome||'—')).join(', ');
+  const autoresQueSaoSocios = s.autores.filter(a =>
+    s.socios.some(so=>so.cpf && a.cpf && so.cpf.replace(/\D/g,'')===a.cpf.replace(/\D/g,''))
+  ).map(a=>escHtml(a.nome||'—')).join(', ') || s.autores.map(a=>escHtml(a.nome||'—')).join(', ');
+  const listaSocios = s.socios.map(so=>`<tr><td>${escHtml(so.nome||'—')}</td><td>${escHtml(so.cpf||'—')}</td><td>${escHtml(so.cargo||'—')}</td></tr>`).join('');
+  const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Ata de Deliberação dos Sócios — ${escHtml(s.titulo)}</title>
+<style>${vSoftDocCss()}</style></head><body>
+${vSoftTimbrado()}
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar como PDF</button>
+<h1>ATA DE DELIBERAÇÃO DOS SÓCIOS</h1>
+<div class="sub">${escHtml(s.empresa.razaoSocial||'—')} — CNPJ ${escHtml(s.empresa.cnpj||'—')}</div>
+
+<p>Aos ${vFmtData(vHoje())}, na sede social ou por meio eletrônico, reuniram-se os sócios de <b>${escHtml(s.empresa.razaoSocial||'—')}</b>, pessoa jurídica inscrita no CNPJ sob o nº ${escHtml(s.empresa.cnpj||'—')}, com sede em ${escHtml(s.empresa.endereco||'—')}, representando a totalidade do capital social, a saber:</p>
+
+<table>
+<thead><tr><th>Nome</th><th>CPF</th><th>Cargo/qualificação</th></tr></thead>
+<tbody>${listaSocios}</tbody>
+</table>
+
+<h2>ORDEM DO DIA</h2>
+<p>Deliberar sobre a cessão de direitos patrimoniais de autor e a transferência de tecnologia referente ao programa de computador <b>"${escHtml(s.titulo)}"</b>, de que são autores originais ${autoresQueSaoSocios}, em favor da sociedade, mediante Instrumento Particular de Cessão de Direitos Patrimoniais de Programa de Computador e Transferência de Tecnologia firmado nesta mesma data.</p>
+
+<h2>DELIBERAÇÕES</h2>
+<p><span class="clausula-num">1.</span> Os sócios, por unanimidade dos presentes, aprovam integralmente os termos do Instrumento de Cessão referido, ratificando a transferência da titularidade dos direitos patrimoniais sobre o programa "${escHtml(s.titulo)}" à sociedade, nos termos da Lei nº 9.609/98 e da Lei nº 9.610/98.</p>
+${conflitantes.length ? `
+<div class="qualif" style="border-left:4pt solid #C9A24B">
+<p><span class="clausula-num">2.</span> Considerando que ${nomesConflitantes} figura(m), simultaneamente, como CEDENTE(S) pessoa(s) física(s) no Instrumento de Cessão e como representante(s) legal(is) da sociedade (CESSIONÁRIA) no mesmo ato, os demais sócios, cientes da situação, <b>autorizam expressamente, nos termos do art. 117 do Código Civil</b>, a celebração do referido instrumento nessa condição de autocontratação, declarando:</p>
+<p>a) não haver prejuízo à sociedade nem aos demais sócios em decorrência da operação;</p>
+<p>b) que os termos e condições pactuados no Instrumento de Cessão (incluindo eventual contraprestação, ou sua gratuidade) refletem a realidade do vínculo societário e/ou contratual entre os cedentes e a sociedade, sendo razoáveis e de pleno conhecimento de todos os sócios;</p>
+<p>c) que renunciam, de forma expressa e irrevogável, a qualquer alegação futura de nulidade ou anulabilidade do Instrumento de Cessão fundada exclusivamente na autocontratação ora autorizada.</p>
+</div>` : `
+<p><span class="clausula-num">2.</span> Os sócios registram que a assinatura do Instrumento de Cessão pela sociedade se dá por representante(s) legal(is) sem coincidência com a pessoa dos cedentes, não havendo situação de autocontratação a ser especialmente autorizada nesta ata.</p>`}
+<p><span class="clausula-num">${conflitantes.length?'3':'3'}.</span> Os sócios autorizam a sociedade, por seus representantes legais, a requerer o registro do programa de computador perante o Instituto Nacional da Propriedade Industrial — INPI, incluindo a assinatura da respectiva Declaração de Veracidade e, se necessário, de Procuração a profissional habilitado.</p>
+
+<p>Nada mais havendo a tratar, foi lavrada a presente ata, que vai assinada por todos os sócios presentes.</p>
+<p style="margin-top:10px">Campo Grande/MS, ${vFmtData(vHoje())}.</p>
+
+<div class="assinaturas">
+${s.socios.map(so=>`<div class="linha">${escHtml(so.nome||'—')}<br>${escHtml(so.cargo||'Sócio(a)')} — CPF ${escHtml(so.cpf||'—')}</div>`).join('')}
+</div>
+</body></html>`;
+  vSoftAbrirDoc('ata-deliberacao', html);
+}
+
 function pageSoftware(){
   const inp='style="padding:9px 12px;border:1px solid var(--linha);border-radius:8px;font-family:inherit;font-size:.85rem;background:#fff;width:100%"';
   const btn='style="padding:9px 16px;border:none;border-radius:8px;background:var(--petroleo);color:#fff;font-weight:600;cursor:pointer;font-size:.85rem"';
@@ -2379,8 +2497,13 @@ function pageSoftware(){
         <div style="flex:1;min-width:200px"><label style="font-size:.72rem;color:var(--cinza)">Forma de pagamento</label><input ${inp} value="${escHtml(s.formaPagamentoCessao)}" oninput="vSoftCampo('${s.id}','formaPagamentoCessao',this.value)"></div>`:''}
       </div>
 
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;border-top:1px solid var(--linha);padding-top:12px">
-        <button onclick="vSoftGerarTudo('${s.id}')" style="padding:11px 20px;border:none;border-radius:8px;background:linear-gradient(135deg,#C9A24B,#b8903f);color:#fff;font-weight:700;cursor:pointer;font-size:.88rem;box-shadow:0 8px 20px -8px rgba(201,162,75,.6)">📋 Gerar TUDO para revisão (4 documentos)</button>
+      ${vSoftDetectarConflito(s).length ? `
+      <div style="background:#fff3d6;border-left:4px solid #C9A24B;border-radius:8px;padding:10px 14px;margin-top:14px;font-size:.8rem;color:#5a4520">
+        ⚠ <b>Autocontratação detectada:</b> ${vSoftDetectarConflito(s).map(c=>escHtml(c.nome||'—')).join(', ')} assina(m) pela empresa e também é(são) cedente(s)/autor(es). O sistema já vai incluir automaticamente a cláusula de autorização (art. 117 do Código Civil) e a Ata de Deliberação dos Sócios no pacote gerado abaixo.
+      </div>` : ''}
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;border-top:1px solid var(--linha);padding-top:12px">
+        <button onclick="vSoftGerarTudo('${s.id}')" style="padding:11px 20px;border:none;border-radius:8px;background:linear-gradient(135deg,#C9A24B,#b8903f);color:#fff;font-weight:700;cursor:pointer;font-size:.88rem;box-shadow:0 8px 20px -8px rgba(201,162,75,.6)">📋 Gerar TUDO para revisão (5 documentos)</button>
         <button onclick="vSoftDel('${s.id}')" ${btnr} style="margin-left:auto">✕ Remover projeto</button>
       </div>
       <details style="margin-top:8px">
@@ -2390,6 +2513,7 @@ function pageSoftware(){
           <button onclick="vSoftGerarDV('${s.id}')" ${btng}>📄 Só a Declaração de Veracidade</button>
           <button onclick="vSoftGerarProcuracao('${s.id}')" ${btng}>📄 Só a Procuração</button>
           <button onclick="vSoftGerarFicha('${s.id}')" ${btng}>📄 Só a Ficha e-RPC</button>
+          <button onclick="vSoftGerarAta('${s.id}')" ${btng}>📄 Só a Ata de Deliberação dos Sócios</button>
         </div>
       </details>
     </div>`;
