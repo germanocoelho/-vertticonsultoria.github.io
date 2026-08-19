@@ -1,18 +1,12 @@
 {
- "atualizado_em": "2026-08-12T14:20:51Z",
+ "atualizado_em": "2026-08-19T13:46:06Z",
  "tipo_ultima_execucao": "semanal",
  "etapas": {
   "rpi": {
    "status": "aviso",
-   "quando": "2026-08-12T14:20:51Z",
+   "quando": "2026-08-19T13:46:06Z",
    "detalhe": "RPIs 2901-2904 indisponíveis (números futuros ou INPI fora do ar)",
    "integridade": "base anterior preservada — nada foi perdido"
-  },
-  "disparo_diario": {
-   "status": "ok",
-   "quando": "2026-08-19T13:36:52Z",
-   "detalhe": "94 contatos enviados hoje, distribuídos entre 1 remetente(s) ativo(s): principal=94",
-   "integridade": "sem falhas"
   }
  },
  "alertas": [],
