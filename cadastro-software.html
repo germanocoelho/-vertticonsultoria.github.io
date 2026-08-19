@@ -150,6 +150,7 @@ textarea{resize:vertical}
   <div id="resultado">
     <h3>✅ Pacote gerado com sucesso!</h3>
     <p>✅ A VERTTI já foi avisada automaticamente do seu cadastro. Falta só uma coisa: o arquivo <b id="nome-arquivo-zip"></b> com seus documentos foi baixado no seu aparelho — envie-o pelo WhatsApp ou e-mail abaixo (mensagem já pronta, você só anexa o arquivo baixado).</p>
+    <p style="font-size:.82rem;color:#888;margin-top:-6px">Não precisa abrir o arquivo — é só anexá-lo direto na conversa ou no e-mail. Se mesmo assim o Windows pedir para "escolher um programa" ao clicar nele, isso não é um defeito do arquivo: é porque o Windows não tem nenhum programa de descompactar instalado no momento. Clique com o botão direito no arquivo → "Extrair tudo" (recurso do próprio Windows) para confirmar que ele abre normalmente.</p>
     <a class="btn-wa" id="link-wa" href="#" target="_blank">💬 Abrir WhatsApp e enviar</a>
     <a class="btn-wa" id="link-email" href="#" style="background:var(--petroleo);margin-left:8px">✉ Ou avisar por e-mail</a>
   </div>
@@ -183,6 +184,7 @@ textarea{resize:vertical}
     </div>
     <div id="resultado-assinados" style="display:none;text-align:center;margin-top:20px;padding:20px;background:#f2f8f4;border-radius:12px">
       <p>✅ Pacote com os documentos assinados baixado. Envie pelo WhatsApp abaixo.</p>
+      <p style="font-size:.8rem;color:#888;margin-top:-4px">Não precisa abrir o arquivo — é só anexá-lo direto na conversa. Se o Windows pedir "escolher um programa", clique com o botão direito no arquivo → "Extrair tudo" para confirmar que abre normalmente.</p>
       <a class="btn-wa" id="link-wa-assinados" href="#" target="_blank">💬 Abrir WhatsApp e enviar</a>
       <a class="btn-wa" id="link-email-assinados" href="#" style="background:var(--petroleo);margin-left:8px">✉ Ou avisar por e-mail</a>
     </div>
@@ -368,7 +370,7 @@ async function finalizarCadastro(){
     if (docFile) zip.file('documento-identidade.pdf', docFile);
     if (contratoFile) zip.file('contrato-social.pdf', contratoFile);
 
-    const blob = await zip.generateAsync({type:'blob'});
+    const blob = await zip.generateAsync({type:'blob', mimeType:'application/zip', compression:'DEFLATE', compressionOptions:{level:6}});
     const nomeArquivo = 'cadastro-software-' + cpf.replace(/\D/g,'') + '.zip';
 
     const url = URL.createObjectURL(blob);
@@ -417,7 +419,7 @@ async function enviarAssinados(){
     zip.file('info.json', JSON.stringify({tipo:'documentos-assinados', nome:nomeRef, referenciaProjeto:document.getElementById('f-ref').value.trim(), enviadoEm:new Date().toISOString()}, null, 2));
     if(procFile) zip.file('procuracao-assinada.pdf', procFile);
     if(dvFile) zip.file('declaracao-veracidade-assinada.pdf', dvFile);
-    const blob = await zip.generateAsync({type:'blob'});
+    const blob = await zip.generateAsync({type:'blob', mimeType:'application/zip', compression:'DEFLATE', compressionOptions:{level:6}});
     const nomeArquivo = 'documentos-assinados-' + nomeRef.replace(/\s+/g,'-').toLowerCase() + '.zip';
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
