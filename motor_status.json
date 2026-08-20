@@ -1,15 +1,69 @@
 {
- "atualizado_em": "2026-08-19T13:46:06Z",
- "tipo_ultima_execucao": "semanal",
+ "atualizado_em": "2026-08-20T13:13:12Z",
+ "tipo_ultima_execucao": "mensal",
  "etapas": {
+  "download": {
+   "status": "ok",
+   "quando": "2026-08-20T13:07:18Z",
+   "detalhe": "21 arquivos, 6.7 GB, ref 2026-07",
+   "integridade": ""
+  },
+  "integridade_zips": {
+   "status": "ok",
+   "quando": "2026-08-20T13:08:29Z",
+   "detalhe": "todos os ZIPs íntegros",
+   "integridade": "zipfile.testzip aprovado em 100%"
+  },
+  "destilaria": {
+   "status": "ok",
+   "quando": "2026-08-20T13:12:57Z",
+   "detalhe": "974,177 estabelecimentos MS",
+   "integridade": "faixa de sanidade ok; Campo Grande presente"
+  },
   "rpi": {
-   "status": "aviso",
-   "quando": "2026-08-19T13:46:06Z",
-   "detalhe": "RPIs 2901-2904 indisponíveis (números futuros ou INPI fora do ar)",
-   "integridade": "base anterior preservada — nada foi perdido"
+   "status": "ok",
+   "quando": "2026-08-20T13:13:09Z",
+   "detalhe": "RPIs 2901-2901 processadas, +248 titulares MS (total 1,368)",
+   "integridade": ""
+  },
+  "jucems": {
+   "status": "ok",
+   "quando": "2026-08-20T13:13:12Z",
+   "detalhe": "dado oficial da JUCEMS obtido, mas só em nível estadual (a JUCEMS parou de publicar por município neste recurso): período 2026, mês JUL: 1437 constituições; acumulado no ano: 10415.",
+   "integridade": "não usado na pontuação por cidade (sem granularidade), mas registrado para acompanhamento"
+  },
+  "filtro_inpi": {
+   "status": "ok",
+   "quando": "2026-08-20T13:13:12Z",
+   "detalhe": "0 removidos por marca existente",
+   "integridade": ""
+  },
+  "lote": {
+   "status": "ok",
+   "quando": "2026-08-20T13:13:12Z",
+   "detalhe": "0 contatos válidos (raios 1,2)",
+   "integridade": "dedupe ok; 0 e-mails inválidos descartados; fila persistente: 2309 aguardando o próximo ciclo"
+  },
+  "brevo": {
+   "status": "ok",
+   "quando": "2026-08-20T13:13:12Z",
+   "detalhe": "envio direto desligado neste ciclo mensal — a fila foi atualizada (novos candidatos entraram, antigos expiraram) e o envio de verdade acontece todo dia, com aquecimento gradual, pelo motor_retry/4_disparo_diario.py",
+   "integridade": "ver etapa 'disparo_diario' no status de cada dia para o volume real enviado"
+  },
+  "funil": {
+   "status": "ok",
+   "quando": "2026-08-20T13:13:12Z",
+   "detalhe": "4 ciclo(s) no histórico — abertura/clique real fica em Brevo: Automations > Workflows > Activity (não duplicado aqui para não arriscar guardar dado pessoal nem depender de campo em depreciação)",
+   "integridade": ""
   }
  },
- "alertas": [],
+ "alertas": [
+  {
+   "nivel": "aviso",
+   "msg": "Lote veio com só 0/100 contatos nos raios 1,2 — estoque de empresas novas qualificadas está diminuindo nesta região. Ligue 'raios_auto_expandir' na configuração, ou amplie os raios manualmente, se quiser manter o volume.",
+   "quando": "2026-08-20T13:13:12Z"
+  }
+ ],
  "metricas": {
   "enviados_total": 1044,
   "ultimo_lote": 95,
@@ -18,5 +72,6 @@
  "proximas": {
   "semanal": "toda quarta-feira, 13:00 UTC (~10:00 Campo Grande/MS)",
   "mensal": "todo dia 20, 12:00 UTC (~09:00 Campo Grande/MS)"
- }
+ },
+ "ref": "2026-07"
 }
