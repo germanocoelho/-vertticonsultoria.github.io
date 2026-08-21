@@ -2536,8 +2536,10 @@ function pageSoftware(){
     <div style="background:#eef5ee;border:1px solid #cfe4cf;border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.82rem">
       📥 <b>Cadastro pelo cliente:</b> envie este link para o autor/sócio preencher os dados dele mesmo, com validação de tamanho/tipo de arquivo:
       <a href="cadastro-software.html" target="_blank" style="color:var(--petroleo)">cadastro-software.html</a>.
-      Quando ele te enviar o .zip pelo WhatsApp/e-mail, baixe e importe aqui:
-      <input type="file" accept=".zip" onchange="vSoftImportarPacote(this)" style="display:block;margin-top:6px;font-size:.8rem">
+      <div style="background:#fff;border:2px dashed var(--petroleo);border-radius:10px;padding:14px;margin-top:12px">
+        <label style="display:block;font-weight:700;color:var(--petroleo);margin-bottom:8px">⬆️ Recebeu o .zip do cliente? Clique abaixo para importar:</label>
+        <input type="file" accept=".zip" onchange="vSoftImportarPacote(this)" style="display:block;width:100%;padding:10px;border:1px solid var(--linha);border-radius:8px;background:#fafafa;font-size:.85rem;cursor:pointer">
+      </div>
     </div>
     <div style="margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap">
       <button onclick="vSoftNovo()" ${btn}>+ Novo registro de software</button>
