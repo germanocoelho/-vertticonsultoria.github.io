@@ -1776,6 +1776,7 @@ function vSoftNovo(){
     socios:[ {nome:'',cpf:'',cargo:'',isolado:false} ],
     poderAssinatura:'conjunta', qtdAssinaturasConjuntas:2, obsPoderes:'',
     cessaoGratuita:true, valorCessao:0, formaPagamentoCessao:'',
+    pagamentoServico:{valor:0, forma:'PIX', conta:'PIX VERTTI', data:vHoje(), notaFiscal:false, numeroNota:'', reciboEnviado:false, reciboData:''},
     ordem:V_SOFT.length+1
   });
   vRefresh('software');
@@ -1790,6 +1791,7 @@ function vSoftCampo(id,campo,valor){
   const partes=campo.split('.');
   if(partes.length===1){ s[campo]=valor; }
   else if(partes[0]==='empresa'){ s.empresa[partes[1]]=valor; }
+  else if(partes[0]==='pagamentoServico'){ if(!s.pagamentoServico) s.pagamentoServico={}; s.pagamentoServico[partes[1]]=valor; }
 }
 function vSoftAutorCampo(id,idx,campo,valor){
   const s=V_SOFT.find(x=>x.id===id); if(!s)return;
@@ -2332,6 +2334,55 @@ ${vSoftTimbrado()}
   vSoftAbrirDoc('ficha', html);
 }
 
+function vSoftGerarRecibo(id){
+  const s=V_SOFT.find(x=>x.id===id); if(!s){ alert('Registro não encontrado.'); return; }
+  if(!s.pagamentoServico) s.pagamentoServico={valor:0, forma:'PIX', conta:'PIX VERTTI', data:vHoje(), notaFiscal:false, numeroNota:'', reciboEnviado:false, reciboData:''};
+  const p=s.pagamentoServico;
+  const nomeCliente = s.empresa.razaoSocial || (s.autores[0]&&s.autores[0].nome) || '—';
+  const cnpjCpf = s.empresa.cnpj || (s.autores[0]&&s.autores[0].cpf) || '—';
+  const email = (s.autores[0]&&s.autores[0].email) || '';
+  const whatsapp = (s.autores[0]&&s.autores[0].whatsapp) || '';
+  const assuntoEmail=encodeURIComponent('VERTTI Consultoria — Recibo — '+nomeCliente);
+  const corpoEmail=encodeURIComponent(`Olá!\n\nSegue em anexo o recibo referente ao serviço de Registro de Software "${s.titulo||''}".\n\nValor: R$ ${(p.valor||0).toLocaleString('pt-BR')}\n\nQualquer dúvida, estou à disposição.\n\nGermano Coelho — VERTTI Consultoria`);
+  const mailtoHref='mailto:'+encodeURIComponent(email)+'?subject='+assuntoEmail+'&body='+corpoEmail;
+  const textoWa=encodeURIComponent(`Olá! Segue o recibo do serviço de Registro de Software "${s.titulo||''}" (R$ ${(p.valor||0).toLocaleString('pt-BR')}). Vou anexar o PDF em seguida.`);
+  const foneWa=(whatsapp||'').replace(/\D/g,'');
+  const waHref='https://wa.me/'+foneWa+'?text='+textoWa;
+  const html=`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Recibo — ${escHtml(nomeCliente)}</title>
+<style>${vSoftDocCss()}
+  .recibo-tabela{width:100%;border-collapse:collapse;margin:18px 0}
+  .recibo-tabela td,.recibo-tabela th{border:1px solid #ddd;padding:9px 12px;text-align:left;font-size:.92rem}
+  .send-btn{position:fixed;top:16px;background:#fff;color:#0E2A36;border:1px solid #0E2A36;border-radius:8px;cursor:pointer;font-family:Arial,sans-serif;font-size:.82rem;padding:9px 16px;text-decoration:none;display:inline-block}
+  @media print{ .send-btn{display:none} }
+</style></head><body>
+<button class="print-btn" onclick="window.print()">🖨 Imprimir / Salvar como PDF</button>
+<a class="send-btn" style="right:220px" href="${mailtoHref}">✉ Enviar por e-mail</a>
+<a class="send-btn" style="right:16px" href="${waHref}" target="_blank">💬 Enviar por WhatsApp</a>
+${vSoftTimbrado()}
+<h1>RECIBO</h1>
+<div class="sub">Campo Grande/MS — ${vFmtData(vHoje())}</div>
+<table class="recibo-tabela">
+  <tr><th>Cliente / titular</th><td>${escHtml(nomeCliente)}${cnpjCpf!=='—'?' — '+escHtml(cnpjCpf):''}</td></tr>
+  <tr><th>Software</th><td>${escHtml(s.titulo||'—')}</td></tr>
+  <tr><th>Serviço</th><td>Assessoria e condução do Registro de Programa de Computador junto ao INPI (Lei nº 9.609/98)</td></tr>
+  <tr><th>Valor recebido</th><td><b>R$ ${(p.valor||0).toLocaleString('pt-BR')}</b></td></tr>
+  <tr><th>Forma de pagamento</th><td>${escHtml(p.forma||'—')}${p.conta?' — '+escHtml(p.conta):''}</td></tr>
+  <tr><th>Data do pagamento</th><td>${vFmtData(p.data)}</td></tr>
+  ${p.notaFiscal?'<tr><th>Nota fiscal</th><td>'+escHtml(p.numeroNota||'emitida')+'</td></tr>':''}
+</table>
+<p>Declaro, para os devidos fins, ter recebido o valor acima referente ao serviço descrito.</p>
+<div class="assinaturas">
+  <div class="linha">
+    ${V_CONFIG.assinaturaGermano?`<img src="${V_CONFIG.assinaturaGermano}" alt="assinatura" style="max-height:60px;display:block;margin:0 auto 6px">`:''}
+    Germano Coelho Ramos Rocha da Silva<br>Agente da Propriedade Industrial — INPI nº 588
+  </div>
+</div>
+</body></html>`;
+  vSoftAbrirDoc('recibo', html);
+  s.pagamentoServico.reciboEnviado=true; s.pagamentoServico.reciboData=vHoje();
+  vRefresh('software');
+}
 function vSoftGerarAta(id){
   const s=V_SOFT.find(x=>x.id===id); if(!s){ alert('Registro não encontrado.'); return; }
   const conflitantes = vSoftDetectarConflito(s);
@@ -2387,6 +2438,7 @@ function pageSoftware(){
   const btnr='style="padding:5px 10px;border:1px solid #d66;border-radius:6px;background:#fff;color:#c33;cursor:pointer;font-size:.72rem"';
 
   const cards=V_SOFT.map(s=>{
+    if(!s.pagamentoServico) s.pagamentoServico={valor:0, forma:'PIX', conta:'PIX VERTTI', data:vHoje(), notaFiscal:false, numeroNota:'', reciboEnviado:false, reciboData:''};
     const autoresHtml=s.autores.map((a,i)=>`
       <div style="border:1px solid var(--linha);border-radius:8px;padding:10px;margin-bottom:8px;background:#fff">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
@@ -2504,6 +2556,24 @@ function pageSoftware(){
         <div style="flex:1;min-width:200px"><label style="font-size:.72rem;color:var(--cinza)">Forma de pagamento</label><input ${inp} value="${escHtml(s.formaPagamentoCessao)}" oninput="vSoftCampo('${s.id}','formaPagamentoCessao',this.value)"></div>`:''}
       </div>
 
+      <b style="font-size:.82rem;display:block;margin-top:16px">7. Pagamento do serviço VERTTI (para o recibo)</b>
+      <div style="background:#faf8f4;border-radius:10px;padding:12px;margin-top:6px">
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <div style="flex:1;min-width:110px"><label style="font-size:.72rem;color:var(--cinza)">Valor (R$)</label><input type="number" ${inp} value="${s.pagamentoServico.valor||0}" oninput="vSoftCampo('${s.id}','pagamentoServico.valor',parseFloat(this.value)||0)"></div>
+          <div style="flex:1;min-width:130px"><label style="font-size:.72rem;color:var(--cinza)">Forma</label>
+            <select ${inp} onchange="vSoftCampo('${s.id}','pagamentoServico.forma',this.value)">
+              ${['PIX','Boleto','Cartao','Transferencia','Dinheiro'].map(f=>`<option ${s.pagamentoServico.forma===f?'selected':''}>${f}</option>`).join('')}
+            </select>
+          </div>
+          <div style="flex:1;min-width:150px"><label style="font-size:.72rem;color:var(--cinza)">Conta recebedora</label><input ${inp} value="${escHtml(s.pagamentoServico.conta)}" oninput="vSoftCampo('${s.id}','pagamentoServico.conta',this.value)"></div>
+          <div style="flex:1;min-width:130px"><label style="font-size:.72rem;color:var(--cinza)">Data pagamento</label><input type="date" ${inp} value="${s.pagamentoServico.data||''}" oninput="vSoftCampo('${s.id}','pagamentoServico.data',this.value)"></div>
+          <div style="flex:1;min-width:150px;display:flex;align-items:flex-end;gap:8px">
+            <label style="display:flex;align-items:center;gap:6px;font-size:.82rem"><input type="checkbox" ${s.pagamentoServico.notaFiscal?'checked':''} onchange="vSoftCampo('${s.id}','pagamentoServico.notaFiscal',this.checked)"> Nota emitida</label>
+          </div>
+          <div style="flex:1;min-width:130px"><label style="font-size:.72rem;color:var(--cinza)">Nº da nota</label><input ${inp} value="${escHtml(s.pagamentoServico.numeroNota)}" oninput="vSoftCampo('${s.id}','pagamentoServico.numeroNota',this.value)"></div>
+        </div>
+      </div>
+
       ${vSoftDetectarConflito(s).length ? `
       <div style="background:#fff3d6;border-left:4px solid #C9A24B;border-radius:8px;padding:10px 14px;margin-top:14px;font-size:.8rem;color:#5a4520">
         ⚠ <b>Autocontratação detectada:</b> ${vSoftDetectarConflito(s).map(c=>escHtml(c.nome||'—')).join(', ')} assina(m) pela empresa e também é(são) cedente(s)/autor(es). O sistema já vai incluir automaticamente a cláusula de autorização (art. 117 do Código Civil) e a Ata de Deliberação dos Sócios no pacote gerado abaixo.
@@ -2511,6 +2581,8 @@ function pageSoftware(){
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;border-top:1px solid var(--linha);padding-top:12px">
         <button onclick="vSoftGerarTudo('${s.id}')" style="padding:11px 20px;border:none;border-radius:8px;background:linear-gradient(135deg,#C9A24B,#b8903f);color:#fff;font-weight:700;cursor:pointer;font-size:.88rem;box-shadow:0 8px 20px -8px rgba(201,162,75,.6)">📋 Gerar TUDO para revisão (5 documentos)</button>
+        <button onclick="vSoftGerarRecibo('${s.id}')" ${btn}>🧾 Gerar recibo</button>
+        <span style="font-size:.76rem;color:var(--cinza);align-self:center">${s.pagamentoServico.reciboEnviado?'Último recibo gerado: '+vFmtData(s.pagamentoServico.reciboData):'Nenhum recibo gerado ainda'}</span>
         <button onclick="vSoftDel('${s.id}')" ${btnr} style="margin-left:auto">✕ Remover projeto</button>
       </div>
       <details style="margin-top:8px">
