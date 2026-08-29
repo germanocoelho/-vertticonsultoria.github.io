@@ -58,8 +58,8 @@
   },
   "disparo_diario": {
    "status": "ok",
-   "quando": "2026-08-28T22:47:31Z",
-   "detalhe": "98 contatos enviados hoje, distribuídos entre 1 remetente(s) ativo(s): principal=98",
+   "quando": "2026-08-29T16:55:20Z",
+   "detalhe": "96 contatos enviados hoje, distribuídos entre 1 remetente(s) ativo(s): principal=96",
    "integridade": "sem falhas"
   }
  },
@@ -71,9 +71,9 @@
   }
  ],
  "metricas": {
-  "enviados_total": 1898,
+  "enviados_total": 1994,
   "ultimo_lote": 95,
-  "ultimo_disparo_diario": 98
+  "ultimo_disparo_diario": 96
  },
  "proximas": {
   "semanal": "toda quarta-feira, 13:00 UTC (~10:00 Campo Grande/MS)",
