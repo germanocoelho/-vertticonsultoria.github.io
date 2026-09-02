@@ -1,75 +1,15 @@
 {
- "atualizado_em": "2026-08-27T04:38:09Z",
- "tipo_ultima_execucao": "mensal",
+ "atualizado_em": "2026-09-02T17:03:07Z",
+ "tipo_ultima_execucao": "semanal",
  "etapas": {
-  "download": {
-   "status": "ok",
-   "quando": "2026-08-27T04:30:43Z",
-   "detalhe": "21 arquivos, 6.7 GB, ref 2026-08",
-   "integridade": ""
-  },
-  "integridade_zips": {
-   "status": "ok",
-   "quando": "2026-08-27T04:31:48Z",
-   "detalhe": "todos os ZIPs íntegros",
-   "integridade": "zipfile.testzip aprovado em 100%"
-  },
-  "destilaria": {
-   "status": "ok",
-   "quando": "2026-08-27T04:37:02Z",
-   "detalhe": "980,579 estabelecimentos MS",
-   "integridade": "faixa de sanidade ok; Campo Grande presente"
-  },
   "rpi": {
    "status": "aviso",
-   "quando": "2026-08-27T04:37:07Z",
+   "quando": "2026-09-02T17:03:07Z",
    "detalhe": "RPIs 2902-2905 indisponíveis (números futuros ou INPI fora do ar)",
    "integridade": "base anterior preservada — nada foi perdido"
-  },
-  "jucems": {
-   "status": "aviso",
-   "quando": "2026-08-27T04:38:08Z",
-   "detalhe": "JUCEMS oficial indisponível neste ciclo: falha de rede ao buscar a JUCEMS (<urlopen error timed out>). O motor usará o sinal calculado da própria base neste ciclo.",
-   "integridade": "mitigação automática (sinal calculado da própria base) — não impede o ciclo de continuar"
-  },
-  "filtro_inpi": {
-   "status": "ok",
-   "quando": "2026-08-27T04:38:09Z",
-   "detalhe": "0 removidos por marca existente",
-   "integridade": ""
-  },
-  "lote": {
-   "status": "ok",
-   "quando": "2026-08-27T04:38:09Z",
-   "detalhe": "0 contatos válidos (raios 1,2)",
-   "integridade": "dedupe ok; 0 e-mails inválidos descartados; fila persistente: 3540 aguardando o próximo ciclo"
-  },
-  "brevo": {
-   "status": "ok",
-   "quando": "2026-08-27T04:38:09Z",
-   "detalhe": "envio direto desligado neste ciclo mensal — a fila foi atualizada (novos candidatos entraram, antigos expiraram) e o envio de verdade acontece todo dia, com aquecimento gradual, pelo motor_retry/4_disparo_diario.py",
-   "integridade": "ver etapa 'disparo_diario' no status de cada dia para o volume real enviado"
-  },
-  "funil": {
-   "status": "ok",
-   "quando": "2026-08-27T04:38:09Z",
-   "detalhe": "5 ciclo(s) no histórico — abertura/clique real fica em Brevo: Automations > Workflows > Activity (não duplicado aqui para não arriscar guardar dado pessoal nem depender de campo em depreciação)",
-   "integridade": ""
-  },
-  "disparo_diario": {
-   "status": "ok",
-   "quando": "2026-09-02T16:55:07Z",
-   "detalhe": "94 contatos enviados hoje, distribuídos entre 1 remetente(s) ativo(s): principal=94",
-   "integridade": "sem falhas"
   }
  },
- "alertas": [
-  {
-   "nivel": "aviso",
-   "msg": "Lote veio com só 0/100 contatos nos raios 1,2 — estoque de empresas novas qualificadas está diminuindo nesta região. Ligue 'raios_auto_expandir' na configuração, ou amplie os raios manualmente, se quiser manter o volume.",
-   "quando": "2026-08-27T04:38:09Z"
-  }
- ],
+ "alertas": [],
  "metricas": {
   "enviados_total": 2374,
   "ultimo_lote": 95,
@@ -78,6 +18,5 @@
  "proximas": {
   "semanal": "toda quarta-feira, 13:00 UTC (~10:00 Campo Grande/MS)",
   "mensal": "todo dia 20, 12:00 UTC (~09:00 Campo Grande/MS)"
- },
- "ref": "2026-08"
+ }
 }
