@@ -1,18 +1,12 @@
 {
- "atualizado_em": "2026-09-02T17:03:07Z",
+ "atualizado_em": "2026-09-09T17:03:58Z",
  "tipo_ultima_execucao": "semanal",
  "etapas": {
   "rpi": {
    "status": "aviso",
-   "quando": "2026-09-02T17:03:07Z",
+   "quando": "2026-09-09T17:03:58Z",
    "detalhe": "RPIs 2902-2905 indisponíveis (números futuros ou INPI fora do ar)",
    "integridade": "base anterior preservada — nada foi perdido"
-  },
-  "disparo_diario": {
-   "status": "aviso",
-   "quando": "2026-09-09T16:55:40Z",
-   "detalhe": "0 contatos enviados hoje, distribuídos entre 1 remetente(s) ativo(s): principal=0",
-   "integridade": "sem falhas"
   }
  },
  "alertas": [],
