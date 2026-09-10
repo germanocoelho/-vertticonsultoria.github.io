@@ -7,13 +7,19 @@
    "quando": "2026-09-09T17:03:58Z",
    "detalhe": "RPIs 2902-2905 indisponíveis (números futuros ou INPI fora do ar)",
    "integridade": "base anterior preservada — nada foi perdido"
+  },
+  "disparo_diario": {
+   "status": "ok",
+   "quando": "2026-09-10T16:43:48Z",
+   "detalhe": "3 contatos enviados hoje, distribuídos entre 1 remetente(s) ativo(s): principal=3",
+   "integridade": "sem falhas"
   }
  },
  "alertas": [],
  "metricas": {
-  "enviados_total": 2433,
+  "enviados_total": 2436,
   "ultimo_lote": 95,
-  "ultimo_disparo_diario": 0
+  "ultimo_disparo_diario": 3
  },
  "proximas": {
   "semanal": "toda quarta-feira, 13:00 UTC (~10:00 Campo Grande/MS)",
