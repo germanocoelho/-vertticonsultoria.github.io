@@ -7,13 +7,19 @@
    "quando": "2026-09-16T17:32:23Z",
    "detalhe": "RPIs 2902-2904 processadas, +578 titulares MS (total 1,946)",
    "integridade": ""
+  },
+  "disparo_diario": {
+   "status": "ok",
+   "quando": "2026-09-17T17:22:01Z",
+   "detalhe": "93 contatos enviados hoje, distribuídos entre 1 remetente(s) ativo(s): principal=93",
+   "integridade": "sem falhas"
   }
  },
  "alertas": [],
  "metricas": {
-  "enviados_total": 2439,
+  "enviados_total": 2532,
   "ultimo_lote": 95,
-  "ultimo_disparo_diario": 1
+  "ultimo_disparo_diario": 93
  },
  "proximas": {
   "semanal": "toda quarta-feira, 13:00 UTC (~10:00 Campo Grande/MS)",
