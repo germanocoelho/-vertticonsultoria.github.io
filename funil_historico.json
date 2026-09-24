@@ -46,5 +46,13 @@
   "enviados_neste_ciclo": 95,
   "enviados_total_historico": 2723,
   "fila_restante": 3810
+ },
+ {
+  "data": "2026-09-24T01:20:19Z",
+  "tipo": "mensal",
+  "ref_dados": "2026-09",
+  "enviados_neste_ciclo": 95,
+  "enviados_total_historico": 3108,
+  "fila_restante": 3800
  }
 ]
