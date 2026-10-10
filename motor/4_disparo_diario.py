@@ -15,6 +15,7 @@ a partir de poucos e-mails por dia) é a prática padrão do mercado para
 evitar isso -- ver comentário em motor/README_MOTOR.md.
 """
 import csv
+import hashlib
 import json
 import math
 import os
@@ -29,6 +30,7 @@ REPO_RAIZ = os.path.dirname(RAIZ)
 CONFIG = os.path.join(REPO_RAIZ, "motor_config.json")
 STATUS = os.path.join(REPO_RAIZ, "motor_status.json")
 ENVIADOS = os.path.join(REPO_RAIZ, "motor_enviados.json")
+FILA_LEVE = os.path.join(REPO_RAIZ, "motor_fila_leve.csv")
 BREVO_API = "https://api.brevo.com/v3/contacts"
 
 
@@ -61,14 +63,58 @@ def volume_do_dia(ativo_desde_str, cfg_aquecimento):
     return min(teto, math.floor(volume))
 
 
+def hash_email(email):
+    return hashlib.sha256(email.strip().lower().encode()).hexdigest()
+
+
+def limpar_fila_ja_contatada(fila_path=FILA_LEVE, enviados_path=ENVIADOS):
+    """Remove da fila leve quem já foi contatado (hash presente em
+    motor_enviados.json) e e-mails repetidos dentro da própria fila
+    (mantém a primeira ocorrência, preservando a ordem).
+
+    Por que isso existe: de 28/09 a 09/10 o lote do dia era preenchido com
+    contatos já enviados, que enviar_para_brevo() descartava -- resultado,
+    0 a 1 e-mail por dia. Limpando a fila ANTES de gerar o lote, cada vaga
+    do lote vai para um contato realmente novo."""
+    if not os.path.exists(fila_path):
+        return 0, 0
+    hist = set(carregar(enviados_path, []))
+    with open(fila_path, encoding="utf-8", newline="") as f:
+        leitor = csv.DictReader(f)
+        campos = leitor.fieldnames
+        linhas = list(leitor)
+    vistos = set()
+    mantidas = []
+    ja_contatados = repetidos = 0
+    for row in linhas:
+        email = (row.get("email") or "").strip().lower()
+        if email:
+            h = hash_email(email)
+            if h in hist:
+                ja_contatados += 1
+                continue
+            if h in vistos:
+                repetidos += 1
+                continue
+            vistos.add(h)
+        mantidas.append(row)
+    if ja_contatados or repetidos:
+        with open(fila_path, "w", encoding="utf-8", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=campos)
+            w.writeheader()
+            w.writerows(mantidas)
+    print(f"Fila leve limpa: {ja_contatados} já contatados e {repetidos} e-mails "
+          f"repetidos removidos; {len(mantidas)} candidatos restantes.")
+    return ja_contatados, repetidos
+
+
 def enviar_para_brevo(chave, lista_id, linhas_csv):
     ok = falhas = 0
     hist = set(carregar(ENVIADOS, []))
     novos_hashes = []
     for row in linhas_csv:
         email = row["EMAIL"].strip().lower()
-        import hashlib
-        h = hashlib.sha256(email.encode()).hexdigest()
+        h = hash_email(email)
         if h in hist:
             continue  # já contatado antes (por qualquer remetente) — nunca duplica
         corpo = json.dumps({
@@ -113,13 +159,14 @@ def main():
 
     resultado_dia = []
     for rem in remetentes:
+        limpar_fila_ja_contatada()
         n_hoje = volume_do_dia(rem["ativo_desde"], aquecimento)
         if n_hoje <= 0:
             continue
         saida_csv = os.path.join(RAIZ, f"lote_diario_{rem['nome']}.csv")
         cmd = [sys.executable, os.path.join(RAIZ, "2_gerar_lote.py"),
                "--db", os.path.join(REPO_RAIZ, "base_ms.sqlite"),
-               "--fila-leve", os.path.join(REPO_RAIZ, "motor_fila_leve.csv"),
+               "--fila-leve", FILA_LEVE,
                "--lote", str(n_hoje), "--raios", cfg.get("raios", "1,2"),
                "--meses", str(cfg.get("meses", 3)), "--saida", saida_csv]
         r = subprocess.run(cmd, cwd=REPO_RAIZ, capture_output=True, text=True)
