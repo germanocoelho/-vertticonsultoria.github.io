@@ -10,14 +10,14 @@
   },
   "disparo_diario": {
    "status": "ok",
-   "quando": "2026-10-10T23:02:31Z",
+   "quando": "2026-10-11T17:51:18Z",
    "detalhe": "100 contatos enviados hoje, distribuídos entre 1 remetente(s) ativo(s): principal=100",
    "integridade": "sem falhas"
   }
  },
  "alertas": [],
  "metricas": {
-  "enviados_total": 3678,
+  "enviados_total": 3778,
   "ultimo_lote": 95,
   "ultimo_disparo_diario": 100
  },
