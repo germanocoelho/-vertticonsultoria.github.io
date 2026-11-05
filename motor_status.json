@@ -7,11 +7,17 @@
    "quando": "2026-11-04T20:19:06Z",
    "detalhe": "RPIs 2911-2913 processadas, +323 titulares MS (total 3,069)",
    "integridade": ""
+  },
+  "disparo_diario": {
+   "status": "ok",
+   "quando": "2026-11-05T20:23:37Z",
+   "detalhe": "100 contatos enviados hoje, distribuídos entre 1 remetente(s) ativo(s): principal=100",
+   "integridade": "sem falhas"
   }
  },
  "alertas": [],
  "metricas": {
-  "enviados_total": 5984,
+  "enviados_total": 6084,
   "ultimo_lote": 95,
   "ultimo_disparo_diario": 100
  },
