@@ -1,18 +1,12 @@
 {
- "atualizado_em": "2026-11-04T20:19:06Z",
+ "atualizado_em": "2026-11-11T20:02:50Z",
  "tipo_ultima_execucao": "semanal",
  "etapas": {
   "rpi": {
-   "status": "ok",
-   "quando": "2026-11-04T20:19:06Z",
-   "detalhe": "RPIs 2911-2913 processadas, +323 titulares MS (total 3,069)",
-   "integridade": ""
-  },
-  "disparo_diario": {
    "status": "aviso",
-   "quando": "2026-11-11T19:54:44Z",
-   "detalhe": "0 contatos enviados hoje, distribuídos entre 0 remetente(s) ativo(s): ",
-   "integridade": "sem falhas"
+   "quando": "2026-11-11T20:02:50Z",
+   "detalhe": "RPIs 2914-2917 indisponíveis (números futuros ou INPI fora do ar)",
+   "integridade": "base anterior preservada — nada foi perdido"
   }
  },
  "alertas": [],
