@@ -1,0 +1,85 @@
+/* Leitor de documentos do ICET: mesmo leitor do livro da Editora (folhear em 3D, miniaturas, busca, ouvir, ampliar)
+   e capas em livro 3D. Paleta Barro e Noite. */
+.ldoc{--noite:#0E1A2B;--creme:#F4EEE3;--tx2:rgba(244,238,227,.82);--tx3:rgba(244,238,227,.55);--linha:rgba(226,169,59,.22);--ouro:#E2A93B;--argila:#C2502E;
+  position:fixed;inset:0;z-index:9000;background:radial-gradient(ellipse at center,#1C2F48 0%,#0E1A2B 70%);display:none;flex-direction:column;color:var(--creme);font-family:'Inter',system-ui,sans-serif}
+.ldoc.aberto{display:flex;animation:ldocSurge .45s ease}
+@keyframes ldocSurge{from{opacity:0}to{opacity:1}}
+.ldoc button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.ldoc .lt-barra{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--linha);background:rgba(14,26,43,.9);font-size:.82rem;flex-wrap:wrap}
+.ldoc .lt-barra .tt{flex:1;min-width:140px;font-family:'Cinzel',serif;font-weight:700;font-size:.82rem;letter-spacing:.06em;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ldoc .lt-bt{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border-radius:10px;color:var(--creme);border:1px solid transparent}
+.ldoc .lt-bt:hover,.ldoc .lt-bt.on{border-color:var(--linha);color:var(--ouro)}
+.ldoc .lt-bt svg{width:18px;height:18px}
+.ldoc .lt-pg{display:flex;align-items:center;gap:6px;color:var(--tx2)}
+.ldoc .lt-pg input{width:64px;padding:6px 8px;border-radius:8px;border:1px solid var(--linha);background:rgba(255,255,255,.05);color:var(--creme);text-align:center;font:inherit}
+.ldoc .lt-pg label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.ldoc .lt-prog{height:3px;background:rgba(255,255,255,.08)}
+.ldoc .lt-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--argila),var(--ouro));transition:width .4s}
+.ldoc .lt-corpo{flex:1;position:relative;overflow:hidden;display:grid;place-items:center;touch-action:pan-y pinch-zoom}
+.ldoc .espelho{position:relative;display:flex;justify-content:center;align-items:center;perspective:2400px}
+.ldoc .folha{position:relative;width:var(--fw,300px);height:var(--fh,420px);background:#fff;box-shadow:0 22px 60px -18px rgba(0,0,0,.9)}
+.ldoc .folha img{width:100%;height:100%;object-fit:contain;background:#fff;display:block}
+.ldoc .folha.esq{border-radius:6px 0 0 6px;box-shadow:inset -28px 0 40px -30px rgba(0,0,0,.45),0 22px 60px -18px rgba(0,0,0,.9)}
+.ldoc .folha.dir{border-radius:0 6px 6px 0;box-shadow:inset 28px 0 40px -30px rgba(0,0,0,.45),0 22px 60px -18px rgba(0,0,0,.9)}
+.ldoc .folha.uni{border-radius:6px}
+.ldoc .folha.vazia{background:transparent;box-shadow:none}
+.ldoc .virando{position:absolute;top:0;width:var(--fw,300px);height:var(--fh,420px);transform-style:preserve-3d;transition:transform .75s cubic-bezier(.45,.05,.25,1);z-index:5}
+.ldoc .virando .face{position:absolute;inset:0;backface-visibility:hidden;background:#fff}
+.ldoc .virando .face img{width:100%;height:100%;object-fit:contain}
+.ldoc .virando .verso{transform:rotateY(180deg)}
+.ldoc .virando::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.25),transparent 30%,transparent 70%,rgba(0,0,0,.2))}
+.ldoc .lt-seta{position:absolute;top:50%;translate:0 -50%;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:rgba(14,26,43,.75);border:1px solid var(--linha);z-index:6}
+.ldoc .lt-seta:hover{background:rgba(194,80,46,.6)}
+.ldoc .lt-seta.ant{left:12px}.ldoc .lt-seta.prox{right:12px}
+.ldoc .lt-seta svg{width:22px;height:22px}
+.ldoc .lt-miniaturas{display:none;gap:8px;overflow-x:auto;padding:10px 14px;background:rgba(14,26,43,.95);border-top:1px solid var(--linha)}
+.ldoc .lt-miniaturas.on{display:flex}
+.ldoc .lt-miniaturas button{flex:0 0 auto;width:62px;border-radius:4px;overflow:hidden;opacity:.6;border:2px solid transparent;position:relative;padding:0}
+.ldoc .lt-miniaturas button img{display:block;width:100%}
+.ldoc .lt-miniaturas button.on{opacity:1;border-color:var(--ouro)}
+.ldoc .lt-miniaturas button span{position:absolute;bottom:0;left:0;right:0;font:700 .62rem 'Inter',sans-serif;background:rgba(0,0,0,.6);color:#fff;text-align:center}
+.ldoc .lt-painel{position:absolute;top:0;right:0;bottom:0;width:min(400px,100%);background:rgba(14,26,43,.97);border-left:1px solid var(--linha);z-index:10;display:flex;flex-direction:column;transform:translateX(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.ldoc .lt-painel.on{transform:none}
+.ldoc .lt-painel h4{font-family:'Cinzel',serif;font-weight:700;color:var(--ouro);padding:16px 18px 6px;font-size:1rem;margin:0}
+.ldoc .lt-painel .ps{padding:0 18px 12px}
+.ldoc .lt-painel input[type=search]{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--linha);background:rgba(255,255,255,.05);color:var(--creme);font:inherit}
+.ldoc .lt-res{flex:1;overflow:auto;padding:0 10px 20px}
+.ldoc .lt-res button{display:block;width:100%;text-align:left;padding:10px;border-radius:10px;font-size:.84rem;color:var(--tx2);border-bottom:1px solid rgba(255,255,255,.05)}
+.ldoc .lt-res button:hover{background:rgba(194,80,46,.25);color:var(--creme)}
+.ldoc .lt-res b{color:var(--ouro);font-weight:700}
+.ldoc .lt-res mark{background:rgba(226,169,59,.35);color:var(--creme);border-radius:3px;padding:0 2px}
+.ldoc .lt-zoom{position:absolute;inset:0;overflow:auto;z-index:20;background:#0B1422;display:none;cursor:zoom-out}
+.ldoc .lt-zoom.on{display:block}
+.ldoc .lt-zoom img{display:block;width:min(1240px,100%);margin:20px auto;background:#fff}
+.ldoc .lt-ouvindo{position:absolute;left:50%;bottom:16px;translate:-50% 0;z-index:9;font:600 .8rem 'Inter',sans-serif;background:rgba(14,26,43,.9);border:1px solid var(--linha);padding:8px 14px;border-radius:999px;display:none;align-items:center;gap:10px}
+.ldoc .lt-ouvindo.on{display:flex}
+.ldoc .onda{display:flex;gap:3px;align-items:flex-end;height:14px}.ldoc .onda i{width:3px;background:var(--ouro);animation:ldocOnda 1s ease-in-out infinite}.ldoc .onda i:nth-child(2){animation-delay:.15s}.ldoc .onda i:nth-child(3){animation-delay:.3s}.ldoc .onda i:nth-child(4){animation-delay:.45s}
+@keyframes ldocOnda{0%,100%{height:3px}50%{height:14px}}
+.ldoc .lt-baixar{font-size:.78rem;text-decoration:none;color:var(--ouro);border:1px solid var(--linha);border-radius:999px;padding:7px 12px}
+@media(max-width:760px){.ldoc .lt-barra .rotulo{display:none}.ldoc .lt-seta{width:44px;height:44px}.ldoc .lt-seta.ant{left:4px}.ldoc .lt-seta.prox{right:4px}}
+
+/* ── capas em livro 3D ── */
+.docs3d{display:flex;flex-wrap:wrap;gap:46px 40px;justify-content:center;margin:2.4rem 0 1rem}
+.doc3d{display:flex;flex-direction:column;align-items:center;gap:22px;width:min(230px,40vw);text-align:center}
+.doc3d-palco{position:relative;width:100%;display:grid;place-items:center;perspective:1200px;padding:18px 0 30px}
+.doc3d-palco.larga{width:min(300px,78vw)}
+.doc3d-aura{position:absolute;width:115%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(226,169,59,.26),rgba(194,80,46,.12) 45%,transparent 70%);filter:blur(10px);animation:doc3dPulsa 6s ease-in-out infinite;pointer-events:none}
+@keyframes doc3dPulsa{50%{transform:scale(1.1);opacity:.75}}
+.doc3d-anel{position:absolute;width:122%;aspect-ratio:1;border-radius:50%;border:1.5px dotted rgba(226,169,59,.45);animation:doc3dGiro 40s linear infinite;pointer-events:none}
+.doc3d-anel.r{width:100%;border-color:rgba(43,179,168,.35);animation-direction:reverse;animation-duration:28s}
+@keyframes doc3dGiro{to{transform:rotate(360deg)}}
+.livro3d{position:relative;width:100%;aspect-ratio:var(--l3d-ar,.707);transform-style:preserve-3d;transform:rotateY(-24deg) rotateX(6deg);transition:transform .6s cubic-bezier(.2,.7,.2,1);animation:doc3dFlutua 7s ease-in-out infinite;cursor:pointer;border:0;background:none;padding:0}
+.livro3d:nth-child(2n){animation-delay:-2.3s}
+@keyframes doc3dFlutua{50%{translate:0 -12px}}
+.livro3d .capa{position:absolute;inset:0;border-radius:3px 8px 8px 3px;overflow:hidden;transform:translateZ(14px);box-shadow:0 30px 60px -20px rgba(0,0,0,.9),inset 0 0 0 1px rgba(255,255,255,.08);background:#fff}
+.livro3d .capa img{width:100%;height:100%;object-fit:cover;display:block}
+.livro3d .capa::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.26) 45%,transparent 60%);background-size:250% 100%;animation:doc3dReflexo 6s ease-in-out infinite}
+@keyframes doc3dReflexo{0%{background-position:150% 0}60%,100%{background-position:-60% 0}}
+.livro3d .lombada{position:absolute;top:0;bottom:0;left:0;width:28px;transform:rotateY(-90deg) translateX(-14px);transform-origin:left;background:linear-gradient(90deg,#5a1f10,#A8422A 40%,#5a1f10);border-radius:3px 0 0 3px}
+.livro3d .miolo{position:absolute;top:6px;bottom:6px;right:0;width:26px;transform:rotateY(90deg) translateZ(-13px) translateX(13px);transform-origin:right;background:repeating-linear-gradient(90deg,#efe6d2 0 1px,#d9ccb0 1px 2px)}
+.livro3d .sombra{position:absolute;left:8%;right:-6%;bottom:-30px;height:24px;background:radial-gradient(ellipse,rgba(0,0,0,.7),transparent 70%);transform:translateZ(-40px)}
+.livro3d:focus-visible{outline:2px solid #2BB3A8;outline-offset:10px}
+.doc3d b{font-family:'Cinzel',serif;color:var(--ou,#E2A93B);font-size:.95rem;line-height:1.25}
+.doc3d small{display:block;font-family:'Inter',sans-serif;font-size:.74rem;color:var(--tx3);margin-top:4px}
+.doc3d-acoes{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
+@media (prefers-reduced-motion:reduce){.livro3d,.doc3d-aura,.doc3d-anel,.livro3d .capa::after{animation:none}}
