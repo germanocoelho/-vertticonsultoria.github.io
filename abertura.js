@@ -20,7 +20,7 @@
   '#vt-ab .palco{position:relative;display:grid;justify-items:center;gap:18px;transition:opacity .45s,transform .9s cubic-bezier(.7,0,.2,1)}',
   '#vt-ab.sai .palco{opacity:0;transform:scale(1.25)}',
   '#vt-ab svg.selo{width:min(360px,76vw);overflow:visible}',
-  '#vt-ab .anel{fill:none;stroke:#C9A24B;stroke-width:2;stroke-dasharray:820;stroke-dashoffset:820;animation:vtTraco 1.2s cubic-bezier(.6,0,.2,1) .5s forwards}',
+  '#vt-ab .anel{fill:none;stroke:#C9A24B;stroke-width:2;stroke-dasharray:950;stroke-dashoffset:950;animation:vtTraco 1.2s cubic-bezier(.6,0,.2,1) .5s forwards}',
   '#vt-ab .anel2{fill:none;stroke:#C9A24B;stroke-width:.8;stroke-dasharray:3 5;opacity:0;animation:vtOp .6s ease 1.2s forwards}',
   '#vt-ab .giro{transform-origin:0 0;animation:vtGira 18s linear infinite}',
   '@keyframes vtGira{to{transform:rotate(360deg)}}',
@@ -54,9 +54,9 @@
   pr += '<path class="g" d="M120 120 l90 0 M120 112 v16 M210 112 v16 M1300 760 l180 0 M1300 752 v16 M1480 752 v16" style="animation-delay:.8s"/></svg>';
 
   var html = '<div id="vt-ab" aria-hidden="true"><div class="meia c"></div><div class="meia b"></div>' + pr +
-    '<div class="palco"><svg class="selo" viewBox="-180 -180 360 360"><defs><path id="vtCirc" d="M0 -132 A132 132 0 1 1 -0.1 -132"/></defs>' +
+    '<div class="palco"><svg class="selo" viewBox="-180 -180 360 360"><defs><path id="vtCirc" d="M0 -132 A132 132 0 1 1 0 132 A132 132 0 1 1 0 -132"/></defs>' +
     '<g class="tremor"><circle class="anel" r="150"/><circle class="anel2" r="116"/>' +
-    '<g class="giro"><text><textPath href="#vtCirc">MARCAS ◆ PATENTES ◆ SOFTWARE ◆ CONTRATOS ◆ INDICAÇÕES GEOGRÁFICAS ◆ INOVAÇÃO ◆</textPath></text></g>' +
+    '<g class="giro"><text><textPath href="#vtCirc" textLength="826" lengthAdjust="spacing">MARCAS ◆ PATENTES ◆ SOFTWARE ◆ CONTRATOS ◆ INDICAÇÕES GEOGRÁFICAS ◆ INOVAÇÃO ◆</textPath></text></g>' +
     '<text class="simb s1" x="0" y="0">®</text><text class="simb s2" x="0" y="0">™</text><text class="simb s3" x="0" y="0">©</text>' +
     '<g class="carimbo"><circle r="104" fill="#F6F2E9"/><circle r="97" fill="none" stroke="#C9A24B" stroke-width="1.5"/>' +
     '<image href="foto/vertti-logo.webp" x="-84" y="-38" width="168" height="76"/></g>' +
