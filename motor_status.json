@@ -7,6 +7,12 @@
    "quando": "2026-11-18T21:09:26Z",
    "detalhe": "RPIs 2914-2915 processadas, +220 titulares MS (total 3,289)",
    "integridade": ""
+  },
+  "disparo_diario": {
+   "status": "aviso",
+   "quando": "2026-11-19T21:03:30Z",
+   "detalhe": "0 contatos enviados hoje, distribuídos entre 0 remetente(s) ativo(s): ",
+   "integridade": "sem falhas"
   }
  },
  "alertas": [],
