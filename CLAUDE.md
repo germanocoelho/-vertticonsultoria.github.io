@@ -1,0 +1,60 @@
+# Instruções para o Claude — análise de diárias (DSEI/MS · CONDISI/MS · AgSUS)
+
+## Documento norteador (obrigatório)
+
+**`Plano de Trabalho corrigido enviado por Tchaia.pdf`**, que está na raiz deste repositório, é o
+**documento norteador de TODAS as análises de diárias**. Trata-se do Plano de Trabalho Integrado
+2026 do DSEI/MS (218 páginas; título interno "Plano_de_Trabalho_DSEI SUPER CORRETOdo_20.07.26").
+
+- Antes de analisar qualquer ofício de diárias, consulte este plano. Não use outro documento no
+  lugar dele (por exemplo, o relato "Boa Prática AgSUS — Controle de Diárias" **não** é o plano).
+- Toda conferência deve responder a três perguntas: (1) a viagem ou o evento está previsto no plano?
+  (2) o número de diárias por pessoa e o número de beneficiários estão dentro do previsto?
+  (3) o valor total cabe no limite do evento, somando os pedidos **anteriores** para o mesmo evento?
+
+## Controle social — Meta 4, Indicador 7
+
+Os parâmetros estão nas páginas 119 a 125 do PDF. Valor unitário da diária: **R$ 280,00**.
+
+### Tabela 3 (págs. 119–120): reunião ordinária com capacitação
+Por pessoa: 6,5 diárias, ou 8,5 para o conselheiro da Aldeia Uberaba.
+Limites: conselheiros 156 diárias, conselheiro de Uberaba 8,5, assessores 13 (2 × 6,5), apoio 6,5.
+
+### Tabela 4 (pág. 121): 100ª e 101ª Reuniões Ordinárias do CONDISI/MS (2 reuniões, mesmo valor)
+Limites **por reunião**:
+
+| Item | Diárias por pessoa | Quantidade | Valor |
+|---|---|---|---|
+| Conselheiros | 4,5 | 108 (24 pessoas) | R$ 30.240,00 |
+| Conselheiro da Aldeia Uberaba (barco, 340 km até Corumbá) | 5,5 | 5,5 | R$ 1.540,00 |
+| Assessores indígenas (2 com diária; o 3º mora na capital e não recebe) | 4,5 | 9 | R$ 2.520,00 |
+| Apoio | 4,5 | 4,5 | R$ 1.260,00 |
+
+O total por reunião, com lanche e material, é de R$ 46.960,52. Para as duas reuniões, R$ 93.921,04.
+
+### Resumo orçamentário (pág. 125)
+São 438 diárias no Indicador 7 (R$ 122.640,00), resultado de 184 diárias da Tabela 3 mais
+2 × 127 diárias da Tabela 4.
+
+## Regras de conferência adotadas pelo escritório
+
+- **Prazo de envio:** conta-se em **dias corridos**, a partir da data em que o pedido **entra no
+  sistema da AgSUS**, até o início do deslocamento (decisão do usuário).
+- **Conselheiros servidores públicos** recebem diária pelo **SCDP** (Decreto 11.872/2023), não pela
+  AgSUS (observação do plano, pág. 120).
+- **Saída na véspera e retorno no dia seguinte** ao evento já estão previstos no plano.
+- **Diárias por evento:** a soma deve incluir **todos os pedidos anteriores** para o mesmo evento
+  (assessores, apoio, conselheiros), e não só o ofício que está sendo analisado.
+
+## Registro dos pedidos por evento
+
+O Claude não guarda memória entre sessões. Para que a soma dos pedidos anteriores não se perca,
+registre aqui cada ofício conferido.
+
+### 101ª Reunião Ordinária do CONDISI/MS (Campo Grande, dezembro de 2026)
+
+| Ofício | Beneficiários | Período | Diárias | Valor | Observação |
+|---|---|---|---|---|---|
+| 2504/2026/MS/DSEI/SESAI/MS (Proc. SEI 25048.002355/2026-65) | 22 conselheiros (21 × 3,5 + 1 × 5,5) | 07 ou 08/12 a 11 ou 12/12/2026 | 79 | R$ 22.120,00 | Dentro do limite de conselheiros (113,5 diárias / R$ 31.780,00); Laucídio = conselheiro de Uberaba |
+| _(assessores: pedidos anteriores, a preencher)_ | | | | | Limite: 9 diárias / R$ 2.520,00 |
+| _(apoio, se houver)_ | | | | | Limite: 4,5 diárias / R$ 1.260,00 |
