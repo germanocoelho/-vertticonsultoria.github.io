@@ -56,7 +56,7 @@ registre aqui cada ofício conferido.
 | Ofício | Beneficiários | Período | Diárias | Valor | Observação |
 |---|---|---|---|---|---|
 | 2504/2026/MS/DSEI/SESAI/MS (Proc. SEI 25048.002355/2026-65) | 22 conselheiros (21 × 3,5 + 1 × 5,5) | 07 ou 08/12 a 11 ou 12/12/2026 | 79 | R$ 22.120,00 | Dentro do limite de conselheiros (113,5 diárias / R$ 31.780,00); Laucídio = conselheiro de Uberaba |
-| 2514/2026/MS/DSEI/SESAI/MS (Proc. SEI 25048.002355/2026-65) | Lurdelice Moreira Nelson (Presidente do CONDISI) | 08 a 11/12/2026 | 3,5 | R$ 980,00 | Diária de capital (3,5 ≤ 4,5 por conselheiro). Dentro do prazo. Conferir se não consta entre os 22 do 2504 (não duplicar) e se não é servidora pública (se for, SCDP, não AgSUS) |
+| 2514/2026/MS/DSEI/SESAI/MS (Proc. SEI 25048.002355/2026-65) | Lurdelice Moreira Nelson (Presidente do CONDISI) | 08 a 11/12/2026 | 3,5 | R$ 980,00 | Diária de capital (3,5 ≤ 4,5 por conselheiro). Dentro do prazo. **Confirmado: NÃO consta entre os 22 do ofício 2504** (ela apenas assina como Presidente) — sem duplicidade. Resta confirmar se não é servidora pública (se for, SCDP, não AgSUS) |
 | **Subtotal conselheiros + Uberaba (2504 + 2514)** | 23 conselheiros | | **82,5** | **R$ 23.100,00** | Limite 113,5 diárias / R$ 31.780,00 — saldo 31 diárias / R$ 8.680,00 |
 | _(assessores: pedidos anteriores, a preencher)_ | | | | | Limite: 9 diárias / R$ 2.520,00 |
 | _(apoio, se houver)_ | | | | | Limite: 4,5 diárias / R$ 1.260,00 |
