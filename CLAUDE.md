@@ -71,3 +71,9 @@ de participantes (2,5 × 15) = R$ 7.500,00.
 |---|---|---|---|---|
 | 2318/2026/MS/DSEI/SESAI/MS (Proc. SEI 25048.001014/2026-72) | Nilzanir Torres Martins, Vitor da Silva Fernandes, Giselda Riquelme Ramos (instrutores) | 11 a 13/11/2026, Campo Grande → Dourados | 7,5 (3 × 2,5) | Prestação de contas conferida em 26/11/2026: relatório conjunto inclui também Nicoly Benites (4ª instrutora, fora deste ofício; localizar o ofício dela). Se ela tiver 2,5 diárias, o limite de instrutores (10) fica esgotado |
 | _(participantes: pedidos a localizar)_ | | | | Limite: 37,5 diárias |
+
+### Reunião do Conselho Local de Saúde Indígena, Polo Base Dois Irmãos do Buriti (Aldeia Buriti, 27 e 28/10/2026)
+
+| Ofício | Beneficiários | Período | Diárias | Observação |
+|---|---|---|---|---|
+| 2254/2026/MS/DSEI/SESAI/MS (Proc. SEI 25048.000352/2026-97), Ação 4, Indicador 8 | Creuza da Silva Delfino (apoio/cozinheira, colaboradora eventual) | 27 a 28/10/2026, Sidrolândia → Dois Irmãos do Buriti | 1,5 (demais localidades) | Prestação de contas conferida em 26/11/2026 (relatório SEI 0059112396): datas, trecho, diárias e assinaturas conferem; assinatura do Presidente do CONDISI em 09/11 (7º dia útil, com Finados). Pedidos: comprovante de deslocamento (não anexado) e lista de presença (assinalada, mas ausente); local "Polo Base" × "Aldeia Buriti" a harmonizar |
