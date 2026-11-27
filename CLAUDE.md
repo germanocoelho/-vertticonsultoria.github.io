@@ -43,6 +43,7 @@ São 438 diárias no Indicador 7 (R$ 122.640,00), resultado de 184 diárias da T
 - **Conselheiros servidores públicos** recebem diária pelo **SCDP** (Decreto 11.872/2023), não pela
   AgSUS (observação do plano, pág. 120).
 - **Saída na véspera e retorno no dia seguinte** ao evento já estão previstos no plano.
+- **Prestação de contas:** o que sempre deve bater é (1) o **ofício com o relatório** (beneficiário, período, trecho, diárias, objeto) e (2) o **BDT com o relatório** (datas, locais e horários de cada dia). Fotos e lista de presença são apoio, não base da conferência (decisão do usuário).
 - **Diárias por evento:** a soma deve incluir **todos os pedidos anteriores** para o mesmo evento
   (assessores, apoio, conselheiros), e não só o ofício que está sendo analisado.
 
