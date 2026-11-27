@@ -83,3 +83,9 @@ de participantes (2,5 × 15) = R$ 7.500,00.
 | Ofício | Beneficiário | Período | Diárias | Observação |
 |---|---|---|---|---|
 | 2566/2026/MS/DSEI/SESAI/MS (Proc. SEI 25048.002473/2026-73), Ação 5, Indicador 10.2 | Marco Antônio Araújo dos Santos (Supervisor em Saúde Ambiental, SESANI) | 02 a 04/12/2026, Campo Grande → Douradina | 2,5 (demais localidades) | Conferido em 27/11/2026. Diárias corretas (3 dias, 2 pernoites). Usa saldo da linha "Inspeção de poços existentes e manutenção preventiva" (Geólogo, dezembro, 4 diárias, pág. 210), mas o objeto é um seminário e o beneficiário não é geólogo: a linha compatível é a do Supervisor de Saúde Ambiental em dezembro (Educação Ambiental contínua, pág. 210). Fora do prazo, com critério VII (determinação de dirigentes da SESAI/AgSUS) sem documento que o comprove; a justificativa real é o convite recebido em 23/11. Pedidos: reenquadrar a linha do plano, anexar convite e programação, corrigir o critério de urgência, corrigir "Arauújo" e "04//12/2026" |
+
+### Vistoria de imóvel para o Polo Base de Corumbá (dezembro de 2026)
+
+| Ofício | Beneficiária | Período | Diárias | Observação |
+|---|---|---|---|---|
+| 2581/2026/MS/DSEI/SESAI/MS (Proc. SEI 25048.002506/2026-85), Ação 5, Indicador 10.2 | Bruna Almeida da Silva (Engenheira Civil, SESANI) | 14 a 16/12/2026, Campo Grande → Corumbá | 2,5 (demais localidades) | Conferido em 27/11/2026. Diárias, assinaturas (beneficiária e Coordenador em 26/11) e prazo corretos; Corumbá consta no plano. Objeto é vistoria de imóvel para locação, rotulado "Medição de obra" (linha do Eng. Civil, dez., 4 diárias, pág. 209); linha mais compatível: "Levantamento para Elaboração de projetos". Marcou "dentro do prazo" e também o critério V, com justificativa em branco: desmarcar o V |
