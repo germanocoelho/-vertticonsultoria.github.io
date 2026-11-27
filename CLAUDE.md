@@ -77,3 +77,9 @@ de participantes (2,5 × 15) = R$ 7.500,00.
 | Ofício | Beneficiários | Período | Diárias | Observação |
 |---|---|---|---|---|
 | 2254/2026/MS/DSEI/SESAI/MS (Proc. SEI 25048.000352/2026-97), Ação 4, Indicador 8 | Creuza da Silva Delfino (apoio/cozinheira, colaboradora eventual) | 27 a 28/10/2026, Sidrolândia → Dois Irmãos do Buriti | 1,5 (demais localidades) | Prestação de contas conferida em 26/11/2026 (relatório SEI 0059112396): datas, trecho, diárias e assinaturas conferem; assinatura do Presidente do CONDISI em 09/11 (7º dia útil, com Finados). Pedidos: comprovante de deslocamento (não anexado) e lista de presença (assinalada, mas ausente); local "Polo Base" × "Aldeia Buriti" a harmonizar |
+
+### Seminário Tesãi Porã (agrotóxicos em territórios Guarani e Kaiowá), Douradina, dezembro de 2026
+
+| Ofício | Beneficiário | Período | Diárias | Observação |
+|---|---|---|---|---|
+| 2566/2026/MS/DSEI/SESAI/MS (Proc. SEI 25048.002473/2026-73), Ação 5, Indicador 10.2 | Marco Antônio Araújo dos Santos (Supervisor em Saúde Ambiental, SESANI) | 02 a 04/12/2026, Campo Grande → Douradina | 2,5 (demais localidades) | Conferido em 27/11/2026. Diárias corretas (3 dias, 2 pernoites). Usa saldo da linha "Inspeção de poços existentes e manutenção preventiva" (Geólogo, dezembro, 4 diárias, pág. 210), mas o objeto é um seminário e o beneficiário não é geólogo: a linha compatível é a do Supervisor de Saúde Ambiental em dezembro (Educação Ambiental contínua, pág. 210). Fora do prazo, com critério VII (determinação de dirigentes da SESAI/AgSUS) sem documento que o comprove; a justificativa real é o convite recebido em 23/11. Pedidos: reenquadrar a linha do plano, anexar convite e programação, corrigir o critério de urgência, corrigir "Arauújo" e "04//12/2026" |
