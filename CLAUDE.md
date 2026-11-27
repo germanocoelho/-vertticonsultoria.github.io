@@ -89,3 +89,9 @@ de participantes (2,5 × 15) = R$ 7.500,00.
 | Ofício | Beneficiária | Período | Diárias | Observação |
 |---|---|---|---|---|
 | 2581/2026/MS/DSEI/SESAI/MS (Proc. SEI 25048.002506/2026-85), Ação 5, Indicador 10.2 | Bruna Almeida da Silva (Engenheira Civil, SESANI) | 14 a 16/12/2026, Campo Grande → Corumbá | 2,5 (demais localidades) | Conferido em 27/11/2026. Diárias, assinaturas (beneficiária e Coordenador em 26/11) e prazo corretos; Corumbá consta no plano. Objeto é vistoria de imóvel para locação, rotulado "Medição de obra" (linha do Eng. Civil, dez., 4 diárias, pág. 209); linha mais compatível: "Levantamento para Elaboração de projetos". Marcou "dentro do prazo" e também o critério V, com justificativa em branco: desmarcar o V |
+
+### Monitoramento da qualidade da água, Polo Base Sidrolândia (novembro de 2026)
+
+| Ofício | Beneficiária | Período | Diárias | Observação |
+|---|---|---|---|---|
+| 1891/2026/MS/DSEI/SESAI/MS (Proc. SEI 25048.001748/2026-51), Ação 5, Indicador 10.2 | Juliana de Souza Soares (Supervisora em Saúde Ambiental, SESANI) | Ofício: 09 a 13/11/2026; executado: 16 a 20/11/2026, Campo Grande → Sidrolândia | 4,5 (demais localidades) | Prestação de contas conferida em 27/11/2026 (relatório SEI 0059538250, BDT SEI 0059547450, lista SEI 0059547409). Viagem feita uma semana depois do período do ofício, sem documento de alteração: pedir ofício retificador ou justificativa assinada pela Coordenação. Mesma quantidade de diárias, sem devolução. BDT (S10 UPA-3A18, motorista Wilson Polon) confirma 16 a 20/11 com quilometragem contínua; em 17/11 o BDT e as fotos mostram Aldeias Lagoinha, Córrego do Meio e 13 de Maio, e o relatório diz Aldeia Tereré; campo "Localidade. UF" sem preencher; coluna "assinatura do usuário" do BDT em branco. Plano: linha do Supervisor de Saúde Ambiental em novembro prevê 4 diárias por atividade (pág. 207), e o ofício pediu 4,5 |
